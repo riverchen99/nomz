@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 
 // Load MenuItem model
@@ -14,8 +15,8 @@ router.get('/test', (req, res) => res.send('menuitem route testing!'));
 // @access Public
 router.get('/', (req, res) => {
   MenuItem.find()
-    .then(menuItems => res.json(menuItems))
-    .catch(err => res.status(404).json({ noMenuItemsFound: 'No MenuItem found' }));
+    .then((menuItems) => res.json(menuItems))
+    .catch((err) => { console.log(err); res.status(404).json({ noMenuItemsFound: 'No MenuItem found' }); });
 });
 
 module.exports = router;
