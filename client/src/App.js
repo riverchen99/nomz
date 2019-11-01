@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
 
-const config = require('./config/config');
-
-
 class App extends Component {
   constructor() {
     super();
@@ -12,9 +9,7 @@ class App extends Component {
   }
 
   handleClick() {
-    console.log('Clicked!');
-    console.log(config.local_backend);
-    axios.get(`${config.local_backend}/api/menuitems`)
+    axios.get('/api/menuitems')
       .then((resp) => { console.log(resp.data); this.setState({ menuItems: resp.data }); });
   }
 
