@@ -23,7 +23,6 @@ module.exports = {
     'jest'
   ],
   rules: {
-
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
   },
 };

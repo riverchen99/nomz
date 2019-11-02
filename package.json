@@ -6,9 +6,11 @@
   "scripts": {
     "start": "node index.js",
     "server": "nodemon index.js",
-    "test": "exit 0",
+    "test:server": "jest",
+    "test:client": "cd client && npm run test",
     "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "test": "npm run lint && npm run test:server && CI=true npm run test:client"
   },
   "repository": {
     "type": "git",
@@ -33,9 +35,21 @@
     "eslint-plugin-jest": "^23.0.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.16.0",
-    "nodemon": "^1.19.4"
+    "jest": "^24.9.0",
+    "nodemon": "^1.19.4",
+    "supertest": "^4.0.2"
   },
   "engines": {
     "node": "8.11.4"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "testPathIgnorePatterns": [
+      "/client/"
+    ],
+    "testRegex": "tests/.*\\.(js|jsx)$"
   }
 }
