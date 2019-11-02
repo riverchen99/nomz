@@ -10,4 +10,4 @@ branches:
 services:
   - mongodb
 env:
-  - MONGODB_TEST_URI="mongodb://localhost/test-restaurants-app"
+  - MONGODB_TEST_URI="mongodb://localhost/nomz_test"
