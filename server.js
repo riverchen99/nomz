@@ -9,6 +9,13 @@ const menuItemsRoute = require('./routes/api/menuItems');
 
 const PORT = process.env.PORT || 8080;
 
+let DB_URI;
+try {
+  const keys = require('./config/keys'); // eslint-disable-line
+  DB_URI = keys.mongoURI;
+} catch (ex) {
+  DB_URI = process.env.MONGODB_URI;
+}
 
 const app = express();
 app.use(cors());
@@ -37,7 +44,7 @@ app.listen(port, () => console.log(`Server running on port ${port}`));
 // adapted from https://www.johnvincent.io/mongo/mongoose-integration-testing/
 let server;
 
-function runServer(databaseUrl, port = PORT) {
+function runServer(databaseUrl = DB_URI, port = PORT) {
   return new Promise((resolve, reject) => {
     mongoose.connect(databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
       if (err) {
@@ -71,8 +78,7 @@ function closeServer() {
 }
 
 if (require.main === module) {
-  const DB_URI = process.env.MONGODB_URI || require('./config/keys').mongoURI; // eslint-disable-line
-  runServer(DB_URI).catch((err) => console.error(err));
+  runServer().catch((err) => console.error(err));
 }
 
 module.exports = { app, runServer, closeServer };

@@ -2,7 +2,15 @@ const request = require('supertest');
 const mongoose = require('mongoose');
 const MenuItem = require('../models/MenuItem');
 const { app, runServer, closeServer } = require('../server');
-const TEST_DB_URI = process.env.MONGODB_TEST_URI || require('../config/keys').mongoTestURI; // eslint-disable-line
+
+let TEST_DB_URI;
+try {
+  // running locally
+  const keys = require('../config/keys'); // eslint-disable-line
+  TEST_DB_URI = keys.mongoTestURI;
+} catch (ex) {
+  TEST_DB_URI = process.env.MONGODB_TEST_URI;
+}
 
 function seedMenuItemData() {
   console.log(MenuItem);
