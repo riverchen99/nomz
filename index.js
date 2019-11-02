@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const menuItemsRoute = require('./routes/api/menuItems');
 
-const dbString = process.env.MONGODB_URI || require('./config/keys').mongoURI; // eslint-disable-line global-require
+const dbString = process.env.MONGODB_URI || require('./config/keys').mongoURI; // eslint-disable-line
 
 const app = express();
 app.use(cors());
