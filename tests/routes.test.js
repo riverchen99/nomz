@@ -13,8 +13,10 @@ try {
 }
 
 function seedMenuItemData() {
-  console.log(MenuItem);
-  return MenuItem.insertMany([{ name: 'combo' }]);
+  return MenuItem.insertMany([
+    { name: 'combo' },
+    { name: 'fish and chips', ingredients: ['fish', 'potato'] },
+  ]);
 }
 
 function tearDownDb() {
@@ -31,10 +33,20 @@ describe('MenuItems API works correctly', () => {
 
   afterAll(() => closeServer());
 
-  describe('GET Endpoints', () => {
-    it('should return 200', async () => {
+  describe('GET Endpoint', () => {
+    it('should return 200 and nonempty list', async () => {
       const res = await request(app).get('/api/menuitems');
       expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(2);
+    });
+  });
+
+  describe('POST Endpoint', () => {
+    it('should return 200 and add entry', async () => {
+      const res = await request(app).post('/api/menuitems').send({ name: 'new item' });
+      expect(res.status).toBe(200);
+      const menuItems = await MenuItem.find();
+      expect(menuItems).toHaveLength(3);
     });
   });
 });
