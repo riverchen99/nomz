@@ -1,3 +1,4 @@
 node_modules/
-config/keys.js
+# in practice, remove the next comment to avoid committing keys to source control
+# config/keys.js
 docs/
