@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 // Create Schema
 
-/** 
+/**
  * @class MenuItem
  */
 const MenuItemSchema = new mongoose.Schema({
