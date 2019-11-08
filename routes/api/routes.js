@@ -9,6 +9,7 @@ const Review = require('../../models/Review');
 const User = require('../../models/User');
 
 const controllerFactory = require('../../controllers/genericControllerFactory');
+const recommendationControllers = require('../../controllers/recommendations');
 
 const endpoints = {
   '/menuItems': MenuItem,
@@ -24,5 +25,8 @@ Object.keys(endpoints).forEach((endpoint) => {
   router.put(endpoint, controllerFactory.createGenericUpdateController(endpoints[endpoint]));
   router.delete(endpoint, controllerFactory.createGenericDeleteController(endpoints[endpoint]));
 });
+
+
+router.get("/recommendations", recommendationControllers.getRecommendations)
 
 module.exports = router;
