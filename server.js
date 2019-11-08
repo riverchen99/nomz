@@ -5,7 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
-const menuItemsRoute = require('./routes/api/menuItems');
+const apiRoutes = require('./routes/api/routes');
 
 const PORT = process.env.PORT || 8080;
 
@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'client', 'build')));
 app.use('/docs', express.static('docs'));
 
-app.use('/api/menuItems', menuItemsRoute);
+app.use('/api', apiRoutes);
 app.get('/hello', (req, res) => res.send('Hello world!'));
 
 app.get('*', (req, res) => {
