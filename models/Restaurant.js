@@ -5,8 +5,8 @@ const RestaurantSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  hours: String,
   stations: [String],
+  menus: { type: [mongoose.Schema.Types.ObjectId], ref: 'Menu' },
 });
 const Restaurant = mongoose.model('Restaurant', RestaurantSchema);
 module.exports = Restaurant;
