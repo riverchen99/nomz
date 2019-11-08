@@ -49,4 +49,26 @@ describe('MenuItems API works correctly', () => {
       expect(menuItems).toHaveLength(3);
     });
   });
+
+  describe('PUT Endpoint', () => {
+    it('should return 200 and update entry', async () => {
+      const res = await request(app).put('/api/menuitems').send({
+        filter: { name: 'fish and chips' },
+        update: { description: 'delicious' },
+      });
+      expect(res.status).toBe(200);
+
+      const menuItems = await MenuItem.find({ name: 'fish and chips' });
+      expect(menuItems[0]).toHaveProperty('description');
+    });
+  });
+
+  describe('DELETE Endpoint', () => {
+    it('should return 200 and delete entry', async () => {
+      const res = await request(app).delete('/api/menuitems').send({ name: 'fish and chips' });
+      expect(res.status).toBe(200);
+      const menuItems = await MenuItem.find();
+      expect(menuItems).toHaveLength(1);
+    });
+  });
 });
