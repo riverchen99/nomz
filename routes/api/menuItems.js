@@ -1,11 +1,11 @@
 const express = require('express');
-const controller = require('../../controllers/menuItemController');
-
+const controllerFactory = require('../../controllers/genericControllerFactory');
+const MenuItem = require('../../models/MenuItem');
 
 const router = express.Router();
-router.get('/', controller.getMenuItems);
-router.post('/', controller.createMenuItem);
-router.put('/', controller.updateMenuItem);
-router.delete('/', controller.deleteMenuItem);
+router.get('/', controllerFactory.genericGetController(MenuItem));
+router.post('/', controllerFactory.genericCreateController(MenuItem));
+router.put('/', controllerFactory.genericUpdateController(MenuItem));
+router.delete('/', controllerFactory.genericDeleteController(MenuItem));
 
 module.exports = router;
