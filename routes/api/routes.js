@@ -27,6 +27,6 @@ Object.keys(endpoints).forEach((endpoint) => {
 });
 
 
-router.get("/recommendations", recommendationControllers.getRecommendations)
+router.get('/recommendations', recommendationControllers.getRecommendations);
 
 module.exports = router;
