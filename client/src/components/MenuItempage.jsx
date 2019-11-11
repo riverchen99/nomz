@@ -1,7 +1,7 @@
 import React from 'react';
+import axios from 'axios';
 import { StyledMenuItempage, MenuItemBox } from './StyledMenuItempage';
 import ReviewComponent from './ReviewComponent';
-import axios from 'axios';
 
 class MenuItempage extends React.Component {
     render() {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import axios from 'axios';
 
 import Loginpage from './components/Loginpage';
@@ -21,13 +21,11 @@ class App extends Component {
   render() {
     const { menuItems } = this.state; // eslint-disable-line
     return (
-      <BrowserRouter>
-        <Switch>
-          <Route exact path="/" component={Loginpage} />
-          <Route exact path="/recommend" component={Recommendpage} />
-          <Route exact path="/menuitem" component={MenuItempage} />
-        </Switch>
-      </BrowserRouter>
+      <Switch>
+        <Route exact path="/" component={Loginpage} />
+        <Route exact path="/recommend" component={Recommendpage} />
+        <Route exact path="/menuitem" component={MenuItempage} />
+      </Switch>
     );
   }
 }
