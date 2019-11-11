@@ -53,9 +53,6 @@ class Recommendpage extends React.Component {
     return (
       <div>
         <h1>What are you craving?</h1>
-<<<<<<< HEAD
-        <p><Link to="/menuitem">Click here to view menu item</Link></p>
-=======
         <div>
           <span>
             {/* <TextWrapper> */}
@@ -70,7 +67,7 @@ class Recommendpage extends React.Component {
           <Button text={"Go"} color={"#EF39FF"} handleClick={() => this.generateRecs()}/>
         </div>
         {this.state.menuItems}
->>>>>>> effcb1edf12d2ad2034d139617b0898ea0c3cf35
+        <p><Link to="/menuitem">Click here to view menu item</Link></p>
       </div>
     )
   }
