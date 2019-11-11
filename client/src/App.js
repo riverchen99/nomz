@@ -13,13 +13,7 @@ class App extends Component {
     this.state = {};
   }
 
-  handleClick() {
-    axios.get('/api/menuitems')
-      .then((resp) => { console.log(resp.data); this.setState({ menuItems: resp.data }); });
-  }
-
   render() {
-    const { menuItems } = this.state; // eslint-disable-line
     return (
       <Switch>
         <Route exact path="/" component={Loginpage} />
