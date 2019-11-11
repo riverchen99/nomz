@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
+import axios from 'axios';
+
 import Loginpage from './components/Loginpage';
 import Recommendpage from './components/Recommendpage';
 import MenuItempage from './components/MenuItempage';
 import './App.css';
-import axios from 'axios';
 
 class App extends Component {
   constructor() {
