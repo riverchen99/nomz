@@ -1,7 +1,7 @@
 import React from 'react';
 import MenuItem from './MenuItem';
 import Button from './Button';
-import { MenuItemWrapper } from './StyledRecommendpage';
+import { MenuItemWrapper, DropdownContainer, TextWrapper } from './StyledRecommendpage';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 import axios from 'axios';
@@ -53,8 +53,15 @@ class Recommendpage extends React.Component {
       <div>
         <h1>What are you craving?</h1>
         <div>
-          <h3>Top picks for:</h3>
-          <Dropdown options={userOptions} onChange={(value) => this.updateUser(value.label)} value={userDefaultOption} />
+          <span>
+            {/* <TextWrapper> */}
+              <TextWrapper>Top picks for:</TextWrapper>
+            {/* </TextWrapper> */}
+            <DropdownContainer>
+            <Dropdown options={userOptions} onChange={(val) => this.updateUser(val)} value={userDefaultOption} />
+            </DropdownContainer>
+          </span>
+
           <Dropdown options={userOptions} />
           <Button text={"Go"} color={"#EF39FF"} handleClick={() => this.generateRecs()}/>
         </div>

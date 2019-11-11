@@ -9,6 +9,17 @@ export const MenuItemWrapper = styled.div`
   box-shadow: 0px 3px 3px #cccccc;
 `;
 
+export const DropdownContainer = styled.div`
+  height: 10%;
+  width: 10%;
+`;
+
+export const TextWrapper = styled.h3`
+  width: 10%;
+  margin: 0;
+  margin-right: 0;
+`;
+
 // placeholder
 export const Thingy = styled.div`
   background: red;
