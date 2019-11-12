@@ -1,7 +1,13 @@
 import React from 'react';
 import MenuItem from './MenuItem';
 import Button from './Button';
-import { MenuItemWrapper, DropdownContainer, TextWrapper } from './StyledRecommendpage';
+import { 
+  MenuItemWrapper,
+  DropdownContainer,
+  TextWrapper,
+  FilterContainer,
+  Header 
+} from './StyledRecommendpage';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 import axios from 'axios';
@@ -49,22 +55,28 @@ class Recommendpage extends React.Component {
       {value: 'me', label: 'Me'}
     ];
     const userDefaultOption = userOptions[0];
+
+    const dayOptions = [
+      {value: 'today', label: 'Today'},
+      {value: 'tomorrow', label: 'Tomorrow'}
+    ]
+    const dayDefaultOption = dayOptions[0];
+
     return (
       <div>
-        <h1>What are you craving?</h1>
-        <div>
+        <Header>What are you craving?</Header>
+        <FilterContainer>
           <span>
-            {/* <TextWrapper> */}
-              <TextWrapper>Top picks for:</TextWrapper>
-            {/* </TextWrapper> */}
+            <h3>Top picks for:</h3>
             <DropdownContainer>
             <Dropdown options={userOptions} onChange={(val) => this.updateUser(val)} value={userDefaultOption} />
             </DropdownContainer>
           </span>
-
-          <Dropdown options={userOptions} />
+          <DropdownContainer>
+            <Dropdown options={dayOptions} value={dayDefaultOption} />
+          </DropdownContainer>
           <Button text={"Go"} color={"#EF39FF"} handleClick={() => this.generateRecs()}/>
-        </div>
+        </FilterContainer>
         {this.state.menuItems}
       </div>
     )

@@ -9,6 +9,11 @@ export const MenuItemWrapper = styled.div`
   box-shadow: 0px 3px 3px #cccccc;
 `;
 
+export const FilterContainer = styled.div`
+  background: #FCE3FF;
+  padding: 2% 5%;
+`;
+
 export const DropdownContainer = styled.div`
   height: 10%;
   width: 10%;
@@ -20,7 +25,11 @@ export const TextWrapper = styled.h3`
   margin-right: 0;
 `;
 
-// placeholder
-export const Thingy = styled.div`
-  background: red;
+export const Header = styled.h1`
+  color: #888888;
+  font-size: 64px;
+  font-weight: semibold;
+  text-align: center;
+  margin: 5%;
+  letter-spacing: 5px;
 `;
