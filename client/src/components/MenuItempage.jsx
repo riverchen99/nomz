@@ -4,9 +4,14 @@ import { StyledMenuItempage, MenuItemBox } from './StyledMenuItempage';
 import ReviewComponent from './ReviewComponent';
 
 class MenuItempage extends React.Component {
+    constructor(props) {
+        super(props);
+    }
     render() {
+        const { name } = this.props.location.state;
         return (
             <StyledMenuItempage>
+                <p>{name}</p>
                 <MenuItemBox>
                     <h1>Reviews</h1>
                     <ReviewComponent user="User 1" rating={5} text="The shrimp scampi pizza is amazing! This is honestly the best pizza I’ve ever had!"/>

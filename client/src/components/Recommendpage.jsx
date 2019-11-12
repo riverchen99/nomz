@@ -22,7 +22,6 @@ class Recommendpage extends React.Component {
     };
     this.updateUser = this.updateUser.bind(this);
     this.generateRecs = this.generateRecs.bind(this);
-
   }
 
   componentDidMount() {
@@ -37,14 +36,10 @@ class Recommendpage extends React.Component {
   }
 
   generateRecs() {
-    console.log("hi");
     axios.get('/api/menuitems')
     .then((resp) => { 
-      console.log(resp.data);
       const items = resp.data.map(item => 
-        <MenuItemWrapper>
-          <MenuItem key={item.name} itemName={item.name} restaurant={item.restaurant} rating={item.rating} />
-        </MenuItemWrapper>
+        <MenuItem key={item.name} index={resp.data.indexOf(item) % 2} itemName={item.name} restaurant={item.restaurant} rating={item.rating} />
       )
       this.setState({ menuItems: items });
     });
@@ -64,23 +59,21 @@ class Recommendpage extends React.Component {
     const dayDefaultOption = dayOptions[0];
 
     return (
-      <div>
+      <React.Fragment>
         <Header>What are you craving?</Header>
         <FilterContainer>
-          <span>
-            <h3>Top picks for:</h3>
-            <DropdownContainer>
+          <h3>Top picks for:</h3>
+          <DropdownContainer>
             <Dropdown options={userOptions} onChange={(val) => this.updateUser(val)} value={userDefaultOption} />
-            </DropdownContainer>
-          </span>
+          </DropdownContainer>
           <DropdownContainer>
             <Dropdown options={dayOptions} value={dayDefaultOption} />
           </DropdownContainer>
           <Button text={"Go"} color={"#EF39FF"} handleClick={() => this.generateRecs()}/>
         </FilterContainer>
         {this.state.menuItems}
-        <p><Link to="/menuitem">Click here to view menu item</Link></p>
-      </div>
+        <p><Link to="/menuitem:id">Click here to view menu item</Link></p>
+      </React.Fragment>
     )
   }
 }

@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import axios from 'axios';
-
 import Loginpage from './components/Loginpage';
 import Recommendpage from './components/Recommendpage';
 import MenuItempage from './components/MenuItempage';
@@ -18,7 +16,7 @@ class App extends Component {
       <Switch>
         <Route exact path="/" component={Loginpage} />
         <Route exact path="/recommend" component={Recommendpage} />
-        <Route exact path="/menuitem" component={MenuItempage} />
+        <Route exact path="/menuitem/:id" component={MenuItempage} />
       </Switch>
     );
   }
