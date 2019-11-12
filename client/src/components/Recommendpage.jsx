@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import MenuItem from './MenuItem';
 import Button from './Button';
 import { MenuItemWrapper, DropdownContainer, TextWrapper } from './StyledRecommendpage';
@@ -66,6 +67,7 @@ class Recommendpage extends React.Component {
           <Button text={"Go"} color={"#EF39FF"} handleClick={() => this.generateRecs()}/>
         </div>
         {this.state.menuItems}
+        <p><Link to="/menuitem">Click here to view menu item</Link></p>
       </div>
     )
   }
