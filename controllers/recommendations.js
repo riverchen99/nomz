@@ -30,11 +30,11 @@ function getRecommendations(req, res) {
       }
 
       res.json(generateRecommendations(menuItemIds))
-    }
+    })
 }
 
 
-generateRecommendations(availableMenuItemIds) {
+function generateRecommendations(availableMenuItemIds) {
     // look up menuItem by menuItemIds
     // do the algorithm
 }
