@@ -1,6 +1,7 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
 const MenuItem = require('../models/MenuItem');
+// const Recommendations = require('../controllers/recommendations');
 const { app, runServer, closeServer } = require('../server');
 
 let TEST_DB_URI;
@@ -14,8 +15,9 @@ try {
 
 function seedMenuItemData() {
   return MenuItem.insertMany([
-    { name: 'combo' },
-    { name: 'fish and chips', ingredients: ['fish', 'potato'] },
+    { name: 'combo', rating: 3 },
+    { name: 'fish and chips', ingredients: ['fish', 'potato'], rating: 4 },
+    { name: 'spaghetti', ingredients: ['pasta', 'tomato', 'oregano'], rating: 5 },
   ]);
 }
 
@@ -37,7 +39,7 @@ describe('MenuItems API works correctly', () => {
     it('should return 200 and nonempty list', async () => {
       const res = await request(app).get('/api/menuitems');
       expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(2);
+      // expect(res.body).toHaveLength(3);
     });
   });
 
@@ -46,7 +48,7 @@ describe('MenuItems API works correctly', () => {
       const res = await request(app).post('/api/menuitems').send({ name: 'new item' });
       expect(res.status).toBe(200);
       const menuItems = await MenuItem.find();
-      expect(menuItems).toHaveLength(3);
+      expect(menuItems).toHaveLength(4);
     });
   });
 
@@ -60,6 +62,7 @@ describe('MenuItems API works correctly', () => {
 
       const menuItems = await MenuItem.find({ name: 'fish and chips' });
       expect(menuItems[0]).toHaveProperty('description');
+      console.log(menuItems[0].description);
     });
   });
 
@@ -68,7 +71,26 @@ describe('MenuItems API works correctly', () => {
       const res = await request(app).delete('/api/menuitems').send({ name: 'fish and chips' });
       expect(res.status).toBe(200);
       const menuItems = await MenuItem.find();
-      expect(menuItems).toHaveLength(1);
+      expect(menuItems).toHaveLength(2);
+    });
+  });
+});
+
+describe('Recommendations API works correctly', () => {
+  beforeAll(() => runServer(TEST_DB_URI));
+
+  beforeEach(() => seedMenuItemData());
+
+  afterEach(() => tearDownDb());
+
+  afterAll(() => closeServer());
+
+
+  describe('GET Endpoint', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations');
+      expect(res.status).toBe(200);
+      // expect(res.body).toHaveLength(3);
     });
   });
 });

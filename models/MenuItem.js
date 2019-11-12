@@ -9,6 +9,7 @@ const MenuItemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  rating: Number,
   description: String,
   nutrition: {
     defaultServingSize: Number,

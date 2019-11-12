@@ -7,9 +7,11 @@ const User = require('../models/User');
 */
 
 function getRecommendations(req, res) {
-  MenuItem.find(req.query) // empty or userId = ...
+  MenuItem.find({})// req.query}) // empty or userId = ...
     .then((results) => {
       // change this code
+      results.sort((a, b) => b.rating - a.rating);
+      console.log(results);
       const recommendations = { recommendations: results };
       res.json(recommendations);
     })
