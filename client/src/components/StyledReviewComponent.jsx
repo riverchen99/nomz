@@ -6,7 +6,8 @@ export const StyledReviewComponent = styled.div`
     width: 100%;
     height: 20%;
     background-color: white;
-    border: 2px solid rgb(196, 196, 196);
+    border: 3px solid rgb(196, 196, 196);
+    border-radius: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
 `;
