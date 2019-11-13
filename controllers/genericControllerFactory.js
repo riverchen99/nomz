@@ -12,12 +12,14 @@ const createGenericGetController = function (model) {
    * Controller to filter and retrive a mongoose model.
    * @function genericGetController
    * @param {express.Request} req - The express request object.
-   * @param {Object} req.query - Object containing properties to filter for the desired resource.
+   * @param {Object} req.params - Object containing properties to filter for the desired resource.
    * (Automatically filled by Express from URL params)
    * @param {express.Response} res - The express response object containing a list of resources.
    */
   const genericGetController = function (req, res) {
-    model.find(req.query)
+    console.log(req.params.ids);
+    const query = req.params.ids === undefined ? {} : { _id: { $in: req.params.ids.split(';') } };
+    model.find(query)
       .then((results) => res.json(results))
       .catch((err) => { console.log(err); res.status(500).send(err); });
   };
