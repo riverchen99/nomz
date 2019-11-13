@@ -1,17 +1,25 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-const util = require('util');
+const menuUrl = 'http://menu.dining.ucla.edu/Menus';
+const recipeUrl = (recipeId) => `http://menu.dining.ucla.edu/Recipes/${recipeId}/1`;
 
-const siteUrl = 'http://menu.dining.ucla.edu/Menus';
-
-const fetchData = async () => {
-  const result = await axios.get(siteUrl);
+const fetchData = async (url) => {
+  const result = await axios.get(url);
   return cheerio.load(result.data);
 };
 
+const getRecipe = async (recipeId) => {
+  const $ = fetchData(recipeUrl(recipeId));
+  const name = $('h2').text().trim();
+  // TODO: get ingredients and allergens
+  return {
+    name,
+  };
+};
+
 const getCurrentMenu = async () => {
-  const $ = await fetchData();
+  const $ = await fetchData(menuUrl);
 
   const items = [];
 
@@ -60,5 +68,6 @@ const testFunction = async () => {
 
 module.exports = {
   getCurrentMenu,
+  getRecipe,
   test: testFunction,
 };
