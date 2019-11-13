@@ -8,10 +8,11 @@ class MenuItempage extends React.Component {
         super(props);
     }
     render() {
-        const { name } = this.props.location.state;
+        const { name, id } = this.props.location.state;
         return (
             <StyledMenuItempage>
                 <p>{name}</p>
+                <p>{id}</p>
                 <MenuItemBox>
                     <h1>Reviews</h1>
                     <ReviewComponent user="User 1" rating={5} text="The shrimp scampi pizza is amazing! This is honestly the best pizza I’ve ever had!"/>
