@@ -171,7 +171,7 @@ describe('MenuItems API works correctly', () => {
       const res = await request(app).delete('/api/menuitems').send({ name: 'fish and chips' });
       expect(res.status).toBe(200);
       const menuItems = await MenuItem.find();
-      expect(menuItems).toHaveLength(9);
+      expect(menuItems).toHaveLength(8);
     });
   });
 });
@@ -191,9 +191,9 @@ describe('Recommendations API works correctly', () => {
 
   describe('GET Endpoint', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations');
+      const res = await request(app).get('/api/recommendations?startTime=2019-11-12T11:30:00');
       expect(res.status).toBe(200);
-      // expect(res.body).toHaveLength(3);
+      //expect(res.body).toHaveLength(3);
     });
   });
 });

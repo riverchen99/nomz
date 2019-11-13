@@ -208,13 +208,16 @@ function generateRecommendations(availableMenuItemIds,
     .catch((err) => { console.log(err); });
 }
 
-function getRecommendations(req, res) {
-  // placeholder
-  //
+function recommendationController(req, res) {
+  // call this with
+  // GET /recommendations?startTime=YYYY-MM-DDTHH:MM:SSZ&userId=whatever
 
-  req.query.
-  req.params.st
-  const date = new Date('Tue Nov 12 2019 11:30:00 AM');
+  const date = new Date(req.query.startTime);
+  //console.log(date)
+  // const userId = req.query.userId // to fix lint error
+
+  //const oldDate = new Date('Tue Nov 12 2019 11:30:00 AM');
+  //console.log(oldDate)
 
   (Menu.find({ endTime: { $gte: date } })).find({ startTime: { $lte: date } })
     .then((results) => {
@@ -231,4 +234,4 @@ function getRecommendations(req, res) {
 }
 
 
-module.exports = { getRecommendations };
+module.exports = { recommendationController };
