@@ -193,7 +193,7 @@ describe('Recommendations API works correctly', () => {
     it('should return 200 and nonempty list', async () => {
       const res = await request(app).get('/api/recommendations?startTime=2019-11-12T11:30:00');
       expect(res.status).toBe(200);
-      //expect(res.body).toHaveLength(3);
+      // expect(res.body).toHaveLength(3);
     });
   });
 });

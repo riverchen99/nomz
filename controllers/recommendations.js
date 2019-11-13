@@ -6,14 +6,14 @@ const Restaurant = require('../models/Restaurant');
 /*
 
 IN PROGRESS FOR USER FILTERS
-HAVEN'T BEEN IMPLEMENTED FOR 
+HAVEN'T BEEN IMPLEMENTED FOR
 DB POPULATION SO COMMENTING THIS OUT
 const Review = require('../models/Review');
 const User = require('../models/User');
 */
-/*function preferenceMatchScore(userInfo, menuItem){
+/* function preferenceMatchScore(userInfo, menuItem){
 
-}*/
+} */
 /*
 function propsCheck(infoArray, props, type){
   var matchScore = 0;
@@ -28,91 +28,91 @@ function propsCheck(infoArray, props, type){
       {
         if (props.vegetarian){
           matchScore+=1;
-        }        
+        }
         break;
       }
       case('vegan'):
       {
         if (props.vegan){
           matchScore+=1;
-        }        
+        }
         break;
       }
       case('peanuts'):
       {
         if (props.peanuts){
           matchScore+=1;
-        }        
+        }
         break;
       }
       case('treeNuts'):
       {
         if (props.treeNuts){
           matchScore+=1;
-        }        
+        }
         break;
       }
       case('wheat'):
       {
         if (props.wheat){
           matchScore+=1;
-        }        
+        }
         break;
       }
       case('gluten'):
       {
         if (props.gluten){
           matchScore+=1;
-        }        
+        }
         break;
       }return true;
       case('soy'):
       {
         if (props.soy){
           matchScore+=1;
-        }        
+        }
         break;
       }
       case('dairy'):
       {
         if (props.dairy){
           matchScore+=1;
-        }        
+        }
         break;
       }
       case('eggs'):
       {
         if (props.eggs){
           matchScore+=1;
-        }        
+        }
         break;
       }
       case('shellfish'):
       {
         if (props.shellfish){
           matchScore+=1;
-        }        
+        }
         break;
       }
       case('fish'):
       {
         if (props.fish){
           matchScore+=1;
-        }        
+        }
         break;
       }
       case('halal'):
       {
         if (props.halal){
           matchScore+=1;
-        }        
+        }
         break;
       }
       case('lowCarbon'):
       {
         if (props.lowCarbon){
           matchScore+=1;
-        }        
+        }
         break;
       }
     }
@@ -120,13 +120,13 @@ function propsCheck(infoArray, props, type){
   if (type == 'restrictions'){
     if (matchScore == 0){
       //contains no "bad" stuff, include in filtered results
-      return true; 
+      return true;
     } else {
       //contains incompatible stuff, exclude from filtered results
-      return false; 
+      return false;
     }
   } else if (type == 'preferences'){
-    //80% matching threshold for acceptance of match 
+    //80% matching threshold for acceptance of match
     if ((matchScore/maxScore) >= 0.5){
       return true;
     } else {
@@ -167,16 +167,16 @@ function generateRecommendations(availableMenuItemIds,
   filterPreferences,
   filterRestrictions) {
   // look up menuItem by menuItemIds
-  
+
   console.log(availableMenuItemIds);
-  var restaurant = '';
+  // let restaurant = '';
   if (filterRestaurant) {
     // placeholder
     const rest = 'Bruin Plate';
     Restaurant.find().where('name').equals(rest)
       .then((restId) => {
         console.log(((restId[0]).id));
-        restaurant = (restId[0]).id;
+        // restaurant = (restId[0]).id;
       });
   }
 
@@ -185,22 +185,22 @@ function generateRecommendations(availableMenuItemIds,
       for (let i = 0; i < results.length; i += 1) {
         if (filterRestaurant) {
           console.log(results[i].restaurant);
-          //if ((results[i]).restaurant != restaurant){
-            //remove this menuItem
-          //}
+          // if ((results[i]).restaurant != restaurant){
+          // remove this menuItem
+          // }
         } else if (filterRestrictions) {
           console.log(results[i].props);
-          //parse ingredients for allergens
-          //parse props
-        } 
+          // parse ingredients for allergens
+          // parse props
+        }
+        if (filterPreferences) {
+          console.log(results[i].preferences);
+          // array.filter()
+          // find counterpart
+          // sort both
+        }
       }
 
-      if (filterPreferences){
-        console.log(results[i].preferences);
-        //array.filter()
-        //find counterpart
-        //sort both
-      }
       results.sort((a, b) => b.rating - a.rating);
       console.log(results);
       return results;
@@ -213,11 +213,11 @@ function recommendationController(req, res) {
   // GET /recommendations?startTime=YYYY-MM-DDTHH:MM:SSZ&userId=whatever
 
   const date = new Date(req.query.startTime);
-  //console.log(date)
+  // console.log(date)
   // const userId = req.query.userId // to fix lint error
 
-  //const oldDate = new Date('Tue Nov 12 2019 11:30:00 AM');
-  //console.log(oldDate)
+  // const oldDate = new Date('Tue Nov 12 2019 11:30:00 AM');
+  // console.log(oldDate)
 
   (Menu.find({ endTime: { $gte: date } })).find({ startTime: { $lte: date } })
     .then((results) => {
@@ -228,7 +228,7 @@ function recommendationController(req, res) {
         menuItemIds = menuItemIds.concat((results[i]).menuItems);
       }
       console.log(menuItemIds);
-      //For now, user filters are false to only generate general recommendations
+      // For now, user filters are false to only generate general recommendations
       res.json(generateRecommendations(menuItemIds, false, false, false));
     });
 }
