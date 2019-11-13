@@ -1,43 +1,45 @@
 import styled from 'styled-components';
 
 export const StyledReviewComponent = styled.div`
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 20%;
-    background-color: white;
-    border: 3px solid rgb(196, 196, 196);
-    border-radius: 10px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 20%;
+  background-color: white;
+  border: 3px solid rgb(196, 196, 196);
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 `;
 
 export const UserInfo = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin: 2%;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin: 2%;
+  align-items: center;
 `;
 
 export const UserAvatar = styled.img`
-    width: 70px;
-    height: 70px;
-    border-radius: 35px;
-    -webkit-border-radius: 35px;
-    -moz-border-radius: 35px;
+  width: 70px;
+  height: 70px;
+  border-radius: 35px;
+  -webkit-border-radius: 35px;
+  -moz-border-radius: 35px;
 `;
 
 export const UserName = styled.div`
-    font-size: 18px;
-    font-weight: bold;
+  font-size: 18px;
+  font-weight: bold;
 `;
 
 export const Rating = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin-left: 2%;
+  display: flex;
+  flex-direction: column;
+  margin-left: 2%;
 `;
 
 export const StarRating = styled.div`
-    font-size: 30px;
+  font-size: 30px;
 `;
