@@ -9,13 +9,55 @@ const fetchData = async (url) => {
   return cheerio.load(result.data);
 };
 
+const PROPS_MAPPING = {
+  V: 'vegetarian',
+  VG: 'vegan',
+  APNT: 'peanuts',
+  ATNT: 'treeNuts',
+  AWHT: 'wheat',
+  AGTN: 'gluten',
+  ASOY: 'soy',
+  AMLK: 'dairy',
+  AEGG: 'eggs',
+  ACSF: 'shellfish',
+  AFSH: 'fish',
+  AHAL: 'halal',
+  LC: 'lowCarbon',
+};
+
 const getRecipe = async (recipeId) => {
-  const $ = fetchData(recipeUrl(recipeId));
+  const $ = await fetchData(recipeUrl(recipeId));
   const name = $('h2').text().trim();
-  // TODO: get ingredients and allergens
-  return {
-    name,
+  const ingredientsEle = $('div.ingred_allergen').children();
+  const ingredients = $(ingredientsEle[0]).text().split(': ')[1].split(', ');
+  const allergens = $(ingredientsEle[1]).text().split(': ')[1].split(', ');
+  const props = {
+    vegetarian: false,
+    vegan: false,
+    peanuts: false,
+    treeNuts: false,
+    wheat: false,
+    gluten: false,
+    soy: false,
+    dairy: false,
+    eggs: false,
+    shellfish: false,
+    fish: false,
+    halal: false,
+    lowCarbon: false,
   };
+  $('div.productinfo').find('img').each((_i, imgEle) => {
+    props[PROPS_MAPPING[$(imgEle).attr('alt')]] = true;
+  });
+  // TODO: get ingredients and allergens
+  const info = {
+    name,
+    ingredients,
+    allergens,
+    props,
+  };
+  console.log(info);
+  return info;
 };
 
 const getCurrentMenu = async () => {
@@ -62,8 +104,9 @@ const getCurrentMenu = async () => {
 };
 
 const testFunction = async () => {
-  const items = await getCurrentMenu();
-  console.log(items);
+  // const items = await getCurrentMenu();
+  // console.log(items);
+  const test = await getRecipe('031002');
 };
 
 module.exports = {
