@@ -14,7 +14,6 @@ import {
   recommendeeDefaultOption,
   dayDefaultOption
 } from '../options.js';
-import 'react-dropdown/style.css';
 import axios from 'axios';
 
 // TESTING
