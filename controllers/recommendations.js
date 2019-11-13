@@ -4,13 +4,17 @@ const Menu = require('../models/Menu');
 
 const Restaurant = require('../models/Restaurant');
 /*
+
+IN PROGRESS FOR USER FILTERS
+HAVEN'T BEEN IMPLEMENTED FOR 
+DB POPULATION SO COMMENTING THIS OUT
 const Review = require('../models/Review');
 const User = require('../models/User');
 */
 /*function preferenceMatchScore(userInfo, menuItem){
 
 }*/
-
+/*
 function propsCheck(infoArray, props, type){
   var matchScore = 0;
   const maxScore = infoArray.length;
@@ -156,12 +160,14 @@ function itemCompatibilty(preferences, restrictions, menuItem){
   var allergenCheck = restrictionCheck(restrictions, menuItem.allergens);
   return prefProps && restrictProps && ingredientCheck && allergenCheck;
 }
+*/
 
 function generateRecommendations(availableMenuItemIds,
   filterRestaurant,
   filterPreferences,
   filterRestrictions) {
   // look up menuItem by menuItemIds
+  
   console.log(availableMenuItemIds);
   var restaurant = '';
   if (filterRestaurant) {
@@ -179,10 +185,10 @@ function generateRecommendations(availableMenuItemIds,
       for (let i = 0; i < results.length; i += 1) {
         if (filterRestaurant) {
           console.log(results[i].restaurant);
-          if ((results[i]).restaurant != restaurant){
-            //results.
-          }
-        }  else if (filterRestrictions) {
+          //if ((results[i]).restaurant != restaurant){
+            //remove this menuItem
+          //}
+        } else if (filterRestrictions) {
           console.log(results[i].props);
           //parse ingredients for allergens
           //parse props
@@ -190,18 +196,24 @@ function generateRecommendations(availableMenuItemIds,
       }
 
       if (filterPreferences){
+        console.log(results[i].preferences);
         //array.filter()
         //find counterpart
         //sort both
       }
       results.sort((a, b) => b.rating - a.rating);
       console.log(results);
+      return results;
     })
     .catch((err) => { console.log(err); });
 }
 
 function getRecommendations(req, res) {
   // placeholder
+  //
+
+  req.query.
+  req.params.st
   const date = new Date('Tue Nov 12 2019 11:30:00 AM');
 
   (Menu.find({ endTime: { $gte: date } })).find({ startTime: { $lte: date } })
@@ -213,7 +225,8 @@ function getRecommendations(req, res) {
         menuItemIds = menuItemIds.concat((results[i]).menuItems);
       }
       console.log(menuItemIds);
-      res.json(generateRecommendations(menuItemIds, true, false, false));
+      //For now, user filters are false to only generate general recommendations
+      res.json(generateRecommendations(menuItemIds, false, false, false));
     });
 }
 
