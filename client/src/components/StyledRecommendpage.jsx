@@ -9,6 +9,10 @@ export const Header = styled.h1`
   letter-spacing: 5px;
 `;
 
+export const Text = styled.h3`
+  color: #888888;
+`;
+
 export const FilterContainer = styled.div`
   background: #FCE3FF;
   padding: 2% 5%;
@@ -16,5 +20,5 @@ export const FilterContainer = styled.div`
 
 export const DropdownContainer = styled.div`
   height: 10%;
-  width: 10%;
+  width: 20%;
 `;

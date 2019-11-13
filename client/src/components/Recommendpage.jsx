@@ -3,24 +3,33 @@ import { Link } from 'react-router-dom';
 import MenuItem from './MenuItem';
 import Button from './Button';
 import { 
-  MenuItemWrapper,
   DropdownContainer,
-  TextWrapper,
+  Text,
   FilterContainer,
   Header 
 } from './StyledRecommendpage';
-import Dropdown from 'react-dropdown';
+import {
+  recommendeeOptions,
+  dayOptions,
+  recommendeeDefaultOption,
+  dayDefaultOption
+} from '../options.js';
 import 'react-dropdown/style.css';
 import axios from 'axios';
+
+// TESTING
+import Select from 'react-select';
 
 class Recommendpage extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
-      user: "",
+      recommendee: "",
+      day: "",
       menuItems: null 
     };
-    this.updateUser = this.updateUser.bind(this);
+    this.updateRecommendee = this.updateRecommendee.bind(this);
+    this.updateDay = this.updateDay.bind(this);
     this.generateRecs = this.generateRecs.bind(this);
   }
 
@@ -28,50 +37,43 @@ class Recommendpage extends React.Component {
     this.generateRecs();
   }
 
-  updateUser(option) {
+  updateRecommendee(option) {
     this.setState({
-      user: option.label,
+      recommendee: option.label,
     });
-    console.log(this.state.user);
+  }
+
+  updateDay(option) {
+    this.setState({
+      day: option.label,
+    });
   }
 
   generateRecs() {
+    // axios.get('api/time/day/recee') or something like that
     axios.get('/api/menuitems')
     .then((resp) => { 
       const items = resp.data.map(item => 
-        <MenuItem key={item.name} index={resp.data.indexOf(item) % 2} itemName={item.name} restaurant={item.restaurant} rating={item.rating} />
+        <MenuItem key={item.name + resp.data.indexOf(item)} index={resp.data.indexOf(item) % 2} itemName={item.name} restaurant={item.restaurant} rating={item.rating} />
       )
       this.setState({ menuItems: items });
     });
   }
 
   render () {
-    const userOptions = [
-      {value: 'everyone', label: 'Everyone'},
-      {value: 'me', label: 'Me'}
-    ];
-    const userDefaultOption = userOptions[0];
-
-    const dayOptions = [
-      {value: 'today', label: 'Today'},
-      {value: 'tomorrow', label: 'Tomorrow'}
-    ]
-    const dayDefaultOption = dayOptions[0];
-
     return (
       <React.Fragment>
         <Header>What are you craving?</Header>
         <FilterContainer>
-          <h3>Top picks for:</h3>
+          <Text>Top picks for:</Text>
           <DropdownContainer>
-            <Dropdown options={userOptions} onChange={(val) => this.updateUser(val)} value={userDefaultOption} />
-          </DropdownContainer>
-          <DropdownContainer>
-            <Dropdown options={dayOptions} value={dayDefaultOption} />
+          <Select options={recommendeeOptions} defaultValue={recommendeeDefaultOption} onChange={(event) => this.updateRecommendee(event)} />
+          <Select options={dayOptions} defaultValue={dayDefaultOption} onChange={(event) => this.updateDay(event)} />
           </DropdownContainer>
           <Button text={"Go"} color={"#EF39FF"} handleClick={() => this.generateRecs()}/>
         </FilterContainer>
         {this.state.menuItems}
+        <p>{this.state.recommendee}</p>
         <p><Link to="/menuitem:id">Click here to view menu item</Link></p>
       </React.Fragment>
     )
