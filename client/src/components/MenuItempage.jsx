@@ -32,7 +32,7 @@ class MenuItempage extends React.Component {
   }
 
   render() {
-    const { name } = this.props.location.state;
+    const { name, id } = this.props.location.state;
     return (
       <StyledMenuItempage>
         <MenuItemBox>

@@ -14,8 +14,8 @@ try {
 
 function seedMenuItemData() {
   return MenuItem.insertMany([
-    { name: 'combo' },
-    { name: 'fish and chips', ingredients: ['fish', 'potato'] },
+    { name: 'combo', _id: 0 },
+    { name: 'fish and chips', ingredients: ['fish', 'potato'], _id: 1 },
   ]);
 }
 
@@ -43,7 +43,7 @@ describe('MenuItems API works correctly', () => {
 
   describe('POST Endpoint', () => {
     it('should return 200 and add entry', async () => {
-      const res = await request(app).post('/api/menuitems').send({ name: 'new item' });
+      const res = await request(app).post('/api/menuitems').send({ name: 'new item', _id: 2 });
       expect(res.status).toBe(200);
       const menuItems = await MenuItem.find();
       expect(menuItems).toHaveLength(3);
