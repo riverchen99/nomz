@@ -22,48 +22,61 @@ const rest2 = new Restaurant({ name: 'Bruin Plate' });
 const rest3 = new Restaurant({ name: 'Feast' });
 const rest4 = new Restaurant({ name: 'De Neve' });
 
-const item1 = new MenuItem({ name: 'combo', rating: 3, restaurant: rest1.id });
+const item1 = new MenuItem({ 
+  _id: "0",
+  name: 'combo', 
+  rating: 3, 
+  restaurant: rest1.id 
+});
 const item2 = new MenuItem({
+  _id: "1",
   name: 'fish and chips',
   ingredients: ['fish', 'potato'],
   rating: 4,
   restaurant: rest1.id,
 });
 const item3 = new MenuItem({
+  _id: "2",
   name: 'spaghetti',
   ingredients: ['pasta', 'tomato', 'oregano'],
   rating: 5,
   restaurant: rest1.id,
 });
 const item4 = new MenuItem({
+  _id: "3",
   name: 'Veggies',
   rating: 2,
   restaurant: rest2.id,
 });
 const item5 = new MenuItem({
+  _id: "4",
   name: 'Steak',
   ingredients: ['Beef', 'potato'],
   rating: 5,
   restaurant: rest2.id,
 });
 const item6 = new MenuItem({
+  _id: "5",
   name: 'lentil spaghetti',
   ingredients: ['pasta', 'lentil', 'oregano'],
   rating: 5,
   restaurant: rest2.id,
 });
 const item7 = new MenuItem({
+  _id: "6",
   name: 'Eggs',
   rating: 3,
   restaurant: rest2.id,
 });
 const item8 = new MenuItem({
+  _id: "7",
   name: 'Bacon',
   ingredients: ['Bacon'],
   rating: 5,
   restaurant: rest2.id,
 });
 const item9 = new MenuItem({
+  _id: "8",
   name: 'Breakfast Taco',
   ingredients: ['tortilla'],
   rating: 5,
@@ -145,7 +158,7 @@ describe('MenuItems API works correctly', () => {
 
   describe('POST Endpoint', () => {
     it('should return 200 and add entry', async () => {
-      const res = await request(app).post('/api/menuitems').send({ name: 'new item' });
+      const res = await request(app).post('/api/menuitems').send({ name: 'new item', _id: "100" });
       expect(res.status).toBe(200);
       const menuItems = await MenuItem.find();
       expect(menuItems).toHaveLength(10);
@@ -168,7 +181,7 @@ describe('MenuItems API works correctly', () => {
 
   describe('DELETE Endpoint', () => {
     it('should return 200 and delete entry', async () => {
-      const res = await request(app).delete('/api/menuitems').send({ name: 'fish and chips' });
+      const res = await request(app).delete('/api/menuitems').send({ _id: '0' });
       expect(res.status).toBe(200);
       const menuItems = await MenuItem.find();
       expect(menuItems).toHaveLength(8);
@@ -184,6 +197,7 @@ describe('Recommendations API works correctly', () => {
     seedMenuData();
     seedRestaurantData();
   });
+
   afterEach(() => tearDownDb());
 
   afterAll(() => closeServer());
@@ -191,9 +205,10 @@ describe('Recommendations API works correctly', () => {
 
   describe('GET Endpoint', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?startTime=2019-11-12T11:30:00');
+      const res = await request(app).get('/api/recommendations?startTime=2019-11-12T8:30:00');
       expect(res.status).toBe(200);
-      // expect(res.body).toHaveLength(3);
+
+      expect(res.body).toHaveLength(1);
     });
   });
 });

@@ -12,7 +12,7 @@ const controllerFactory = require('../../controllers/genericControllerFactory');
 const recommendationControllers = require('../../controllers/recommendations');
 
 const endpoints = {
-  '/menuItems': MenuItem,
+  '/menuItems/': MenuItem,
   '/restaurants': Restaurant,
   '/menus': Menu,
   '/reviews': Review,
@@ -20,7 +20,7 @@ const endpoints = {
 };
 
 Object.keys(endpoints).forEach((endpoint) => {
-  router.get(endpoint, controllerFactory.createGenericGetController(endpoints[endpoint]));
+  router.get(`${endpoint}:ids?`, controllerFactory.createGenericGetController(endpoints[endpoint]));
   router.post(endpoint, controllerFactory.createGenericCreateController(endpoints[endpoint]));
   router.put(endpoint, controllerFactory.createGenericUpdateController(endpoints[endpoint]));
   router.delete(endpoint, controllerFactory.createGenericDeleteController(endpoints[endpoint]));
