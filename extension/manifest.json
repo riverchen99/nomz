@@ -1,0 +1,23 @@
+{
+  "name": "Nomz",
+  "version": "1.0",
+  "description": "View and provide ratings for UCLA Dining Services menus!",
+  "manifest_version": 2,
+  "permissions": [
+    "http://localhost/*"
+  ],
+  "background": {
+    "persistent": false,
+    "scripts": [ "background.js" ]
+  },
+  "browser_action": {
+  	"default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [ "*://menu.dining.ucla.edu/*" ],
+      "css": [ "lib/star-rating-svg.css" ],
+      "js": [ "lib/jquery-3.4.1.js", "lib/jquery.star-rating-svg.js", "main.js" ]
+    }
+  ]
+}
