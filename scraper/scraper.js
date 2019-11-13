@@ -1,8 +1,12 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-const menuUrl = 'http://menu.dining.ucla.edu/Menus';
-const recipeUrl = (recipeId) => `http://menu.dining.ucla.edu/Recipes/${recipeId}/1`;
+// const Menu = require('../models/Menu');
+// const MenuItem = require('../models/MenuItem');
+// const Restaurant = require('../models/Restaurant');
+
+const menuUrl = (date) => `http://menu.dining.ucla.edu/Menus/${date}`;
+const recipeUrl = (recipeId, recipeSize) => `http://menu.dining.ucla.edu/Recipes/${recipeId}/${recipeSize}`;
 
 const fetchData = async (url) => {
   const result = await axios.get(url);
@@ -25,12 +29,14 @@ const PROPS_MAPPING = {
   LC: 'lowCarbon',
 };
 
-const getRecipe = async (recipeId) => {
-  const $ = await fetchData(recipeUrl(recipeId));
+const getRecipe = async (recipeId, recipeSize) => {
+  const $ = await fetchData(recipeUrl(recipeId, recipeSize));
   const name = $('h2').text().trim();
+  // main props
   const ingredientsEle = $('div.ingred_allergen').children();
   const ingredients = $(ingredientsEle[0]).text().split(': ')[1].split(', ');
   const allergens = $(ingredientsEle[1]).text().split(': ')[1].split(', ');
+  // special properties
   const props = {
     vegetarian: false,
     vegan: false,
@@ -49,9 +55,14 @@ const getRecipe = async (recipeId) => {
   $('div.productinfo').find('img').each((_i, imgEle) => {
     props[PROPS_MAPPING[$(imgEle).attr('alt')]] = true;
   });
-  // TODO: get ingredients and allergens
+  const description = $('div.description').text();
+
+  // nutrition information
+  // const nutrition = {};
+
   const info = {
     name,
+    description,
     ingredients,
     allergens,
     props,
@@ -60,8 +71,8 @@ const getRecipe = async (recipeId) => {
   return info;
 };
 
-const getCurrentMenu = async () => {
-  const $ = await fetchData(menuUrl);
+const getMenu = async (date) => {
+  const $ = await fetchData(menuUrl(date));
 
   const items = [];
 
@@ -92,9 +103,10 @@ const getCurrentMenu = async () => {
         $(diningSectionEle).find('li.menu-item').each((_i2, menuItemEle) => {
           const menuItemLinkEle = $(menuItemEle).find('a.recipelink');
           const recipeId = menuItemLinkEle.attr('href').split('/')[4];
+          const recipeSize = menuItemLinkEle.attr('href').split('/')[5];
           // console.log(`    ${recipeId}`);
           items.push({
-            recipeId, diningHall, diningSection, menuPeriod, menuDate,
+            recipeId, recipeSize, diningHall, diningSection, menuPeriod, menuDate,
           });
         });
       });
@@ -103,14 +115,31 @@ const getCurrentMenu = async () => {
   return items;
 };
 
+const updateMenuDay = async (date) => {
+  const items = await getMenu(date);
+  let recipes = [];
+  for (let i = 0; i < items.length; i += 1) {
+    const item = items[i];
+    recipes.push(getRecipe(item.recipeId, item.recipeSize));
+  }
+  recipes = await Promise.all(recipes);
+
+  for (let i = 0; i < items.length; i += 1) {
+    // const item = items[i];
+    // const recipe = recipes[i];
+  }
+};
+
 const testFunction = async () => {
-  // const items = await getCurrentMenu();
+  // const items = await getMenu('2019-11-13');
   // console.log(items);
-  const test = await getRecipe('031002');
+  // const test = await getRecipe('031002', '5');
+  // await updateMenuDay('2019-11-13');
 };
 
 module.exports = {
-  getCurrentMenu,
+  getMenu,
   getRecipe,
   test: testFunction,
+  updateMenuDay,
 };
