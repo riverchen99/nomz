@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import StarRatingComponent from 'react-star-rating-component';
 import { StyledMenuItempage, MenuItemBox, MenuItemHeader, MenuItemInfoHeader, MenuItemInfoName, MenuItemInfoRating, MenuItemInfoRestaurant, Heading } from './StyledMenuItempage';
 import ReviewComponent from './ReviewComponent';
@@ -31,6 +32,7 @@ class MenuItempage extends React.Component {
   }
 
   render() {
+    const { name } = this.props.location.state;
     return (
       <StyledMenuItempage>
         <MenuItemBox>
