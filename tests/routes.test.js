@@ -19,8 +19,8 @@ try {
 // let menuItemsIds = [];
 const rest1 = new Restaurant({ name: 'Covel' });
 const rest2 = new Restaurant({ name: 'Bruin Plate' });
-// const rest3 = new Restaurant({ name: 'Feast' });
-// const rest4 = new Restaurant({ name: 'De Neve' });
+const rest3 = new Restaurant({ name: 'Feast' });
+const rest4 = new Restaurant({ name: 'De Neve' });
 
 const item1 = new MenuItem({ name: 'combo', rating: 3, restaurant: rest1.id });
 const item2 = new MenuItem({
@@ -70,14 +70,14 @@ const item9 = new MenuItem({
   restaurant: rest2.id,
 });
 
-/* function seedRestaurantData() {
+function seedRestaurantData() {
   Restaurant.insertMany([
     rest1,
     rest2,
     rest3,
     rest4,
   ]);
-} */
+}
 
 function seedMenuItemData() {
   MenuItem.insertMany([
@@ -124,7 +124,7 @@ function tearDownDb() {
   console.warn('Deleting database');
   return mongoose.connection.dropDatabase();
 }
-/*
+
 describe('MenuItems API works correctly', () => {
   beforeAll(() => runServer(TEST_DB_URI));
 
@@ -174,7 +174,7 @@ describe('MenuItems API works correctly', () => {
       expect(menuItems).toHaveLength(9);
     });
   });
-}); */
+});
 
 describe('Recommendations API works correctly', () => {
   beforeAll(() => runServer(TEST_DB_URI));
@@ -182,7 +182,7 @@ describe('Recommendations API works correctly', () => {
   beforeEach(() => {
     seedMenuItemData();
     seedMenuData();
-    // seedRestaurantData();
+    seedRestaurantData();
   });
   afterEach(() => tearDownDb());
 
