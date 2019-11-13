@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import Loginpage from './components/Loginpage';
+import Recommendpage from './components/Recommendpage';
+import MenuItempage from './components/MenuItempage';
 import './App.css';
-import axios from 'axios';
 
 class App extends Component {
   constructor() {
@@ -8,24 +11,15 @@ class App extends Component {
     this.state = {};
   }
 
-  handleClick() {
-    axios.get('/api/menuitems')
-      .then((resp) => { console.log(resp.data); this.setState({ menuItems: resp.data }); });
-  }
-
   render() {
-    const { menuItems } = this.state;
     return (
-      <div className="button__container">
-        <button type="button" onClick={this.handleClick.bind(this)}>
-          Click Me
-        </button>
-        <p>
-          menu items:
-          {' '}
-          {JSON.stringify(menuItems)}
-        </p>
-      </div>
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" component={Loginpage} />
+          <Route exact path="/recommend" component={Recommendpage} />
+          <Route exact path="/menuitem/:id" component={MenuItempage} />
+        </Switch>
+      </BrowserRouter>
     );
   }
 }
