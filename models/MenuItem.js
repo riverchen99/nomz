@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
  * @class MenuItem
  */
 const MenuItemSchema = new mongoose.Schema({
+  _id: { type: Number, required: true },
   name: {
     type: String,
     required: true,
@@ -48,6 +49,7 @@ const MenuItemSchema = new mongoose.Schema({
   },
   restaurant: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' },
   station: String,
+  rating: Number,
 });
 const MenuItem = mongoose.model('MenuItem', MenuItemSchema);
 module.exports = MenuItem;
