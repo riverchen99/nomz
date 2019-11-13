@@ -162,75 +162,84 @@ function itemCompatibilty(preferences, restrictions, menuItem){
 }
 */
 
-function generateRecommendations(availableMenuItemIds,
+async function generateRecommendations(
+  availableMenuItemIds,
   filterRestaurant,
   filterPreferences,
-  filterRestrictions) {
+  filterRestrictions,
+) {
   // look up menuItem by menuItemIds
 
   console.log(availableMenuItemIds);
-  // let restaurant = '';
   if (filterRestaurant) {
-    // placeholder
-    const rest = 'Bruin Plate';
     Restaurant.find().where('name').equals(rest)
       .then((restId) => {
         console.log(((restId[0]).id));
-        // restaurant = (restId[0]).id;
+        const restaurant = (restId[0]).id; // eslint-disable-line
       });
   }
 
-  MenuItem.find({ _id: { $in: availableMenuItemIds } })
-    .then((results) => {
-      for (let i = 0; i < results.length; i += 1) {
-        if (filterRestaurant) {
-          console.log(results[i].restaurant);
-          // if ((results[i]).restaurant != restaurant){
-          // remove this menuItem
-          // }
-        } else if (filterRestrictions) {
-          console.log(results[i].props);
-          // parse ingredients for allergens
-          // parse props
-        }
-        if (filterPreferences) {
-          console.log(results[i].preferences);
-          // array.filter()
-          // find counterpart
-          // sort both
-        }
-      }
+  const results = await MenuItem.find({ _id: { $in: availableMenuItemIds } });
 
-      results.sort((a, b) => b.rating - a.rating);
-      console.log(results);
-      return results;
-    })
-    .catch((err) => { console.log(err); });
+
+  // refactor this
+  for (let i = 0; i < results.length; i += 1) {
+    if (filterRestaurant) {
+      console.log(results[i].restaurant);
+      // if ((results[i]).restaurant != restaurant){
+      // remove this menuItem
+      // }
+    }
+    if (filterRestrictions) {
+      console.log(results[i].props);
+      // parse ingredients for allergens
+      // parse props
+    }
+    if (filterPreferences) {
+      console.log(results[i].preferences);
+      // array.filter()
+      // find counterpart
+      // sort both
+    }
+  }
+
+
+  results.sort((a, b) => b.rating - a.rating);
+  console.log(results);
+
+
+  return results;
 }
 
-function recommendationController(req, res) {
+async function recommendationController(req, res) {
   // call this with
   // GET /recommendations?startTime=YYYY-MM-DDTHH:MM:SSZ&userId=whatever
 
   const date = new Date(req.query.startTime);
-  // console.log(date)
+
+  console.log(date);
   // const userId = req.query.userId // to fix lint error
 
   // const oldDate = new Date('Tue Nov 12 2019 11:30:00 AM');
   // console.log(oldDate)
 
-  (Menu.find({ endTime: { $gte: date } })).find({ startTime: { $lte: date } })
-    .then((results) => {
-      // results is an array of Menus available today
-      console.log(results);
-      let menuItemIds = [];
-      for (let i = 0; i < results.length; i += 1) {
-        menuItemIds = menuItemIds.concat((results[i]).menuItems);
-      }
-      console.log(menuItemIds);
-      // For now, user filters are false to only generate general recommendations
-      res.json(generateRecommendations(menuItemIds, false, false, false));
-    });
+
+  // Menu.find().then(() => console.log(results));
+
+
+  const availableMenus = await Menu.find({ endTime: { $gte: date }, startTime: { $lte: date } });
+
+  // availableMenus is an array of Menus available today
+  console.log(availableMenus);
+  let menuItemIds = [];
+  for (let i = 0; i < availableMenus.length; i += 1) {
+    menuItemIds = menuItemIds.concat((availableMenus[i]).menuItems);
+  }
+  console.log(menuItemIds);
+  // For now, user filters are false to only generate general recommendations
+
+  const recommendations = await generateRecommendations(menuItemIds, false, false, false);
+  res.json(recommendations);
 }
 
 
