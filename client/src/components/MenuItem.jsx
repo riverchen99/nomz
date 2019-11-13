@@ -1,18 +1,24 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import StarRatingComponent from 'react-star-rating-component';
-import { ItemTitle, StarWrapper } from './StyledMenuItem';
+import { ItemTitle, StarWrapper, StyledMenuItem } from './StyledMenuItem';
 
 function MenuItem (props) {
-    const { itemName, restaurant, rating } = props;
+    const { itemName, restaurant, rating, index } = props;
     return (
-      <div>
+      <StyledMenuItem index={index}>
         <StarWrapper><StarRatingComponent name={itemName} value={rating} emptyStarColor={"#cccccc"} editing={false} /></StarWrapper>
-        <div>
-          <ItemTitle>{itemName}</ItemTitle>
+        <React.Fragment>
+          <ItemTitle index={index}>{itemName}</ItemTitle>
           <p>{restaurant}</p>
-          <p>Click for details</p>
-        </div>
-      </div>
+          <Link to={{ 
+            pathname: `/menuitem/${itemName}`, 
+            state: {name: itemName}}}
+          >
+            Click for details
+          </Link>
+        </React.Fragment>
+      </StyledMenuItem>
     )
 }
 

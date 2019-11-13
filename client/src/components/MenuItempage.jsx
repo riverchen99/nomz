@@ -36,7 +36,7 @@ class MenuItempage extends React.Component {
         <MenuItemBox>
           <MenuItemHeader>
             <MenuItemInfoHeader>
-              <MenuItemInfoName>Shrimp Scampi Pizza</MenuItemInfoName>
+              <MenuItemInfoName>{name}</MenuItemInfoName>
               <MenuItemInfoRestaurant>Cafe 1919</MenuItemInfoRestaurant>
             </MenuItemInfoHeader>
             <MenuItemInfoRating>
