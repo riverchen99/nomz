@@ -15,11 +15,11 @@ class MenuItempage extends React.Component {
     this.handleReviewSubmit = this.handleReviewSubmit.bind(this);
     this.getMenuItem = this.getMenuItem.bind(this);
     this.state = {
-      review_text: '',
-      star_rating: 0,
-      item_name: '',
-      restaurant: '',
-      aggregate_rating: '',
+      reviewText: '',
+      starRating: 0,
+      itemName: '',
+      restaurantName: '',
+      aggregateRating: 0,
     };
   }
 
@@ -28,46 +28,45 @@ class MenuItempage extends React.Component {
   }
 
   handleRatingChange(rating) {
-    this.setState({star_rating: rating });
+    this.setState({starRating: rating });
   }
 
   handleReviewChange(review) {
-    this.setState({review_text: review });
+    this.setState({reviewText: review });
   }
 
   handleReviewSubmit() {
-    alert('Rating: ' + this.state.star_rating + ', Review: ' + this.state.review_text);
+    alert('Rating: ' + this.state.starRating + ', Review: ' + this.state.reviewText);
   }
 
   getMenuItem() {
     const { name, id } = this.props.location.state;
-    this.setState( { item_name: name });
+    this.setState( { itemName: name });
     axios.get(`/api/menuitems/${id}`)
-    .then((resp) => {
-      const item = resp.data[0];
-      const rating = item.rating;
-      this.setState({ aggregate_rating: rating });
-      const restaurantID = item.restaurant;
-      // axios.get(`/api/restaurants/${restaurantID}`)
-      // .then((resp) => {
-      //   const item = resp.data[0];
-      //   console.log(item);
-      // })
-    });
+      .then((resp) => {
+        const item = resp.data[0];
+        const rating = item.rating;
+        this.setState({ aggregateRating: rating });
+        const restaurantID = item.restaurant;
+        axios.get(`/api/restaurants/${restaurantID}`)
+          .then((resp) => {
+            const item = resp.data[0];
+            this.setState({ restaurantName: item.name });
+          })
+      });
   }
 
   render() {
-    const { name, id } = this.props.location.state;
     return (
       <StyledMenuItempage>
         <MenuItemBox>
           <MenuItemHeader>
             <MenuItemInfoHeader>
-              <MenuItemInfoName>{name}</MenuItemInfoName>
-              <MenuItemInfoRestaurant>Cafe 1919</MenuItemInfoRestaurant>
+              <MenuItemInfoName>{this.state.itemName}</MenuItemInfoName>
+              <MenuItemInfoRestaurant>{this.state.restaurantName}</MenuItemInfoRestaurant>
             </MenuItemInfoHeader>
             <MenuItemInfoRating>
-              <StarRatingComponent name="rating" editing={false} starCount={5} value={this.state.aggregate_rating} />
+              <StarRatingComponent name="rating" editing={false} starCount={5} value={this.state.aggregateRating} />
             </MenuItemInfoRating>
           </MenuItemHeader>
           <Heading>Write a review!</Heading>
