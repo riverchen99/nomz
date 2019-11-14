@@ -218,13 +218,13 @@ async function recommendationController(req, res) {
   let dateStr = '';
   const today = new Date();
   if (dayIn === 'today') {
-    dateStr = `${today.getFullYear()}-${(today.getMonth() + 1)}-${today.getDate()}${time}`;
+    dateStr = `${today.getFullYear()}-${(today.getMonth() + 1)}-${today.getDate()}${time}-0800`;
   } else if (dayIn === 'tomorrow') {
-    dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate() + 1}${time}`;
+    dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate() + 1}${time}-0800`;
   }
   console.log(dateStr);
   const date = new Date(dateStr);
-  console.log(date);
+
   // console.log(date);
   // const userId = req.query.userId // to fix lint error
 
