@@ -152,7 +152,7 @@ describe('MenuItems API works correctly', () => {
       const res = await request(app).get('/api/menuitems');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(9);
-      console.log(res.body);
+      // console.log(res.body);
     });
   });
 
@@ -204,12 +204,51 @@ describe('Recommendations API works correctly', () => {
   afterAll(() => closeServer());
 
 
-  describe('GET Endpoint', () => {
+  describe('Get Recommendations Test 1: Trivial time filtering', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?startTime=2019-11-12T11:30:00');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(6);
+    });
+  });
+
+  describe('Get Recommendations Test 2: Trivial time filtering', () => {
     it('should return 200 and nonempty list', async () => {
       const res = await request(app).get('/api/recommendations?startTime=2019-11-12T08:30:00');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(3);
-      // expect(1).toBe(1);
+    });
+  });
+
+  describe('Get Recommendations 3: Edge start time filtering', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?startTime=2019-11-12T07:00:00');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(3);
+    });
+  });
+
+  describe('Get Recommendations 4: Edge edge morning time filtering', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?startTime=2019-11-12T09:00:00');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(3);
+    });
+  });
+
+  describe('GET Endpoint Test 4: Edge edge lunch time filtering', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?startTime=2019-11-12T14:00:00');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(6);
+    });
+  });
+
+  describe('GET Endpoint Test 5: Unavailable time filtering', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?startTime=2019-11-12T02:00:00');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(0);
     });
   });
 });

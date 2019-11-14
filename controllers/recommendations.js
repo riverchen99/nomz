@@ -170,7 +170,7 @@ async function generateRecommendations(
 ) {
   // look up menuItem by menuItemIds
 
-  console.log(availableMenuItemIds);
+  // console.log(availableMenuItemIds);
   if (filterRestaurant) {
     // placeholder
     const rest = 'Bruin Plate';
@@ -218,7 +218,7 @@ async function recommendationController(req, res) {
   // GET /recommendations?startTime=YYYY-MM-DDTHH:MM:SSZ&userId=whatever
 
   const date = new Date(req.query.startTime);
-  console.log(date);
+  // console.log(date);
   // const userId = req.query.userId // to fix lint error
 
   // const oldDate = new Date('Tue Nov 12 2019 11:30:00 AM');
@@ -235,7 +235,7 @@ async function recommendationController(req, res) {
   for (let i = 0; i < availableMenus.length; i += 1) {
     menuItemIds = menuItemIds.concat((availableMenus[i]).menuItems);
   }
-  console.log(menuItemIds);
+  // console.log(menuItemIds);
   // For now, user filters are false to only generate general recommendations
 
   const recommendations = await generateRecommendations(menuItemIds, false, false, false);
