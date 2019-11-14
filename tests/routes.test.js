@@ -295,4 +295,12 @@ describe('Recommendations API works correctly', () => {
       expect(res.body).toHaveLength(2);
     });
   });
+
+  describe('Get Recommendations Test 7: Trivial time filtering for everyone', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?day=today&time=T09:00&userId=everyone');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(3);
+    });
+  });
 });

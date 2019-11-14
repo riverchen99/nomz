@@ -312,4 +312,6 @@ async function recommendationController(req, res) {
 }
 
 
-module.exports = { recommendationController };
+module.exports = {
+  recommendationController, propsCheck, restrictionCheck, generateRecommendations,
+};
