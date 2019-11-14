@@ -10,9 +10,7 @@ const MenuItemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  rating: {
-    type: Number,
-  },
+  rating: Number,
   description: String,
   nutrition: {
     defaultServingSize: Number,
@@ -52,7 +50,6 @@ const MenuItemSchema = new mongoose.Schema({
   },
   restaurant: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' },
   station: String,
-  rating: Number,
 });
 const MenuItem = mongoose.model('MenuItem', MenuItemSchema);
 module.exports = MenuItem;
