@@ -146,22 +146,22 @@ function seedMenuData() {
     [
       {
         restaurant: rest1.id,
-        startTime: new Date('2019-11-14T19:00:00Z'),
-        endTime: new Date('2019-11-14T21:00:00Z'),
+        startTime: new Date('2019-11-14T19:00:00.000Z'),
+        endTime: new Date('2019-11-14T21:00:00.000Z'),
         menuItems: [item1.id, item2.id, item3.id],
       },
 
       {
         restaurant: rest2.id,
-        startTime: new Date('2019-11-14T19:00:00Z'),
-        endTime: new Date('2019-11-14T21:00:00Z'),
+        startTime: new Date('2019-11-14T19:00:00.000Z'),
+        endTime: new Date('2019-11-14T21:00:00.000Z'),
         menuItems: [item4.id, item5.id, item6.id],
       },
 
       {
         restaurant: rest2.id,
-        startTime: new Date('2019-11-14T15:00:00'),
-        endTime: new Date('2019-11-14T17:00:00'),
+        startTime: new Date('2019-11-14T15:00:00.000Z'),
+        endTime: new Date('2019-11-14T17:00:00.000Z'),
         menuItems: [item7.id, item8.id, item9.id],
       },
     ],
@@ -258,7 +258,7 @@ describe('Recommendations API works correctly', () => {
 
   describe('Get Recommendations 3: Edge start time filtering', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?day=today&time=T07:00:00Z&userId=EmptyUser');
+      const res = await request(app).get('/api/recommendations?day=today&time=T07:00&userId=EmptyUser');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(3);
     });
@@ -266,7 +266,7 @@ describe('Recommendations API works correctly', () => {
 
   describe('Get Recommendations 4: Edge edge morning time filtering', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?day=today&time=T09:00:00Z&userId=EmptyUser');
+      const res = await request(app).get('/api/recommendations?day=today&time=T09:00&userId=EmptyUser');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(3);
     });
@@ -274,7 +274,7 @@ describe('Recommendations API works correctly', () => {
 
   describe('GET Endpoint Test 4: Edge edge lunch time filtering', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?day=today&time=T2]14:00:00Z&userId=EmptyUser');
+      const res = await request(app).get('/api/recommendations?day=today&time=T14:00&userId=EmptyUser');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(6);
     });
@@ -282,7 +282,7 @@ describe('Recommendations API works correctly', () => {
 
   describe('GET Endpoint Test 5: Unavailable time filtering', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?day=today&time=T02:00:00Z&userId=EmptyUser');
+      const res = await request(app).get('/api/recommendations?day=today&time=T02:00&userId=EmptyUser');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(0);
     });
@@ -290,7 +290,7 @@ describe('Recommendations API works correctly', () => {
 
   describe('Get Recommendations 6: Breakfast egg restriction', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?day=today&time=T09:00:00Z&userId=Mufasa');
+      const res = await request(app).get('/api/recommendations?day=today&time=T09:00&userId=Mufasa');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(2);
     });
