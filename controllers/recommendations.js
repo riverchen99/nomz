@@ -1,18 +1,24 @@
+/**
+ @module genericControllerFactory
+ */
 
 const MenuItem = require('../models/MenuItem');
 const Menu = require('../models/Menu');
 const User = require('../models/User');
 const Restaurant = require('../models/Restaurant');
-/*
-
-IN PROGRESS FOR USER FILTERS
-HAVEN'T BEEN IMPLEMENTED FOR
-DB POPULATION SO COMMENTING THIS OUT
-const Review = require('../models/Review');
-const User = require('../models/User');
-*/
 
 
+/**
+ * Auxiliary function to return whether a menuItem is included in the filtered results based on whether 
+ * its props (dietary tags) are compatible with the user's filters. If checking for preferences, a menu
+ * item should have all or  * most of props identified in the user preferences. If checking for 
+ * restrictions, a menu item must not have any props that the user restricted on order to be included.
+ * 
+ * @param {[String]} infoArray - Contains a list of either user restrictions or preferences to check
+ * @param {MenuItem.props} props - Desc
+ * @param {String} type - 'preferences' or 'restrictions'. Used to relate any matches to type of filtering.
+ * @return {Boolean} - Whether the menu item should be included
+ */
 function propsCheck(infoArray, props, type) {
   let matchScore = 0;
   const maxScore = infoArray.length;
@@ -137,7 +143,14 @@ function propsCheck(infoArray, props, type) {
   return true;
 }
 
-// Used by both ingredients and allergens
+/**
+ * Auxiliary function to return whether a menu item's ingredients comply with user restrictions. 
+ * If any restricted item is found, it does not comply.
+ * 
+ * @param {[String]} restrictions - Contains a list of the user restrictions
+ * @param {[String]} info - Information to search through. Either allergen or ingredient information
+ * @return {Boolean} - Return whether any restricted items are listed in the menu item information
+ */
 function restrictionCheck(restrictions, info) {
   // var infoArray = info.split(", ");
   if (restrictions.length === 0 || info.length === 0) {
@@ -155,6 +168,15 @@ function restrictionCheck(restrictions, info) {
   return true;
 }
 
+/**
+ * Checks if a menuItem is included in the filtered results based on whethers its dietary information
+ * complies with the user preferences and restrictions
+ * 
+ * @param {[String]} preferences - Array of user preferences that a menu item should have
+ * @param {[String]} restrictions - Array of user restrictions that a menu item cannot have
+ * @param {MenuItem} type - MenuItem object to check for compliance of user filters
+ * @return {Boolean} - Whether the menu item complies with user filters
+ */
 function itemCompatibilty(preferences, restrictions, menuItem) {
   const prefProps = (propsCheck(preferences, menuItem.props, 'preferences'));
   const restrictProps = (propsCheck(restrictions, menuItem.props, 'restrictions'));
@@ -163,7 +185,32 @@ function itemCompatibilty(preferences, restrictions, menuItem) {
   return prefProps && restrictProps && ingredientCheck && allergenCheck;
 }
 
+/**
+ * Checks if a menuItem is included in the filtered results based on whethers its dietary information
+ * complies with the user preferences and restrictions
+ * 
+ * @param {[String]} preferences - Array of user preferences that a menu item should have
+ * @param {[String]} restrictions - Array of user restrictions that a menu item cannot have
+ * @param {MenuItem} type - MenuItem object to check for compliance of user filters
+ * @return {Boolean} - Whether the menu item complies with user filters
+ */
+function itemCompatibilty(preferences, restrictions, menuItem) {
+  const prefProps = (propsCheck(preferences, menuItem.props, 'preferences'));
+  const restrictProps = (propsCheck(restrictions, menuItem.props, 'restrictions'));
+  const ingredientCheck = restrictionCheck(restrictions, menuItem.ingredients);
+  const allergenCheck = restrictionCheck(restrictions, menuItem.allergens);
+  return prefProps && restrictProps && ingredientCheck && allergenCheck;
+}
 
+/**
+ * Returns an array of MenuItem objects from the 
+ * 
+ * @param {[String]} availableMenuItemIds- Array of object IDs for MenuItem candidates
+ * @param {[String]}
+ * @param {[String]} restrictions - Array of user restrictions that a menu item cannot have
+ * @param {MenuItem} type - MenuItem object to check for compliance of user filters
+ * @return {Boolean} - Whether the menu item complies with user filters
+ */
 async function generateRecommendations(
   availableMenuItemIds,
   restaurantFilter,
