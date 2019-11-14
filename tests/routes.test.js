@@ -173,7 +173,7 @@ function tearDownDb() {
   return mongoose.connection.dropDatabase();
 }
 
-describe('MenuItems API works correctly', () => {
+describe('CRUD API Endpoints works correctly', () => {
   beforeAll(() => runServer(TEST_DB_URI));
 
   beforeEach(() => seedMenuItemData());
@@ -197,6 +197,18 @@ describe('MenuItems API works correctly', () => {
       expect(res.status).toBe(200);
       const menuItems = await MenuItem.find();
       expect(menuItems).toHaveLength(10);
+    });
+  });
+
+  describe('POST Review', () => {
+    it('should update the corresponding MenuItem rating', async () => {
+      await User.create({ name: 'NewUser' });
+      const users = await User.find();
+      console.log(users);
+      const res = await request(app).post('/api/reviews').send({ menuItem: '0', author: users[0]._id, rating: 5 });
+      expect(res.status).toBe(200);
+      const menuItem = await MenuItem.find({ _id: '0' });
+      expect(menuItem[0].rating).toBe(5);
     });
   });
 
