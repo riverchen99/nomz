@@ -4,7 +4,7 @@ const localURL = 'http://localhost:8080';
 /**
  * @module
  */
- 
+
 /**
  * Function to find all itemIds on a given webpage
  * @return {string[]} itemIds - An array of item id strings.

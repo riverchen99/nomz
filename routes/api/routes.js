@@ -18,21 +18,21 @@ const recommendationControllers = require('../../controllers/recommendations');
  * Helper function to create backend endpoints CRUD requests.
  * @param {express.Router} router - The express router to handle HTTP requests
  */
-function createCRUDEndpoints(router) {
-	const endpoints = {
-	  '/menuItems': MenuItem,
-	  '/restaurants': Restaurant,
-	  '/menus': Menu,
-	  '/reviews': Review,
-	  '/users': User,
-	};
+function createCRUDEndpoints(router) { // eslint-disable-line
+  const endpoints = {
+    '/menuItems': MenuItem,
+    '/restaurants': Restaurant,
+    '/menus': Menu,
+    '/reviews': Review,
+    '/users': User,
+  };
 
-	Object.keys(endpoints).forEach((endpoint) => {
-	  router.get(`${endpoint}/:ids?`, controllerFactory.createGenericGetController(endpoints[endpoint]));
-	  router.post(endpoint, controllerFactory.createGenericCreateController(endpoints[endpoint]));
-	  router.put(endpoint, controllerFactory.createGenericUpdateController(endpoints[endpoint]));
-	  router.delete(endpoint, controllerFactory.createGenericDeleteController(endpoints[endpoint]));
-	});
+  Object.keys(endpoints).forEach((endpoint) => {
+    router.get(`${endpoint}/:ids?`, controllerFactory.createGenericGetController(endpoints[endpoint]));
+    router.post(endpoint, controllerFactory.createGenericCreateController(endpoints[endpoint]));
+    router.put(endpoint, controllerFactory.createGenericUpdateController(endpoints[endpoint]));
+    router.delete(endpoint, controllerFactory.createGenericDeleteController(endpoints[endpoint]));
+  });
 }
 
 createCRUDEndpoints(router);

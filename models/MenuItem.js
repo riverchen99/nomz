@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
  * @property {string} name - The name of the item.
  * @property {number} rating - The cached aggregate rating.
  * @property {string} description - The description of the item.
- * @property {Array<number|string>} nutrition - Array containing various nutritional properties (e.g. calories, fat, etc).
+ * @property {Array<number|string>} nutrition -
+ * Array containing various nutritional properties (e.g. calories, fat, etc).
  * @property {string[]} ingredients - The list of ingredients.
  * @property {string[]} allergens - The list of allergens.
  * @property {Array<boolean>} props - The list of properties (e.g. vegetarian, vegan, halal, etc).
