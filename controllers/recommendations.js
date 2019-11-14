@@ -225,7 +225,7 @@ async function recommendationController(req, res) {
   console.log(dateStr);
   const date = new Date(dateStr);
 
-  // console.log(date);
+  console.log(date);
   // const userId = req.query.userId // to fix lint error
 
   // const oldDate = new Date('Tue Nov 12 2019 11:30:00 AM');
