@@ -246,14 +246,17 @@ async function recommendationController(req, res) {
   // For now, user filters are false to only generate general recommendations
 
   let preferences = [];
-  let restrictions = [];// 'eggs'];
+  let restrictions = [];
   const restaurant = '';
   const userInfo = req.query.userId;
+  
   if (userInfo.length !== 0) {
-    const user = await User.find({ name: userInfo });
-    if (user.length !== 0) {
-      preferences = user[0].preferences;
-      restrictions = user[0].restrictions;
+    if (userInfo !== 'everyone'){
+      const user = await User.find({ name: userInfo });
+      if (user.length !== 0) {
+        preferences = user[0].preferences;
+        restrictions = user[0].restrictions;
+      }
     }
   }
 
