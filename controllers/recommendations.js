@@ -212,10 +212,19 @@ async function generateRecommendations(
 
 async function recommendationController(req, res) {
   // call this with
-  // GET /recommendations?startTime=YYYY-MM-DDTHH:MM:SSZ&userId=whatever
-
-  const date = new Date(req.query.startTime);
-
+  // GET /recommendations?day=whatver&time=THH:MM&userId=whatever
+  const dayIn = req.query.day;
+  const { time } = req.query;
+  let dateStr = '';
+  const today = new Date();
+  if (dayIn === 'today') {
+    dateStr = `${today.getFullYear()}-${(today.getMonth() + 1)}-${today.getDate()}${time}`;
+  } else if (dayIn === 'tomorrow') {
+    dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate() + 1}${time}`;
+  }
+  console.log(dateStr);
+  const date = new Date(dateStr);
+  console.log(date);
   // console.log(date);
   // const userId = req.query.userId // to fix lint error
 
