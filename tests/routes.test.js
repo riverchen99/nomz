@@ -146,22 +146,22 @@ function seedMenuData() {
     [
       {
         restaurant: rest1.id,
-        startTime: new Date('2019-11-13T19:00:00.000Z'),
-        endTime: new Date('2019-11-13T22:00:00.000Z'),
+        startTime: new Date('2019-11-14T19:00:00.000Z'),
+        endTime: new Date('2019-11-14T22:00:00.000Z'),
         menuItems: [item1.id, item2.id, item3.id],
       },
 
       {
         restaurant: rest2.id,
-        startTime: new Date('2019-11-13T19:00:00.000Z'),
-        endTime: new Date('2019-11-13T22:00:00.000Z'),
+        startTime: new Date('2019-11-14T19:00:00.000Z'),
+        endTime: new Date('2019-11-14T22:00:00.000Z'),
         menuItems: [item4.id, item5.id, item6.id],
       },
 
       {
         restaurant: rest2.id,
-        startTime: new Date('2019-11-13T15:00:00.000Z'),
-        endTime: new Date('2019-11-13T17:00:00.000Z'),
+        startTime: new Date('2019-11-14T15:00:00.000Z'),
+        endTime: new Date('2019-11-14T17:00:00.000Z'),
         menuItems: [item7.id, item8.id, item9.id],
       },
     ],
