@@ -14,17 +14,20 @@ class MenuItempage extends React.Component {
     this.handleReviewChange = this.handleReviewChange.bind(this);
     this.handleReviewSubmit = this.handleReviewSubmit.bind(this);
     this.getMenuItem = this.getMenuItem.bind(this);
+    this.getReviews = this.getReviews.bind(this);
     this.state = {
       reviewText: '',
       starRating: 0,
       itemName: '',
       restaurantName: '',
       aggregateRating: 0,
+      reviews: null,
     };
   }
 
   componentDidMount() { 
     this.getMenuItem();
+    this.getReviews();
   }
 
   handleRatingChange(rating) {
@@ -56,6 +59,19 @@ class MenuItempage extends React.Component {
       });
   }
 
+  getReviews() {
+    const { id } = this.props.location.state;
+    axios.get(`/api/reviews`)
+      .then((resp) => {
+        const reviews = resp.data.filter(review => 
+          review.menuItem === id);
+        const itemReviews = reviews.map(review =>  
+          <ReviewComponent key={this.state.itemName + resp.data.indexOf(review)} review={review} />
+        )
+        this.setState({ reviews: itemReviews });
+    });
+  }
+
   render() {
     return (
       <StyledMenuItempage>
@@ -73,9 +89,7 @@ class MenuItempage extends React.Component {
           <EditableStarRating onRatingChange={this.handleRatingChange} />
           <ReviewForm onReviewChange={this.handleReviewChange} onReviewSubmit={this.handleReviewSubmit} />
           <Heading>Reviews</Heading>
-          <ReviewComponent user="User 1" rating={5} text="The shrimp scampi pizza is amazing! This is honestly the best pizza I’ve ever had!"/>
-          <ReviewComponent user="User 2" rating={4} text="It can be a little salty sometimes depending on the day, but usually it is perfect. 10/10 would recommend."/>
-          <ReviewComponent user="User 3" rating={3} text="Could have been better. Not bad but not great. You can get better pizza at Dominos."/>
+          {this.state.reviews}
         </MenuItemBox>
       </StyledMenuItempage>
     )
