@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const MenuItem = require('../models/MenuItem');
 const Menu = require('../models/Menu');
 const Restaurant = require('../models/Restaurant');
-// const User = require('../models/User');
+const User = require('../models/User');
 // const Recommendations = require('../controllers/recommendations');
 const { app, runServer, closeServer } = require('../server');
 
@@ -66,6 +66,8 @@ const item7 = new MenuItem({
   _id: '6',
   name: 'Eggs',
   rating: 3,
+  ingredients: ['eggs'],
+  props: { eggs: true },
   restaurant: rest2.id,
 });
 const item8 = new MenuItem({
@@ -82,6 +84,39 @@ const item9 = new MenuItem({
   rating: 5,
   restaurant: rest2.id,
 });
+
+const user1 = new User({
+  name: 'Mufasa',
+  preferences: [],
+  restrictions: ['eggs'],
+});
+
+const user2 = new User({
+  name: 'Scar',
+  preferences: ['vegetarian'],
+  restrictions: ['nuts'],
+});
+
+const user3 = new User({
+  name: 'Pumbaa',
+  preferences: [],
+  restrictions: ['non-grub things'],
+});
+
+const user4 = new User({
+  name: 'EmptyUser',
+  preferences: [],
+  restrictions: [],
+});
+
+function seedUserData() {
+  return User.insertMany([
+    user1,
+    user2,
+    user3,
+    user4,
+  ]);
+}
 
 function seedRestaurantData() {
   return Restaurant.insertMany([
@@ -111,22 +146,22 @@ function seedMenuData() {
     [
       {
         restaurant: rest1.id,
-        startTime: new Date('2019-11-12T11:00:00'),
-        endTime: new Date('2019-11-12T14:00:00'),
+        startTime: new Date('2019-11-14T19:00:00.000Z'),
+        endTime: new Date('2019-11-14T22:00:00.000Z'),
         menuItems: [item1.id, item2.id, item3.id],
       },
 
       {
         restaurant: rest2.id,
-        startTime: new Date('2019-11-12T11:00:00'),
-        endTime: new Date('2019-11-12T14:00:00'),
+        startTime: new Date('2019-11-14T19:00:00.000Z'),
+        endTime: new Date('2019-11-14T22:00:00.000Z'),
         menuItems: [item4.id, item5.id, item6.id],
       },
 
       {
         restaurant: rest2.id,
-        startTime: new Date('2019-11-12T07:00:00'),
-        endTime: new Date('2019-11-12T09:00:00'),
+        startTime: new Date('2019-11-14T15:00:00.000Z'),
+        endTime: new Date('2019-11-14T17:00:00.000Z'),
         menuItems: [item7.id, item8.id, item9.id],
       },
     ],
@@ -152,7 +187,7 @@ describe('MenuItems API works correctly', () => {
       const res = await request(app).get('/api/menuitems');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(9);
-      console.log(res.body);
+      // console.log(res.body);
     });
   });
 
@@ -196,6 +231,7 @@ describe('Recommendations API works correctly', () => {
   beforeEach(() => Promise.all([
     seedMenuItemData(),
     seedMenuData(),
+    seedUserData(),
     seedRestaurantData(),
   ]));
 
@@ -204,12 +240,59 @@ describe('Recommendations API works correctly', () => {
   afterAll(() => closeServer());
 
 
-  describe('GET Endpoint', () => {
+  describe('Get Recommendations Test 1: Trivial time filtering', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?startTime=2019-11-12T08:30:00');
+      const res = await request(app).get('/api/recommendations?day=today&time=T11:30&userId=EmptyUser');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(6);
+    });
+  });
+
+  describe('Get Recommendations Test 2: Trivial time filtering', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?day=today&time=T08:30&userId=EmptyUser');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(3);
-      // expect(1).toBe(1);
+    });
+  });
+
+  describe('Get Recommendations 3: Edge start time filtering', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?day=today&time=T07:00&userId=EmptyUser');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(3);
+    });
+  });
+
+  describe('Get Recommendations 4: Edge edge morning time filtering', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?day=today&time=T09:00&userId=EmptyUser');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(3);
+    });
+  });
+
+  describe('GET Endpoint Test 4: Edge edge lunch time filtering', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?day=today&time=T14:00&userId=EmptyUser');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(6);
+    });
+  });
+
+  describe('GET Endpoint Test 5: Unavailable time filtering', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?day=today&time=T02:00&userId=EmptyUser');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(0);
+    });
+  });
+
+  describe('Get Recommendations 6: Breakfast egg restriction', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?day=today&time=T09:00&userId=Mufasa');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(2);
     });
   });
 });
