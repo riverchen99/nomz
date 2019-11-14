@@ -17,7 +17,6 @@ function MenuItem (props) {
           >
             Click for details
           </Link>
-          <p>{props.id}</p>
         </React.Fragment>
       </StyledMenuItem>
     )
