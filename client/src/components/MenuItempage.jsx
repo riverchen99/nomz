@@ -39,7 +39,20 @@ class MenuItempage extends React.Component {
   }
 
   handleReviewSubmit() {
-    alert('Rating: ' + this.state.starRating + ', Review: ' + this.state.reviewText);
+    const { id } = this.props.location.state;
+    if (this.state.starRating < 1) {
+      alert('Please give a rating.');
+    }
+    else {
+      axios.post('/api/reviews', {
+        menuItem: id,
+        author: "5dcd2aa442e56ac143e24b6d", // currently hard coded since no user login yet
+        rating: this.state.starRating,
+        comments: this.state.reviewText
+      })
+      .then((resp) => console.log(resp));
+      this.getReviews();
+    }
   }
 
   getMenuItem() {
