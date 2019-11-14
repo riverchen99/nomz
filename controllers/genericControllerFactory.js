@@ -30,6 +30,22 @@ const createGenericGetController = function (model) {
 };
 
 /**
+ * Helper function to update cached aggregate rating from the average of individual ratings
+ * @param {string} menuItemId - the id of the menuitem to update
+ */
+async function updateAggregateRating(menuItemId) {
+  const averageObject = await Review.aggregate([
+    { $match: { menuItem: menuItemId } },
+    { $group: { _id: null, avgRating: { $avg: '$rating' } } },
+  ]);
+  console.log(averageObject);
+  await MenuItem.findOneAndUpdate(
+    { _id: menuItemId },
+    { rating: averageObject[0].avgRating },
+  );
+}
+
+/**
  * Higher order function to create a generic controller for POST endpoint requests.
  * @param {mongoose.Model} model - The mongoose model for the resource to be created.
  * @return {genericCreateController} - Controller function
@@ -47,19 +63,11 @@ function createGenericCreateController(model) {
     try {
       await model.create(req.body);
       if (model === Review) { // if we provided a review, update the aggergate rating
-        const averageObject = await Review.aggregate([
-          {$match: { menuItem: req.body.menuItem }},
-          {$group: { _id: null, avgRating: { $avg: "$rating" }}}
-        ]);
-        console.log(averageObject);
-        const oldMenuItem = await MenuItem.findOneAndUpdate(
-          { _id: req.body.menuItem },
-          { rating: averageObject[0].avgRating }
-        );
+        await updateAggregateRating(req.body.menuItem);
       }
-      res.sendStatus(200)
-    } catch (err) { 
-      console.log(err); res.status(500).send(err); 
+      res.sendStatus(200);
+    } catch (err) {
+      console.log(err); res.status(500).send(err);
     }
   };
   return genericCreateController;
