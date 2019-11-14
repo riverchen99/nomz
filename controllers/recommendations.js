@@ -296,7 +296,7 @@ async function recommendationController(req, res) {
   let restrictions = [];// 'eggs'];
   const restaurant = '';
   const userInfo = req.query.userId;
-  if (userInfo.length !== 0) {
+  if (userInfo.length !== 0 && userInfo !== 'everyone') {
     const user = await User.find({ name: userInfo });
     if (user.length !== 0) {
       preferences = user[0].preferences;
