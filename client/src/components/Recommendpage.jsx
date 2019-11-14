@@ -53,7 +53,7 @@ class Recommendpage extends React.Component {
     axios.get('/api/menuitems')
     .then((resp) => { 
       const items = resp.data.map(item => 
-        <MenuItem key={item.name + resp.data.indexOf(item)} id={item._id} index={resp.data.indexOf(item) % 2} itemName={item.name} restaurant={item.restaurant} rating={item.rating} />
+        <MenuItem key={item.name + resp.data.indexOf(item)} id={item.id} index={resp.data.indexOf(item) % 2} itemName={item.name} restaurant={item.restaurant} rating={item.rating} />
       )
       this.setState({ menuItems: items });
     });

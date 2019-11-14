@@ -13,10 +13,18 @@ class MenuItempage extends React.Component {
     this.handleRatingChange = this.handleRatingChange.bind(this);
     this.handleReviewChange = this.handleReviewChange.bind(this);
     this.handleReviewSubmit = this.handleReviewSubmit.bind(this);
+    this.getMenuItem = this.getMenuItem.bind(this);
     this.state = {
       review_text: '',
       star_rating: 0,
+      item_name: '',
+      restaurant: '',
+      aggregate_rating: '',
     };
+  }
+
+  componentDidMount() { 
+    this.getMenuItem();
   }
 
   handleRatingChange(rating) {
@@ -31,6 +39,23 @@ class MenuItempage extends React.Component {
     alert('Rating: ' + this.state.star_rating + ', Review: ' + this.state.review_text);
   }
 
+  getMenuItem() {
+    const { name, id } = this.props.location.state;
+    this.setState( { item_name: name });
+    axios.get(`/api/menuitems/${id}`)
+    .then((resp) => {
+      const item = resp.data[0];
+      const rating = item.rating;
+      this.setState({ aggregate_rating: rating });
+      const restaurantID = item.restaurant;
+      // axios.get(`/api/restaurants/${restaurantID}`)
+      // .then((resp) => {
+      //   const item = resp.data[0];
+      //   console.log(item);
+      // })
+    });
+  }
+
   render() {
     const { name, id } = this.props.location.state;
     return (
@@ -42,7 +67,7 @@ class MenuItempage extends React.Component {
               <MenuItemInfoRestaurant>Cafe 1919</MenuItemInfoRestaurant>
             </MenuItemInfoHeader>
             <MenuItemInfoRating>
-              <StarRatingComponent name="rating" editing={false} starCount={5} value={5} />
+              <StarRatingComponent name="rating" editing={false} starCount={5} value={this.state.aggregate_rating} />
             </MenuItemInfoRating>
           </MenuItemHeader>
           <Heading>Write a review!</Heading>
