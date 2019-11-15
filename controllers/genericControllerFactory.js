@@ -1,6 +1,9 @@
 /**
- @module genericControllerFactory
+ * @module
  */
+
+const Review = require('../models/Review');
+const MenuItem = require('../models/MenuItem');
 
 /**
  * Higher order function to create a generic controller for GET endpoint requests.
@@ -27,6 +30,22 @@ const createGenericGetController = function (model) {
 };
 
 /**
+ * Helper function to update cached aggregate rating from the average of individual ratings
+ * @param {string} menuItemId - the id of the menuitem to update
+ */
+async function updateAggregateRating(menuItemId) {
+  const averageObject = await Review.aggregate([
+    { $match: { menuItem: menuItemId } },
+    { $group: { _id: null, avgRating: { $avg: '$rating' } } },
+  ]);
+  console.log(averageObject);
+  await MenuItem.findOneAndUpdate(
+    { _id: menuItemId },
+    { rating: averageObject[0].avgRating },
+  );
+}
+
+/**
  * Higher order function to create a generic controller for POST endpoint requests.
  * @param {mongoose.Model} model - The mongoose model for the resource to be created.
  * @return {genericCreateController} - Controller function
@@ -40,10 +59,16 @@ function createGenericCreateController(model) {
    * (Automatically filled by Express from URL params)
    * @param {express.Response} res - The express response object indicating success or failure.
    */
-  const genericCreateController = function (req, res) {
-    model.create(req.body)
-      .then(() => res.sendStatus(200))
-      .catch((err) => { console.log(err); res.status(500).send(err); });
+  const genericCreateController = async function (req, res) {
+    try {
+      await model.create(req.body);
+      if (model === Review) { // if we provided a review, update the aggergate rating
+        await updateAggregateRating(req.body.menuItem);
+      }
+      res.sendStatus(200);
+    } catch (err) {
+      console.log(err); res.status(500).send(err);
+    }
   };
   return genericCreateController;
 }
