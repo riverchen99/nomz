@@ -22,11 +22,11 @@ const createGenericGetController = function (model) {
    */
   const genericGetController = function (req, res) {
     console.log(req.params.ids);
-    console.log(req.query)
-    for (var k of Object.keys(req.query)) {
-      req.query[k] = JSON.parse(req.query[k])
+    console.log(req.query);
+    for (var k of Object.keys(req.query)) { // eslint-disable-line
+      req.query[k] = JSON.parse(req.query[k]);
     }
-    console.log(req.query)
+    console.log(req.query);
     const query = req.params.ids === undefined ? req.query : { _id: { $in: req.params.ids.split(';') } };
     model.find(query)
       .then((results) => res.json(results))
