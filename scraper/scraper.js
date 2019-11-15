@@ -92,7 +92,6 @@ const fetchRecipeData = async (recipeId, recipeSize) => {
     allergens,
     props,
   };
-  // console.log(info);
   return info;
 };
 
@@ -105,7 +104,6 @@ const fetchMenuData = async (date) => {
   for (let i = 0; i < headers.length; i += 1) {
     // find the menu date
     const menuDateStr = $(headers[i]).text();
-    // console.log(menuDateStr);
     const menuPeriod = menuDateStr.split(' ')[0];
     const menuDate = menuDateStr.substring(2 + menuDateStr.indexOf(',')).trim();
     const elementsBetween = $(headers[i]).nextUntil(headers[i + 1]);
@@ -115,14 +113,12 @@ const fetchMenuData = async (date) => {
     $(menuBlocks).each((_i, menuBlock) => {
       const diningHallEle = $(menuBlock).find('h3');
       const diningHall = diningHallEle.text();
-      // console.log(diningHall);
 
       // find the dining hall section
       const diningSectionsEle = diningHallEle.nextAll().filter('ul.sect-list').children();
       $(diningSectionsEle).each((_i1, diningSectionEle) => {
         const fullDiningText = $(diningSectionEle).text().trim();
         const diningSection = fullDiningText.substring(0, fullDiningText.indexOf('\n'));
-        // console.log(`  ${diningSection}`);
 
         // find the menu items
         $(diningSectionEle).find('li.menu-item').each((_i2, menuItemEle) => {
@@ -130,7 +126,6 @@ const fetchMenuData = async (date) => {
           const recipeId = menuItemLinkEle.attr('href').split('/')[4];
           const recipeSize = menuItemLinkEle.attr('href').split('/')[5];
           const name = menuItemLinkEle.text();
-          // console.log(`    ${recipeId}`);
           items.push({
             name, recipeId, recipeSize, diningHall, diningSection, menuPeriod, menuDate,
           });
@@ -164,7 +159,11 @@ const fetchMenuTimes = async (date) => {
   };
 };
 
-const getUpdatedMenu = async (date) => {
+const getUpdatedMenu = async (
+  date,
+  fetchMenu = fetchMenuData,
+  fetchTimes = fetchMenuTimes,
+  fetchRecipes = fetchRecipeData) => {
   const menuItems = [];
   const restaurants = {
     Covel: await Restaurant.findOne({ name: 'Covel' }),
@@ -174,13 +173,13 @@ const getUpdatedMenu = async (date) => {
   };
   const menus = {};
 
-  const times = await fetchMenuTimes(date);
-  const items = await fetchMenuData(date);
+  const times = await fetchTimes(date);
+  const items = await fetchMenu(date);
 
   const recipePromises = [];
   for (let i = 0; i < items.length; i += 1) {
     const item = items[i];
-    recipePromises.push(fetchRecipeData(item.recipeId, item.recipeSize));
+    recipePromises.push(fetchRecipes(item.recipeId, item.recipeSize));
   }
   const recipes = await Promise.all(recipePromises);
 
@@ -225,31 +224,9 @@ const getUpdatedMenu = async (date) => {
   };
 };
 
-const testFunction = async () => {
-  // const items = await getMenu('2019-11-13');
-  // console.log(items);
-  // const test = await getRecipe('031002', '5');
-  // await updateMenuDay('2019-11-13');
-  // MenuItem.find({}).then((result) => console.log(result));
-  // MenuItem.findById('047073').then((result) => {
-  //   if (result === null) {
-  //     console.log('result is null');
-  //   } else {
-  //     console.log(result);
-  //   }
-  // });
-  //
-  //
-  const dayMenu = await getUpdatedMenu('2019-11-13');
-  console.log('finished menu');
-  // console.log(dayMenu);
-  for (let i = 0; i < dayMenu.items.length; i += 1) {
-    dayMenu.items[i].update();
-    console.log('saving item');
-    console.log(dayMenu.items[i]);
-  }
-};
-
 module.exports = {
-  test: testFunction,
+  getUpdatedMenu,
+  fetchMenuData,
+  fetchRecipeData,
+  fetchMenuTimes,
 };
