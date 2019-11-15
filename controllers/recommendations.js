@@ -9,11 +9,12 @@ const Restaurant = require('../models/Restaurant');
 
 
 /**
- * Auxiliary function to return whether a menuItem is included in the filtered results
+ * Return whether a menuItem is included in the filtered results
  * based on whether its props (dietary tags) are compatible with the user's filters. If
  * checking for preferences, a menu item should have all or  * most of props identified
  * in the user preferences. If checking for restrictions, a menu item must not have any
  * props that the user restricted on order to be included.
+ * Auxiliary function not exposed to client.
  *
  * @param {string[]} infoArray - Contains a list of either user restrictions or
  * preferences to check
@@ -54,8 +55,9 @@ function propsCheck(infoArray, props, type) {
 }
 
 /**
- * Auxiliary function to return whether a menu item's ingredients comply with user restrictions.
+ * Return whether a menu item's ingredients comply with user restrictions.
  * If any restricted item is found, it does not comply.
+ * Auxiliary function not exposed to client.
  *
  * @param {string[]} restrictions - Contains a list of the user restrictions
  * @param {string[]} info - Information to search through. Either allergen or ingredient information
@@ -81,6 +83,7 @@ function restrictionCheck(restrictions, info) {
 /**
  * Checks if a menuItem is included in the filtered results based on whethers its
  * dietary information complies with the user preferences and restrictions
+ * Auxiliary function not exposed to client.
  *
  * @param {string[]} preferences - Array of user preferences that a menu item should have
  * @param {string[]} restrictions - Array of user restrictions that a menu item cannot have
@@ -97,8 +100,8 @@ function itemCompatibility(preferences, restrictions, menuItem) {
 
 
 /**
- * Returns an array of MenuItem objects from the
- *
+ * Returns an array of MenuItem objects from the MenuItem array based on user filters.
+ * Auxiliary function not exposed to client.
  * @param {string[]} availableMenuItemIds- Array of object IDs for MenuItem candidates
  * @param {string} restaurantFilter - name of restaurant, if applicable. Empty string otherwise
  * @param {string[]} preferences - Array of user preferences to filter through menu items by
@@ -150,22 +153,25 @@ async function generateRecommendations(
 
   return results;
 }
-
+/*
+ * orig params
+ * @param {Object} req.query.day - day
+ * @param {Object} req.query.time - time period
+ * @param {Object} req.query.userId - name of user whose information will be used to
+ * generate recommendations
+*/
 /**
  * Return recommended menu items based on request query
  * @param {express.Request} req - The express request object.
  * @param {Object} req.query - Object containing properties to filter for the desired resource.
  * (Automatically filled by Express from URL params)
- * @param {Object} req.query.day - day
- * @param {Object} req.query.time - time period
- * @param {Object} req.query.userId - name of user whose information will be used to
- * generate recommendations
+ * @param {Object} req.query.date - date
  * @param {express.Response} res - The express response object indicating success or failure.
  * @return {MenuItem[]} - Array of MenuItems the comply with the applicable filters
  */
 async function recommendationController(req, res) {
   // call this with
-  // GET /recommendations?day=whatver&time=THH:MM&userId=whatever
+  // GET /recommendations?date=YYYY-MM-DDTHH:MM-0800&userId=whatever
 
   /*
   const dayIn = req.query.day;
@@ -200,8 +206,6 @@ async function recommendationController(req, res) {
     menuItemIds = menuItemIds.concat((availableMenus[i]).menuItems);
   }
   // console.log(menuItemIds);
-  // For now, user filters are false to only generate general recommendations
-
   let preferences = [];
   let restrictions = [];
   const restaurant = '';
@@ -222,7 +226,10 @@ async function recommendationController(req, res) {
   res.json(recommendations);
 }
 
-
+/*
+For deployment, only recommendationController will be exposed to the client
+auxiliary functions are only exposed for unit testing
+*/
 module.exports = {
   recommendationController, propsCheck, restrictionCheck, generateRecommendations,
 };

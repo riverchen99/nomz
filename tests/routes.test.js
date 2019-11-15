@@ -307,4 +307,27 @@ describe('Recommendations API works correctly', () => {
       expect(res.body).toHaveLength(2);
     });
   });
+
+  describe('Get Recommendations Test 7: Trivial time filtering for everyone', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations??date=2019-11-14T09:00-0800&userId=everyone');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(6);
+    });
+  });
+});
+
+
+describe('Recommendations API works correctly', () => {
+  beforeAll(() => runServer(TEST_DB_URI));
+
+  afterAll(() => closeServer());
+
+  describe('Get Recommendations : Actual DB data', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?date=2019-11-14T12:00-0800&&userId=everyone');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(0);
+    });
+  });
 });
