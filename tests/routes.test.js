@@ -23,13 +23,13 @@ const rest3 = new Restaurant({ name: 'Feast' });
 const rest4 = new Restaurant({ name: 'De Neve' });
 
 const item1 = new MenuItem({
-  _id: '0',
+  _id: '10',
   name: 'combo',
   rating: 3,
   restaurant: rest1.id,
 });
 const item2 = new MenuItem({
-  _id: '1',
+  _id: '12',
   name: 'fish and chips',
   ingredients: ['fish', 'potato'],
   rating: 4,
@@ -298,9 +298,24 @@ describe('Recommendations API works correctly', () => {
 
   describe('Get Recommendations Test 7: Trivial time filtering for everyone', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?day=today&time=T09:00&userId=everyone');
+      const res = await request(app).get('/api/recommendations?day=today&time=T12:30&userId=everyone');
       expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(3);
+      expect(res.body).toHaveLength(6);
+    });
+  });
+});
+
+
+describe('Recommendations API works correctly', () => {
+  beforeAll(() => runServer(TEST_DB_URI));
+
+  afterAll(() => closeServer());
+
+  describe('Get Recommendations : Actual DB data', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?day=tomorrow&time=T12:30&userId=everyone');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(2);
     });
   });
 });

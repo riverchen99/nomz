@@ -104,14 +104,60 @@ describe('Props Check Test 5: ', () => {
   });
 });
 
+/*
+item1 = new MenuItem({
+    _id: { type: String, required: true },
+    name: {
+      type: String,
+      required: true,
+    },
+    rating: Number,
+    description: String,
+    nutrition: {
+      defaultServingSize: Number,
+      servingUnit: String,
+      calories: Number,
+      fatCal: Number,
+      totalFat: Number,
+      satFat: Number,
+      transFat: Number,
+      cholesterol: Number,
+      sodium: Number,
+      totalCarbohydrate: Number,
+      dietaryFiber: Number,
+      sugars: Number,
+      protein: Number,
+      vitA: Number,
+      vitC: Number,
+      calcium: Number,
+      iron: Number,
+    },
+    ingredients: [String],
+    allergens: [String],
+    props: {
+      vegetarian: Boolean,
+      vegan: Boolean,
+      peanuts: Boolean,
+      treeNuts: Boolean,
+      wheat: Boolean,
+      gluten: Boolean,
+      soy: Boolean,
+      dairy: Boolean,
+      eggs: Boolean,
+      shellfish: Boolean,
+      fish: Boolean,
+      halal: Boolean,
+      lowCarbon: Boolean,
+    },
+    restaurant: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' },
+    station: String,
+  });
+
 describe('Props Check Test 6: ', () => {
   it('finds MOST of the preference tags....return false', async () => {
-    const props = {
-      vegetarian: true,
-      vegan: false,
-      peanuts: true,
-    };
+
     const res = Recommendations.propsCheck(['vegan', 'vegetarian', 'halal'], props, 'preferences');
     expect(res).toBe(false);
   });
 });
+*/
