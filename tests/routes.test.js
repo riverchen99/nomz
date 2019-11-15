@@ -23,13 +23,13 @@ const rest3 = new Restaurant({ name: 'Feast' });
 const rest4 = new Restaurant({ name: 'De Neve' });
 
 const item1 = new MenuItem({
-  _id: '0',
+  _id: '10',
   name: 'combo',
   rating: 3,
   restaurant: rest1.id,
 });
 const item2 = new MenuItem({
-  _id: '1',
+  _id: '12',
   name: 'fish and chips',
   ingredients: ['fish', 'potato'],
   rating: 4,
@@ -176,9 +176,9 @@ function tearDownDb() {
 describe('CRUD API Endpoints works correctly', () => {
   beforeAll(() => runServer(TEST_DB_URI));
 
-  beforeEach(() => seedMenuItemData());
+  beforeEach(() => { return seedMenuItemData() } );
 
-  afterEach(() => tearDownDb());
+  afterEach(() => { return tearDownDb() });
 
   afterAll(() => closeServer());
 
@@ -205,9 +205,9 @@ describe('CRUD API Endpoints works correctly', () => {
       await User.create({ name: 'NewUser' });
       const users = await User.find();
       console.log(users);
-      const res = await request(app).post('/api/reviews').send({ menuItem: '0', author: users[0]._id, rating: 5 });
+      const res = await request(app).post('/api/reviews').send({ menuItem: '10', author: users[0]._id, rating: 5 });
       expect(res.status).toBe(200);
-      const menuItem = await MenuItem.find({ _id: '0' });
+      const menuItem = await MenuItem.find({ _id: '10' });
       expect(menuItem[0].rating).toBe(5);
     });
   });
@@ -228,7 +228,7 @@ describe('CRUD API Endpoints works correctly', () => {
 
   describe('DELETE Endpoint', () => {
     it('should return 200 and delete entry', async () => {
-      const res = await request(app).delete('/api/menuitems').send({ _id: '0' });
+      const res = await request(app).delete('/api/menuitems').send({ _id: '10' });
       expect(res.status).toBe(200);
       const menuItems = await MenuItem.find();
       expect(menuItems).toHaveLength(8);
@@ -247,7 +247,7 @@ describe('Recommendations API works correctly', () => {
     seedRestaurantData(),
   ]));
 
-  afterEach(() => tearDownDb());
+  afterEach(() => { return tearDownDb() });
 
   afterAll(() => closeServer());
 
@@ -307,5 +307,4 @@ describe('Recommendations API works correctly', () => {
       expect(res.body).toHaveLength(2);
     });
   });
-
 });

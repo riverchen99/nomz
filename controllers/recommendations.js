@@ -1,5 +1,5 @@
 /**
- @module genericControllerFactory
+ @module recommendations
  */
 
 const MenuItem = require('../models/MenuItem');
@@ -15,10 +15,10 @@ const Restaurant = require('../models/Restaurant');
  * in the user preferences. If checking for restrictions, a menu item must not have any
  * props that the user restricted on order to be included.
  *
- * @param {[String]} infoArray - Contains a list of either user restrictions or
+ * @param {string[]} infoArray - Contains a list of either user restrictions or
  * preferences to check
  * @param {MenuItem.props} props - Desc
- * @param {String} type - 'preferences' or 'restrictions'. Used to relate any matches
+ * @param {string} type - 'preferences' or 'restrictions'. Used to relate any matches
  * to type of filtering.
  * @return {Boolean} - Whether the menu item should be included
  */
@@ -57,8 +57,8 @@ function propsCheck(infoArray, props, type) {
  * Auxiliary function to return whether a menu item's ingredients comply with user restrictions.
  * If any restricted item is found, it does not comply.
  *
- * @param {[String]} restrictions - Contains a list of the user restrictions
- * @param {[String]} info - Information to search through. Either allergen or ingredient information
+ * @param {string[]} restrictions - Contains a list of the user restrictions
+ * @param {string[]} info - Information to search through. Either allergen or ingredient information
  * @return {Boolean} - Return whether any restricted items are listed in the menu item information
  */
 function restrictionCheck(restrictions, info) {
@@ -82,8 +82,8 @@ function restrictionCheck(restrictions, info) {
  * Checks if a menuItem is included in the filtered results based on whethers its
  * dietary information complies with the user preferences and restrictions
  *
- * @param {[String]} preferences - Array of user preferences that a menu item should have
- * @param {[String]} restrictions - Array of user restrictions that a menu item cannot have
+ * @param {string[]} preferences - Array of user preferences that a menu item should have
+ * @param {string[]} restrictions - Array of user restrictions that a menu item cannot have
  * @param {MenuItem} type - MenuItem object to check for compliance of user filters
  * @return {Boolean} - Whether the menu item complies with user filters
  */
@@ -99,11 +99,11 @@ function itemCompatibility(preferences, restrictions, menuItem) {
 /**
  * Returns an array of MenuItem objects from the
  *
- * @param {[String]} availableMenuItemIds- Array of object IDs for MenuItem candidates
- * @param {[String]}
- * @param {[String]} restrictions - Array of user restrictions that a menu item cannot have
- * @param {MenuItem} type - MenuItem object to check for compliance of user filters
- * @return {Boolean} - Whether the menu item complies with user filters
+ * @param {string[]} availableMenuItemIds- Array of object IDs for MenuItem candidates
+ * @param {string} restaurantFilter - name of restaurant, if applicable. Empty string otherwise
+ * @param {string[]} preferences - Array of user preferences to filter through menu items by
+ * @param {string[]} restrictions - Array of user restrictions to filter out menu items by
+ * @return {MenuItem[]} - Array of MenuItems the comply with the applicable filters
  */
 async function generateRecommendations(
   availableMenuItemIds,
@@ -151,6 +151,18 @@ async function generateRecommendations(
   return results;
 }
 
+/**
+ * Return recommended menu items based on request query
+ * @param {express.Request} req - The express request object.
+ * @param {Object} req.query - Object containing properties to filter for the desired resource.
+ * (Automatically filled by Express from URL params)
+ * @param {Object} req.query.day - day
+ * @param {Object} req.query.time - time period
+ * @param {Object} req.query.userId - name of user whose information will be used to
+ * generate recommendations
+ * @param {express.Response} res - The express response object indicating success or failure.
+ * @return {MenuItem[]} - Array of MenuItems the comply with the applicable filters
+ */
 async function recommendationController(req, res) {
   // call this with
   // GET /recommendations?day=whatver&time=THH:MM&userId=whatever
@@ -210,4 +222,6 @@ async function recommendationController(req, res) {
 }
 
 
-module.exports = { recommendationController };
+module.exports = {
+  recommendationController, propsCheck, restrictionCheck, generateRecommendations,
+};
