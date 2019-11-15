@@ -247,6 +247,8 @@ async function generateRecommendations(
 async function recommendationController(req, res) {
   // call this with
   // GET /recommendations?day=whatver&time=THH:MM&userId=whatever
+
+  /*
   const dayIn = req.query.day;
   const { time } = req.query;
   let dateStr = '';
@@ -257,7 +259,9 @@ async function recommendationController(req, res) {
     dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate() + 1}${time}-0800`;
   }
   console.log(dateStr);
-  const date = new Date(dateStr);
+  */
+
+  const date = new Date(req.query.date);
 
   console.log(date);
   // const userId = req.query.userId // to fix lint error
@@ -282,9 +286,8 @@ async function recommendationController(req, res) {
   let preferences = [];
   let restrictions = [];// 'eggs'];
   const restaurant = '';
-  const userInfo = req.query.userId;
-  if (userInfo.length !== 0 && userInfo !== 'everyone') {
-    const user = await User.find({ name: userInfo });
+  if (req.query.userId !== undefined) {
+    const user = await User.find({ name: req.query.userId });
     if (user.length !== 0) {
       preferences = user[0].preferences;
       restrictions = user[0].restrictions;
