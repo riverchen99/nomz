@@ -55,7 +55,7 @@ class Recommendpage extends React.Component {
   */
   generateRecs() {
     const { day, recommendee } = this.state;
-    axios.get(`api/recommendations?day=${day}&time=T12:00&userId=${recommendee}`)
+    axios.get(`api/recommendations?date=2019-11-14T12:00-0800&userId=${recommendee}`)
       .then((resp) => {
         const items = resp.data.map((item) => {
           return (
