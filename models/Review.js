@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 
 /**
  * @class Review
+ * @property {string} menuItem - The menuItem that review is associated with.
  * @property {mongoose.Schema.Types.ObjectId} author - The user who provided the review.
  * @property {number} rating - Star rating provided to the dish.
  * @property {string} comments - Optional text comments about the dish.
