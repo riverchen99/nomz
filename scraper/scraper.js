@@ -34,8 +34,10 @@ const fetchRecipeData = async (recipeId, recipeSize) => {
   const name = $('h2').text().trim();
   // main props
   const ingredientsEle = $('div.ingred_allergen').children();
-  const ingredients = $(ingredientsEle[0]).text().split(': ')[1].split(', ');
-  const allergens = $(ingredientsEle[1]).text().split(': ')[1].split(', ');
+  const ingredients = (ingredientsEle.length > 0)
+    ? $(ingredientsEle[0]).text().split(': ')[1].split(', ') : '';
+  const allergens = (ingredientsEle.length > 1)
+    ? $(ingredientsEle[1]).text().split(': ')[1].split(', ') : '';
   // special properties
   const props = {
     vegetarian: false,
@@ -67,7 +69,7 @@ const fetchRecipeData = async (recipeId, recipeSize) => {
     allergens,
     props,
   };
-  console.log(info);
+  // console.log(info);
   return info;
 };
 
@@ -139,53 +141,65 @@ const fetchMenuTimes = async (date) => {
 };
 
 const getUpdatedMenu = async (date) => {
-  let menuItems = [];
-  let restaurants = {};
-  let menus = {};
+  const menuItems = [];
+  const restaurants = {
+    Covel: await Restaurant.findOne({ name: 'Covel' }),
+    'Bruin Plate': await Restaurant.findOne({ name: 'Bruin Plate' }),
+    'De Neve': await Restaurant.findOne({ name: 'De Neve' }),
+    Feast: await Restaurant.findOne({ name: 'Feast' }),
+  };
+  const menus = {};
 
-  await fetchMenutimes(date).then((times) => {
-    fetchMenuData(date).then((items) => {
-      for (let i = 0; i < items.length; i += 1) {
-        const item = items[i];
+  const times = await fetchMenuTimes(date);
+  const items = await fetchMenuData(date);
 
-        // create restaurant
-        if (item.diningHall in restaurants) {
-          restaurants['']
-        } else {
-          restaurants.push(Restaurant.create({name: item.diningHall, menus:}))
-        }
+  const recipePromises = [];
+  for (let i = 0; i < items.length; i += 1) {
+    const item = items[i];
+    recipePromises.push(fetchRecipeData(item.recipeId, item.recipeSize));
+  }
+  const recipes = await Promise.all(recipePromises);
 
-        // create menu
-        if (item.menuPeriod in menus) {
-          menus[item.menuPeriod].menuItems.push(item.recipeId);
-        } else {
-          menus[item.menuPeriod] = Menu.create({
-            mealPeriod: item.menuPeriod,
-            startTime: times[item.menuPeriod].startTime,
-            endTime: times[item.menuPeriod].endTime,
-            restaurant: item.diningHall,
-            menuItems: [item.recipeId],
-          });
-        }
+  for (let i = 0; i < items.length; i += 1) {
+    const item = items[i];
+    const recipe = recipes[i];
 
+    // update restaurant
+    // restaurants[item.diningHall](Restaurant.create({name: item.diningHall, menus:}))
 
-        // create menu item
-        fetchRecipeData(item.recipeId, item.recipeSize).then((recipe) => {
-          menuItems.push(MenuItem.create({
-            _id: item.recipeId,
-            name: recipe.name,
-            rating: null,
-            description: recipe.description,
-            ingredients: recipe.ingredients,
-            allergens: recipe.allergens,
-            props: recipe.props,
-            restaurant: item.diningHall,
-            station: item.diningSection,
-          }));
-        });
-      }
-    });
-  });
+    // create menu
+    if (item.menuPeriod in menus) {
+      menus[item.menuPeriod].menuItems.push(item.recipeId);
+    } else {
+      menus[item.menuPeriod] = new Menu({
+        mealPeriod: item.menuPeriod,
+        startTime: times[item.menuPeriod].startTime,
+        endTime: times[item.menuPeriod].endTime,
+        restaurant: restaurants[item.diningHall]._id,
+        menuItems: [item.recipeId],
+      });
+    }
+
+    // create menu item
+    menuItems.push(new MenuItem({
+      _id: item.recipeId,
+      name: recipe.name,
+      rating: null,
+      description: recipe.description,
+      ingredients: recipe.ingredients,
+      allergens: recipe.allergens,
+      props: recipe.props,
+      restaurant: restaurants[item.diningHall]._id,
+      station: item.diningSection,
+    }));
+  }
+
+  return {
+    items: menuItems,
+    menus,
+    restaurants,
+  };
+};
 
 const testFunction = async () => {
   // const items = await getMenu('2019-11-13');
@@ -200,9 +214,15 @@ const testFunction = async () => {
   //     console.log(result);
   //   }
   // });
+  //
+  //
   const dayMenu = await getUpdatedMenu('2019-11-13');
-  for (let i = 0; i < dayMenu.menuItems.length; i += 1) {
-    dayMenu.menuItems[i].save()
+  console.log('finished menu');
+  console.log(dayMenu);
+  for (let i = 0; i < dayMenu.items.length; i += 1) {
+    dayMenu.items[i].save();
+    console.log('saving item');
+    console.log(dayMenu.items[i]);
   }
 };
 
