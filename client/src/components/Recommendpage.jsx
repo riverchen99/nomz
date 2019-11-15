@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import MenuItem from './MenuItem';
 import Button from './Button';
 import { 
@@ -50,33 +49,33 @@ class Recommendpage extends React.Component {
     });
   }
 
- /**
- * Function that makes axios call to backend to fetch recommended items based on input values
- * @return {Number} - 1 denotes success, 0 denotes failure
- */
+  /**
+  * Function that makes axios call to backend to fetch recommended items based on input values
+  * @return {Number} - 1 denotes success, 0 denotes failure
+  */
   generateRecs() {
-        //axios.get('api/menuitems')
-    //axios.get(`api/time/day/recommendations?day=${this.state.day}&time=T09:00&userId=${this.state.recommendee}`)
-    axios.get('api/recommendations?day=today&time=T09:00&userId=Mufasa')
-    .then((resp) => { 
-      console.log(resp.data);
-      const items = resp.data.map(item => {
-        return <MenuItem
-          key={item.name + resp.data.indexOf(item)}
-          id={item._id}
-          index={resp.data.indexOf(item) % 2}
-          itemName={item.name}
-          restaurant={item.restaurant}
-          rating={item.rating}
-        />
+    const { day, recommendee } = this.state;
+    axios.get(`api/recommendations?day=${day}&time=T12:00&userId=${recommendee}`)
+      .then((resp) => {
+        const items = resp.data.map((item) => {
+          return (
+            <MenuItem
+              key={item.name + resp.data.indexOf(item)}
+              id={item._id}
+              index={resp.data.indexOf(item) % 2}
+              itemName={item.name}
+              restaurant={item.restaurant}
+              rating={item.rating}
+            />
+          );
+        });
+        this.setState({ menuItems: items });
+        return 1;
       })
-      this.setState({ menuItems: items });
-      return 1;
-    })
-    .catch((error) => { 
-      console.log(error);
-      return 0;
-    });
+      .catch((error) => { 
+        console.log(error);
+        return 0;
+      });
   }
 
   render () {
@@ -92,8 +91,6 @@ class Recommendpage extends React.Component {
           <Button text={"Go"} color={"#EF39FF"} handleClick={() => this.generateRecs()}/>
         </FilterContainer>
         {this.state.menuItems}
-        <p>{this.state.recommendee}</p>
-        <p><Link to="/menuitem:id">Click here to view menu item</Link></p>
       </React.Fragment>
     )
   }
