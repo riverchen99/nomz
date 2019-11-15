@@ -32,6 +32,29 @@ const PROPS_MAPPING = {
 const fetchRecipeData = async (recipeId, recipeSize) => {
   const $ = await fetchData(recipeUrl(recipeId, recipeSize));
   const name = $('h2').text().trim();
+  if (name === '') {
+    return {
+      name: '',
+      description: '',
+      ingredients: '',
+      allergens: [],
+      props: {
+        vegetarian: false,
+        vegan: false,
+        peanuts: false,
+        treeNuts: false,
+        wheat: false,
+        gluten: false,
+        soy: false,
+        dairy: false,
+        eggs: false,
+        shellfish: false,
+        fish: false,
+        halal: false,
+        lowCarbon: false,
+      },
+    };
+  }
   // main props
   const ingredientsEle = $('div.ingred_allergen').children();
   const ingredients = (ingredientsEle.length > 0)
@@ -57,7 +80,7 @@ const fetchRecipeData = async (recipeId, recipeSize) => {
   $('div.productinfo').find('img').each((_i, imgEle) => {
     props[PROPS_MAPPING[$(imgEle).attr('alt')]] = true;
   });
-  const description = $('div.description').text();
+  const description = $('div.description').text().trim();
 
   // nutrition information
   // const nutrition = {};
@@ -106,9 +129,10 @@ const fetchMenuData = async (date) => {
           const menuItemLinkEle = $(menuItemEle).find('a.recipelink');
           const recipeId = menuItemLinkEle.attr('href').split('/')[4];
           const recipeSize = menuItemLinkEle.attr('href').split('/')[5];
+          const name = menuItemLinkEle.text();
           // console.log(`    ${recipeId}`);
           items.push({
-            recipeId, recipeSize, diningHall, diningSection, menuPeriod, menuDate,
+            name, recipeId, recipeSize, diningHall, diningSection, menuPeriod, menuDate,
           });
         });
       });
@@ -183,7 +207,7 @@ const getUpdatedMenu = async (date) => {
     // create menu item
     menuItems.push(new MenuItem({
       _id: item.recipeId,
-      name: recipe.name,
+      name: item.name,
       rating: null,
       description: recipe.description,
       ingredients: recipe.ingredients,
@@ -218,9 +242,9 @@ const testFunction = async () => {
   //
   const dayMenu = await getUpdatedMenu('2019-11-13');
   console.log('finished menu');
-  console.log(dayMenu);
+  // console.log(dayMenu);
   for (let i = 0; i < dayMenu.items.length; i += 1) {
-    dayMenu.items[i].save();
+    dayMenu.items[i].update();
     console.log('saving item');
     console.log(dayMenu.items[i]);
   }
