@@ -19,5 +19,9 @@
       "css": [ "lib/star-rating-svg.css" ],
       "js": [ "lib/jquery-3.4.1.js", "lib/jquery.star-rating-svg.js", "main.js" ]
     }
-  ]
+  ],
+  "icons": {
+    "48": "img/logo_48.png",
+    "128": "img/logo_128.png"
+  }
 }
