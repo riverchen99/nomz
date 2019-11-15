@@ -10,13 +10,14 @@ configure({ adapter: new Adapter() });
 describe('Single menu item page component', () => {
   it('should render correctly with given path name and state', () => {
     const component = shallow(
-      <MemoryRouter initialEntries={[{ pathname: "/menuitem/Sandwich" , state: {name: 'Sandwich', id: '0'}}]}>
+      <MemoryRouter initialEntries={[{ pathname: '/menuitem/Sandwich', state: { name: 'Sandwich', id: '0' } }]}>
         <MenuItempage />
-      </MemoryRouter>);
+      </MemoryRouter>,
+    );
     expect(component).toMatchSnapshot();
   });
-  // NOTE:  This test is having issues due to getting this.prop.location.state to work during mounting.
-  //        Will work on in Part C.
+  // NOTE:  This test is having issues due to getting this.prop.location.state
+  //        to work during mounting. Will work on in Part C.
 
   // it('componentDidMount gets called', () => {
   //   const component = mount(

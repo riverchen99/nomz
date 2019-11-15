@@ -14,16 +14,22 @@ describe('Input to submit text review', () => {
     expect(component).toMatchSnapshot();
   });
   it('should render correctly with onReviewSubmit and onReviewChange', () => {
-    const component = mount(<ReviewForm onReviewSubmit={submitFn} onReviewChange={reviewChangeFn} />);
+    const component = mount(
+      <ReviewForm onReviewSubmit={submitFn} onReviewChange={reviewChangeFn} />,
+    );
     expect(component).toMatchSnapshot();
   });
   it('calls the onReviewSubmit function correctly', () => {
-    const component = mount(<ReviewForm onReviewSubmit={submitFn} onReviewChange={reviewChangeFn} />);
+    const component = mount(
+      <ReviewForm onReviewSubmit={submitFn} onReviewChange={reviewChangeFn} />,
+    );
     component.props().onReviewSubmit();
     expect(submitFn).toHaveBeenCalled();
   });
   it('calls the onReviewChange function correctly', () => {
-    const component = mount(<ReviewForm onReviewSubmit={submitFn} onReviewChange={reviewChangeFn} />);
+    const component = mount(
+      <ReviewForm onReviewSubmit={submitFn} onReviewChange={reviewChangeFn} />,
+    );
     component.props().onReviewChange();
     expect(reviewChangeFn).toHaveBeenCalled();
   });

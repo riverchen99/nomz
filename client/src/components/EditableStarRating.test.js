@@ -9,7 +9,7 @@ configure({ adapter: new Adapter() });
 const clickFn = jest.fn();
 describe('Editable star rating component', () => {
   it('should render correctly with no props', () => {
-    const component = shallow(<EditableStarRating/>);
+    const component = shallow(<EditableStarRating />);
     expect(component).toMatchSnapshot();
   });
   it('should render correctly with multiple props', () => {
