@@ -11,7 +11,7 @@ export const StyledMenuItempage = styled.div`
 
 export const MenuItemBox = styled.div`
   height: 100%;
-  width: 60%;
+  width: 90%;
   display: flex;
   flex-direction: column;
 `;

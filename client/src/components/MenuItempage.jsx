@@ -30,18 +30,36 @@ class MenuItempage extends React.Component {
     this.getReviews();
   }
 
+  /**
+   * Function that handles changing the state of the starRating,
+   * passed as a prop to the EditableStarRating component.
+   * @param {Number} rating - Holds newly updated rating value
+   */
   handleRatingChange(rating) {
     this.setState({starRating: rating });
   }
-
+  
+  /**
+   * Function that handles changing the state of the review 
+   * as you type
+   * @param {String} review - Holds updated value for review text
+   */
   handleReviewChange(review) {
     this.setState({reviewText: review });
   }
 
+  /**
+   * Function that handles checking to make sure a rating is 
+   * eligible to be submitted, and submits it to the data via
+   * an API POST request if eligible.
+   * Once submitted, the reviews on the page are re-rendered
+   */
   handleReviewSubmit() {
+    // this code assumes we will be passed in a location.state via the router
     const { id } = this.props.location.state;
+    // only allow review to be submitted if a rating is given (0 by default)
     if (this.state.starRating < 1) {
-      alert('Please give a rating.');
+      alert('Please give a rating.'); 
     }
     else {
       axios.post('/api/reviews', {
@@ -55,7 +73,12 @@ class MenuItempage extends React.Component {
     }
   }
 
+  /**
+   * Function that calls the API to get information about the 
+   * current menu item and sets the states to hold the info.
+   */
   getMenuItem() {
+    // this code assumes we will be passed in a location.state via the router
     const { name, id } = this.props.location.state;
     this.setState( { itemName: name });
     axios.get(`/api/menuitems/${id}`)
@@ -72,10 +95,17 @@ class MenuItempage extends React.Component {
       });
   }
 
+  /**
+   * Function to grab all of the reviews for the current menu 
+   * item from the api via axios get call and generate
+   * the list of ReviewComponents that will be displayed
+   * on the page.
+   */
   getReviews() {
     const { id } = this.props.location.state;
     axios.get(`/api/reviews`)
       .then((resp) => {
+        // filter for reviews of the current menu item only
         const reviews = resp.data.filter(review => 
           review.menuItem === id);
         const itemReviews = reviews.map(review =>  
