@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Menu Item component has correct Link path to menu item review page 1`] = `ReactWrapper {}`;
+
+exports[`Menu Item component should render correctly given props 1`] = `ReactWrapper {}`;
+
+exports[`Menu Item component should render correctly without props 1`] = `ShallowWrapper {}`;
