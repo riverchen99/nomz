@@ -262,7 +262,7 @@ describe('Recommendations API works correctly', () => {
 
   describe('Get Recommendations Test 2: Trivial time filtering', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T08:30&userId=EmptyUser');
+      const res = await request(app).get('/api/recommendations?date=2019-11-14T08:30-0800');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(3);
     });
@@ -270,7 +270,7 @@ describe('Recommendations API works correctly', () => {
 
   describe('Get Recommendations 3: Edge start time filtering', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T07:00&userId=EmptyUser');
+      const res = await request(app).get('/api/recommendations?date=2019-11-14T07:00-0800');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(3);
     });
@@ -278,7 +278,7 @@ describe('Recommendations API works correctly', () => {
 
   describe('Get Recommendations 4: Edge edge morning time filtering', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T09:00&userId=EmptyUser');
+      const res = await request(app).get('/api/recommendations?date=2019-11-14T09:00-0800');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(3);
     });
@@ -286,7 +286,7 @@ describe('Recommendations API works correctly', () => {
 
   describe('GET Endpoint Test 4: Edge edge lunch time filtering', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T14:00&userId=EmptyUser');
+      const res = await request(app).get('/api/recommendations?date=2019-11-14T14:00-0800');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(6);
     });
@@ -294,7 +294,7 @@ describe('Recommendations API works correctly', () => {
 
   describe('GET Endpoint Test 5: Unavailable time filtering', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T02:00&userId=EmptyUser');
+      const res = await request(app).get('/api/recommendations?date=2019-11-14T02:00-0800');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(0);
     });
@@ -302,7 +302,7 @@ describe('Recommendations API works correctly', () => {
 
   describe('Get Recommendations 6: Breakfast egg restriction', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T09:00&userId=Mufasa');
+      const res = await request(app).get('/api/recommendations?date=2019-11-14T09:00-0800&userId=Mufasa');
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(2);
     });
