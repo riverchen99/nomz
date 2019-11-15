@@ -1,18 +1,27 @@
+/**
+ @module recommendations
+ */
 
 const MenuItem = require('../models/MenuItem');
 const Menu = require('../models/Menu');
 const User = require('../models/User');
 const Restaurant = require('../models/Restaurant');
-/*
-
-IN PROGRESS FOR USER FILTERS
-HAVEN'T BEEN IMPLEMENTED FOR
-DB POPULATION SO COMMENTING THIS OUT
-const Review = require('../models/Review');
-const User = require('../models/User');
-*/
 
 
+/**
+ * Auxiliary function to return whether a menuItem is included in the filtered results
+ * based on whether its props (dietary tags) are compatible with the user's filters. If
+ * checking for preferences, a menu item should have all or  * most of props identified
+ * in the user preferences. If checking for restrictions, a menu item must not have any
+ * props that the user restricted on order to be included.
+ *
+ * @param {string[]} infoArray - Contains a list of either user restrictions or
+ * preferences to check
+ * @param {MenuItem.props} props - Desc
+ * @param {string} type - 'preferences' or 'restrictions'. Used to relate any matches
+ * to type of filtering.
+ * @return {Boolean} - Whether the menu item should be included
+ */
 function propsCheck(infoArray, props, type) {
   let matchScore = 0;
   const maxScore = infoArray.length;
@@ -22,101 +31,8 @@ function propsCheck(infoArray, props, type) {
     return true;
   }
   for (let i = 0; i < infoArray.length; i += 1) {
-    switch (infoArray[i]) {
-      case ('vegetarian'):
-      {
-        if (props.vegetarian) {
-          matchScore += 1;
-        }
-        break;
-      }
-      case ('vegan'):
-      {
-        if (props.vegan) {
-          matchScore += 1;
-        }
-        break;
-      }
-      case ('peanuts'):
-      {
-        if (props.peanuts) {
-          matchScore += 1;
-        }
-        break;
-      }
-      case ('treeNuts'):
-      {
-        if (props.treeNuts) {
-          matchScore += 1;
-        }
-        break;
-      }
-      case ('wheat'):
-      {
-        if (props.wheat) {
-          matchScore += 1;
-        }
-        break;
-      }
-      case ('gluten'):
-      {
-        if (props.gluten) {
-          matchScore += 1;
-        }
-        break;
-      }
-      case ('soy'):
-      {
-        if (props.soy) {
-          matchScore += 1;
-        }
-        break;
-      }
-      case ('dairy'):
-      {
-        if (props.dairy) {
-          matchScore += 1;
-        }
-        break;
-      }
-      case ('eggs'):
-      {
-        if (props.eggs) {
-          matchScore += 1;
-        }
-        break;
-      }
-      case ('shellfish'):
-      {
-        if (props.shellfish) {
-          matchScore += 1;
-        }
-        break;
-      }
-      case ('fish'):
-      {
-        if (props.fish) {
-          matchScore += 1;
-        }
-        break;
-      }
-      case ('halal'):
-      {
-        if (props.halal) {
-          matchScore += 1;
-        }
-        break;
-      }
-      case ('lowCarbon'):
-      {
-        if (props.lowCarbon) {
-          matchScore += 1;
-        }
-        break;
-      }
-      default: {
-        matchScore += 0;
-      }
+    if (props[infoArray[i]]) {
+      matchScore += 1;
     }
   }
   if (type === 'restrictions') {
@@ -137,7 +53,14 @@ function propsCheck(infoArray, props, type) {
   return true;
 }
 
-// Used by both ingredients and allergens
+/**
+ * Auxiliary function to return whether a menu item's ingredients comply with user restrictions.
+ * If any restricted item is found, it does not comply.
+ *
+ * @param {string[]} restrictions - Contains a list of the user restrictions
+ * @param {string[]} info - Information to search through. Either allergen or ingredient information
+ * @return {Boolean} - Return whether any restricted items are listed in the menu item information
+ */
 function restrictionCheck(restrictions, info) {
   // var infoArray = info.split(", ");
   if (restrictions.length === 0 || info.length === 0) {
@@ -155,7 +78,16 @@ function restrictionCheck(restrictions, info) {
   return true;
 }
 
-function itemCompatibilty(preferences, restrictions, menuItem) {
+/**
+ * Checks if a menuItem is included in the filtered results based on whethers its
+ * dietary information complies with the user preferences and restrictions
+ *
+ * @param {string[]} preferences - Array of user preferences that a menu item should have
+ * @param {string[]} restrictions - Array of user restrictions that a menu item cannot have
+ * @param {MenuItem} type - MenuItem object to check for compliance of user filters
+ * @return {Boolean} - Whether the menu item complies with user filters
+ */
+function itemCompatibility(preferences, restrictions, menuItem) {
   const prefProps = (propsCheck(preferences, menuItem.props, 'preferences'));
   const restrictProps = (propsCheck(restrictions, menuItem.props, 'restrictions'));
   const ingredientCheck = restrictionCheck(restrictions, menuItem.ingredients);
@@ -164,6 +96,15 @@ function itemCompatibilty(preferences, restrictions, menuItem) {
 }
 
 
+/**
+ * Returns an array of MenuItem objects from the
+ *
+ * @param {string[]} availableMenuItemIds- Array of object IDs for MenuItem candidates
+ * @param {string} restaurantFilter - name of restaurant, if applicable. Empty string otherwise
+ * @param {string[]} preferences - Array of user preferences to filter through menu items by
+ * @param {string[]} restrictions - Array of user restrictions to filter out menu items by
+ * @return {MenuItem[]} - Array of MenuItems the comply with the applicable filters
+ */
 async function generateRecommendations(
   availableMenuItemIds,
   restaurantFilter,
@@ -200,7 +141,7 @@ async function generateRecommendations(
     // These booleans will be populated by user info
   }
   if (filterRestrictions || filterPreferences) {
-    results = results.filter((menuItem) => itemCompatibilty(preferences, restrictions, menuItem));
+    results = results.filter((menuItem) => itemCompatibility(preferences, restrictions, menuItem));
   }
 
   results.sort((a, b) => b.rating - a.rating);
@@ -210,9 +151,23 @@ async function generateRecommendations(
   return results;
 }
 
+/**
+ * Return recommended menu items based on request query
+ * @param {express.Request} req - The express request object.
+ * @param {Object} req.query - Object containing properties to filter for the desired resource.
+ * (Automatically filled by Express from URL params)
+ * @param {Object} req.query.day - day
+ * @param {Object} req.query.time - time period
+ * @param {Object} req.query.userId - name of user whose information will be used to
+ * generate recommendations
+ * @param {express.Response} res - The express response object indicating success or failure.
+ * @return {MenuItem[]} - Array of MenuItems the comply with the applicable filters
+ */
 async function recommendationController(req, res) {
   // call this with
   // GET /recommendations?day=whatver&time=THH:MM&userId=whatever
+
+  /*
   const dayIn = req.query.day;
   const { time } = req.query;
   let dateStr = '';
@@ -223,7 +178,9 @@ async function recommendationController(req, res) {
     dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate() + 1}${time}-0800`;
   }
   console.log(dateStr);
-  const date = new Date(dateStr);
+  */
+
+  const date = new Date(req.query.date);
 
   console.log(date);
   // const userId = req.query.userId // to fix lint error
@@ -248,15 +205,12 @@ async function recommendationController(req, res) {
   let preferences = [];
   let restrictions = [];
   const restaurant = '';
-  const userInfo = req.query.userId;
-  
-  if (userInfo.length !== 0) {
-    if (userInfo !== 'everyone'){
-      const user = await User.find({ name: userInfo });
-      if (user.length !== 0) {
-        preferences = user[0].preferences;
-        restrictions = user[0].restrictions;
-      }
+
+  if (req.query.userId !== undefined) {
+    const user = await User.find({ name: req.query.userId });
+    if (user.length !== 0 && user !== 'everyone') {
+      preferences = user[0].preferences;
+      restrictions = user[0].restrictions;
     }
   }
 
@@ -269,4 +223,6 @@ async function recommendationController(req, res) {
 }
 
 
-module.exports = { recommendationController };
+module.exports = {
+  recommendationController, propsCheck, restrictionCheck, generateRecommendations,
+};

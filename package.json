@@ -28,10 +28,12 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "jsdoc": "^3.6.3",
     "mongoose": "^5.7.7"
   },
   "devDependencies": {
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1",
+    "enzyme-to-json": "^3.4.3",
     "eslint": "^6.6.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
@@ -39,7 +41,9 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.16.0",
     "jest": "^24.9.0",
+    "jsdoc": "^3.6.3",
     "nodemon": "^1.19.4",
+    "react-test-renderer": "^16.11.0",
     "supertest": "^4.0.2"
   },
   "engines": {
@@ -53,6 +57,9 @@
     "testPathIgnorePatterns": [
       "/client/"
     ],
-    "testRegex": "tests/.*\\.(js|jsx)$"
+    "testRegex": "tests/.*\\.(js|jsx)$",
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ]
   }
 }
