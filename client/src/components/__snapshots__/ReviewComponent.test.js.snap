@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Displaying review component should render correctly with given review prop 1`] = `ReactWrapper {}`;
+
+exports[`Displaying review component should render correctly without props 1`] = `ShallowWrapper {}`;

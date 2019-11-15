@@ -16,11 +16,15 @@ class ReviewComponent extends React.Component {
   }
 
   componentDidMount() {
-    axios.get(`/api/users/${this.props.review.author}`)
+    if (this.props.review != null) {
+      axios.get(`/api/users/${this.props.review.author}`)
       .then((resp) => {
-        this.setState({ userName: resp.data[0].name });
+        this.setState({ userName: resp.data[0].name, starRating: this.props.review.rating, textReview: this.props.review.comments });
       })
-    this.setState({ starRating: this.props.review.rating, textReview: this.props.review.comments });
+      return 0;
+    }
+    else
+      return 1;
   }
 
   render() {
