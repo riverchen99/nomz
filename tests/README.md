@@ -13,3 +13,7 @@ Recommendation Endpoint Tests:
  - Test Cases 1, 2: Filter the list of available Menus (and MenuItems) by time.
  - Test Cases 3, 4, 5: Filter the list of available Menus (and MenuItems) by time. Edge cases for start time, and unavailable times.
  - Test Cases 6: Test the dietary restriction filtering functionality. Verify that only two available MenuItems are returned to the user.
+
+Scraper Tests:
+ - Recipe Parser: Call the parser on a known menu item that exercises several elements (ingredients, allergens, and special properties). Checks that the parsed object matches an expected object that was manually vetted.
+ - Menu Parser: Call the parser on a known menu page with duplicate menu items, and different available dining halls. Checks that the parsed object matches an expected object that was manually vetted.

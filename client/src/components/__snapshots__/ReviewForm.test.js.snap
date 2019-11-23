@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Input to submit text review should render correctly with onReviewSubmit and onReviewChange 1`] = `ReactWrapper {}`;
+
+exports[`Input to submit text review should render correctly without props 1`] = `ShallowWrapper {}`;

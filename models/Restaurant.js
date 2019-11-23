@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 // Create Schema
 
 /**
- * @class Restaurent
+ * @class Restaurant
  * @property {string} name - The name of the restaurant.
  * @property {string[]} stations - Array containing names of stations at the restaurant.
  * @property {mongoose.Schema.Types.ObjectId[]} menus -

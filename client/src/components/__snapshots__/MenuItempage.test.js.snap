@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Single menu item page component should render correctly with given path name and state 1`] = `ShallowWrapper {}`;
