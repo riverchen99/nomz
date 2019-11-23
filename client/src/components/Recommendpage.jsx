@@ -31,6 +31,7 @@ class Recommendpage extends React.Component {
     this.updateRecommendee = this.updateRecommendee.bind(this);
     this.updateDay = this.updateDay.bind(this);
     this.generateRecs = this.generateRecs.bind(this);
+    this.generateRecURL = this.generateRecURL.bind(this);
   }
 
   componentDidMount() {
@@ -69,12 +70,27 @@ class Recommendpage extends React.Component {
   }
 
   /**
+  * Helper function that generates the URL of the recommendations get request
+  * @return {string} - Returns string form of axios get request url
+  */
+  generateRecURL() {
+    const { day, recommendee } = this.state;
+    const thing = new Date();
+    const month = thing.getMonth() + 1;
+    let date = thing.getDate();
+    if (day === 'tomorrow'){
+      date += 1;
+    }
+      return `api/recommendations?date=2019-${month}-${date}T12:00-0800&userId=${recommendee}`;
+  }
+
+  /**
   * Function that makes axios call to backend to fetch recommended items based on input values
   * @return {Number} - 1 denotes success, 0 denotes failure
   */
   generateRecs() {
-    const { day, recommendee } = this.state;
-    axios.get(`api/recommendations?date=2019-11-14T12:00-0800&userId=${recommendee}`)
+    const apiURL = this.generateRecURL();
+    axios.get(apiURL)
       .then((resp) => {
         const items = resp.data.map((item) => {
           return (
