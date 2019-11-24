@@ -1,5 +1,5 @@
 
-const Recommendations = require('../controllers/recommendations');
+const Utils = require('../controllers/recommendations-utils');
 /**
  * Note: The following tests auxiliary functions. These only work
  * if they are exposed to the client so it's
@@ -13,35 +13,35 @@ describe('Sample Test for when auxiliary functions are no longer exposed', () =>
 
 describe('Restriction Check Test 1: empty list', () => {
   it('should return true ', async () => {
-    const res = Recommendations.restrictionCheck([], []);
+    const res = Utils.restrictionCheck([], []);
     expect(res).toBe(true);
   });
 });
 
 describe('Restriction Check Test 2: Empty restriction search', () => {
   it('should find not any restricted items... return true', async () => {
-    const res = Recommendations.restrictionCheck([], ['eggs']);
+    const res = Utils.restrictionCheck([], ['eggs']);
     expect(res).toBe(true);
   });
 });
 
 describe('Restriction Check Test 3: Empty allergen/ingredient search', () => {
   it('should not find restricted item ...return true', async () => {
-    const res = Recommendations.restrictionCheck(['eggs'], []);
+    const res = Utils.restrictionCheck(['eggs'], []);
     expect(res).toBe(true);
   });
 });
 
 describe('Restriction Check Test 4: single restriction search', () => {
   it('should find restricted item ...return false', async () => {
-    const res = Recommendations.restrictionCheck(['eggs'], ['eggs']);
+    const res = Utils.restrictionCheck(['eggs'], ['eggs']);
     expect(res).toBe(false);
   });
 });
 
 describe('Restriction Check Test 5: multiple restriction match', () => {
   it('should find a single restrict item return false', async () => {
-    const res = Recommendations.restrictionCheck(['eggs', 'fish', 'meat'], ['fish', 'peanuts', 'potato']);
+    const res = Utils.restrictionCheck(['eggs', 'fish', 'meat'], ['fish', 'peanuts', 'potato']);
     expect(res).toBe(false);
   });
 });
@@ -53,7 +53,7 @@ describe('Props Check Test 1: ', () => {
       peanuts: false,
       gluten: false,
     };
-    const res = Recommendations.propsCheck(['gluten'], props, 'restrictions');
+    const res = Utils.propsCheck(['gluten'], props, 'restrictions');
     expect(res).toBe(true);
   });
 });
@@ -65,7 +65,7 @@ describe('Props Check Test 2: ', () => {
       peanuts: false,
       gluten: false,
     };
-    const res = Recommendations.propsCheck(['fish'], props, 'restrictions');
+    const res = Utils.propsCheck(['fish'], props, 'restrictions');
     expect(res).toBe(true);
   });
 });
@@ -76,7 +76,7 @@ describe('Props Check Test 3: ', () => {
       vegetarian: true,
       vegan: true,
     };
-    const res = Recommendations.propsCheck(['vegan'], props, 'preferences');
+    const res = Utils.propsCheck(['vegan'], props, 'preferences');
     expect(res).toBe(true);
   });
 });
@@ -87,7 +87,7 @@ describe('Props Check Test 4: ', () => {
       vegetarian: true,
       eggs: true,
     };
-    const res = Recommendations.propsCheck(['vegan'], props, 'preferences');
+    const res = Utils.propsCheck(['vegan'], props, 'preferences');
     expect(res).toBe(false);
   });
 });
@@ -99,7 +99,7 @@ describe('Props Check Test 5: ', () => {
       vegan: true,
       peanuts: true,
     };
-    const res = Recommendations.propsCheck(['vegan', 'vegetarian', 'halal'], props, 'preferences');
+    const res = Utils.propsCheck(['vegan', 'vegetarian', 'halal'], props, 'preferences');
     expect(res).toBe(true);
   });
 });
@@ -156,7 +156,7 @@ item1 = new MenuItem({
 describe('Props Check Test 6: ', () => {
   it('finds MOST of the preference tags....return false', async () => {
 
-    const res = Recommendations.propsCheck(['vegan', 'vegetarian', 'halal'], props, 'preferences');
+    const res = Utils.propsCheck(['vegan', 'vegetarian', 'halal'], props, 'preferences');
     expect(res).toBe(false);
   });
 });
