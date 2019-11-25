@@ -4,6 +4,7 @@
 
 const Review = require('../models/Review');
 const MenuItem = require('../models/MenuItem');
+const Menu = require('../models/Menu');
 
 /**
  * Higher order function to create a generic controller for GET endpoint requests.
@@ -30,9 +31,19 @@ const createGenericGetController = function (model) {
     }
     console.log(req.query);
     const query = req.params.ids === undefined ? req.query : { _id: { $in: req.params.ids.split(';') } };
-    model.find(query)
-      .then((results) => res.json(results))
-      .catch((err) => { console.log(err); res.status(500).send(err); });
+
+    model.find(query).then(async (results) => {
+      if (model === Menu) {
+        results = JSON.parse(JSON.stringify(results))
+        // notice, we could normally use mongoose' populate functionality, but it lacks support for [String] ref types 
+        for (var i = 0; i < results.length; i++) {
+          results[i].menuItems = await MenuItem.find({ _id: { $in: results[i].menuItems }});
+          console.log(results[i].menuItems)
+        }
+      }
+
+      res.json(results);
+    }).catch((err) => { console.log(err); res.status(500).send(err); });
   };
   return genericGetController;
 };
