@@ -1,9 +1,80 @@
+
 /**
  @module recommendations-utils
  */
 
 const Restaurant = require('../models/Restaurant');
 const MenuItem = require('../models/MenuItem');
+const Review = require('../models/Review');
+
+
+function similarityScore(menuItem1, menuItem2) {
+  // ingredient score
+  console.log(menuItem2);
+  const ingredients1 = menuItem1.ingredients;
+  const ingredients2 = menuItem2.ingredients;
+  console.log(`Ingredients2: ${ingredients2}`);
+  let score = 0;
+  // assume imgredients listed by importance
+  const len = ingredients1.length;
+  for (let i = 0; i < ingredients1.length; i += 1) {
+    if (ingredients2.includes(ingredients1[i])) {
+      score += (len - i);
+    }
+  }
+
+  const prop1 = menuItem1.props;
+  const prop2 = menuItem2.props;
+  Object.keys(prop1).forEach((key) => {
+    if (prop1[key] === prop2[key]) {
+      score += 1;
+    }
+  });
+  return score;
+}
+
+function weightedRecommendations(menuItems, reviewed) {
+  const ratingWeight = 10;
+  const dict = []; // create an empty array
+
+
+  for (let i = 0; i < menuItems.length; i += 1) {
+    let cumeScore = 0;
+    const menuItem = menuItems[i];
+    // Score rating
+    cumeScore += (menuItem.rating * ratingWeight);
+    // Score similarity of item to user history
+    for (let j = 0; j < reviewed.length; j += 1) {
+      console.log('Menu Item: ', menuItem);
+      console.log('Reviewed Item: ', reviewed[j]);
+      if (menuItem._id === reviewed[j]._id) {
+        // standard similarity score
+        cumeScore += menuItem.ingredients.length;
+        // Extra points for being in user history
+        cumeScore += menuItem.rating * ratingWeight;
+      } else {
+        cumeScore += similarityScore(menuItem, reviewed[j]);
+      }
+    }
+    // Cume score
+    dict.push({
+      item: menuItem,
+      score: cumeScore,
+    });
+  }
+
+  dict.sort((a, b) => b.score - a.score);
+  return dict;
+}
+
+async function getUserReviewedItems(user, ratingThresh) {
+  const reviews = await Review.find({ author: user, rating: { $gte: ratingThresh } });
+  const menuItemIds = [];
+  for (let i = 0; i < reviews.length; i += 1) {
+    menuItemIds.push((reviews[i]).menuItem);
+  }
+  return menuItemIds;
+}
 
 /**
  * Return whether a menuItem is included in the filtered results
@@ -23,7 +94,7 @@ const MenuItem = require('../models/MenuItem');
 function propsCheck(infoArray, props, type) {
   let matchScore = 0;
   const maxScore = infoArray.length;
-  console.log(infoArray);
+  // console.log(infoArray);
   if (maxScore === 0) {
     // no restrictions/preferences to worry about so we can include it
     return true;
@@ -108,7 +179,7 @@ async function generateRecommendations(
   availableMenuItemIds,
   restaurantFilter,
   preferences,
-  restrictions,
+  restrictions, reviewedItems,
 ) {
   // look up menuItem by menuItemIds
 
@@ -128,7 +199,7 @@ async function generateRecommendations(
 
   let results = await MenuItem.find({ _id: { $in: availableMenuItemIds } });
 
-
+  const reviewed = await MenuItem.find({ _id: { $in: reviewedItems } });
   // refactor this
   for (let i = 0; i < results.length; i += 1) {
     if (filterRestaurant) {
@@ -143,7 +214,19 @@ async function generateRecommendations(
     results = results.filter((menuItem) => itemCompatibility(preferences, restrictions, menuItem));
   }
 
+  // add score to remaining results that we want to sort
+  const weightedResults = weightedRecommendations(results, reviewed);
+  console.log('Weighted');
+  console.log(weightedResults);
+
+  const scoredResults = weightedResults.map((a) => a.item);
+
+  console.log('Final');
+  console.log(scoredResults);
+
+  // Original seen for debugging purposes
   results.sort((a, b) => b.rating - a.rating);
+  console.log('Regular');
   console.log(results);
 
 
@@ -151,5 +234,5 @@ async function generateRecommendations(
 }
 
 module.exports = {
-  propsCheck, restrictionCheck, generateRecommendations,
+  propsCheck, restrictionCheck, generateRecommendations, getUserReviewedItems,
 };

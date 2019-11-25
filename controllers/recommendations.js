@@ -62,9 +62,12 @@ async function recommendationController(req, res) {
   let preferences = [];
   let restrictions = [];// 'eggs'];
   const restaurant = '';
+  let reviewedItems = [];
+
   if (req.query.userId !== undefined) {
     const user = await User.find({ name: req.query.userId });
     if (user.length !== 0 && user !== 'everyone') {
+      reviewedItems = await Utils.getUserReviewedItems(user[0], 3);
       preferences = user[0].preferences;
       restrictions = user[0].restrictions;
     }
@@ -74,7 +77,7 @@ async function recommendationController(req, res) {
   const recommendations = await Utils.generateRecommendations(menuItemIds,
     restaurant,
     preferences,
-    restrictions);
+    restrictions, reviewedItems);
   res.json(recommendations);
 }
 
