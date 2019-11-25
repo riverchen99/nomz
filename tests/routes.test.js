@@ -176,9 +176,9 @@ function tearDownDb() {
 describe('CRUD API Endpoints works correctly', () => {
   beforeAll(() => runServer(TEST_DB_URI));
 
-  beforeEach(() => { return seedMenuItemData() } );
+  beforeEach(() => seedMenuItemData());
 
-  afterEach(() => { return tearDownDb() });
+  afterEach(() => tearDownDb());
 
   afterAll(() => closeServer());
 
@@ -247,7 +247,7 @@ describe('Recommendations API works correctly', () => {
     seedRestaurantData(),
   ]));
 
-  afterEach(() => { return tearDownDb() });
+  afterEach(() => tearDownDb());
 
   afterAll(() => closeServer());
 
