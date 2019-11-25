@@ -33,7 +33,7 @@ function similarityScore(menuItem1, menuItem2) {
   return score;
 }
 
-function weightedRecommendations(menuItems, reviewed) {
+function weightedRecommendations(menuItems, reviewed, reviewedRatings) {
   const ratingWeight = 10;
   const dict = []; // create an empty array
 
@@ -51,7 +51,7 @@ function weightedRecommendations(menuItems, reviewed) {
         // standard similarity score
         cumeScore += menuItem.ingredients.length;
         // Extra points for being in user history
-        cumeScore += menuItem.rating * ratingWeight;
+        cumeScore += reviewedRatings[i] * ratingWeight;
       } else {
         cumeScore += similarityScore(menuItem, reviewed[j]);
       }
@@ -69,11 +69,14 @@ function weightedRecommendations(menuItems, reviewed) {
 
 async function getUserReviewedItems(user, ratingThresh) {
   const reviews = await Review.find({ author: user, rating: { $gte: ratingThresh } });
-  const menuItemIds = [];
+  const reviewedItems = [];
   for (let i = 0; i < reviews.length; i += 1) {
-    menuItemIds.push((reviews[i]).menuItem);
+    reviewedItems.push({
+      item: (reviews[i]).menuItem,
+      userRating: (reviews[i].rating),
+    });
   }
-  return menuItemIds;
+  return reviewedItems;
 }
 
 /**
@@ -179,7 +182,8 @@ async function generateRecommendations(
   availableMenuItemIds,
   restaurantFilter,
   preferences,
-  restrictions, reviewedItems,
+  restrictions,
+  reviewedItems,
 ) {
   // look up menuItem by menuItemIds
 
@@ -197,9 +201,15 @@ async function generateRecommendations(
       });
   }
 
+  let reviewedItemsIds = [];
+  let reviewedItemsRatings = [];
+  if (reviewedItems.length !== 0) {
+    reviewedItemsIds = reviewedItems.map((a) => a.item);
+    reviewedItemsRatings = reviewedItems.map((a) => a.userRating);
+  }
   let results = await MenuItem.find({ _id: { $in: availableMenuItemIds } });
 
-  const reviewed = await MenuItem.find({ _id: { $in: reviewedItems } });
+  const reviewed = await MenuItem.find({ _id: { $in: reviewedItemsIds } });
   // refactor this
   for (let i = 0; i < results.length; i += 1) {
     if (filterRestaurant) {
@@ -215,7 +225,7 @@ async function generateRecommendations(
   }
 
   // add score to remaining results that we want to sort
-  const weightedResults = weightedRecommendations(results, reviewed);
+  const weightedResults = weightedRecommendations(results, reviewed, reviewedItemsRatings);
   console.log('Weighted');
   console.log(weightedResults);
 
