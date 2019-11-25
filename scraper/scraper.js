@@ -222,7 +222,7 @@ const fetchMenuTimes = async (date) => {
  * @return {Object} - Returns an object encapsulating the fully collated data in
  * the form of MenuItem, Menu, and Restaurant Documents.
  */
-const getUpdatedMenu = async (
+const updateMenu = async (
   date,
   fetchMenu = fetchMenuData,
   fetchTimes = fetchMenuTimes,
@@ -266,10 +266,9 @@ const getUpdatedMenu = async (
       // we need to create a new menu doc
       const menuData = {
         mealPeriod: item.menuPeriod,
-        startTime: times[item.menuPeriod].startTime,
-        endTime: times[item.menuPeriod].endTime,
+        startTime: times[item.menuPeriod].start,
+        endTime: times[item.menuPeriod].end,
         restaurant: restaurants[item.diningHall]._id,
-        menuItems: [],
       };
       // we allow this await in the loop because it only fetches
       // the menu once per meal period.
@@ -279,7 +278,9 @@ const getUpdatedMenu = async (
       }
       menus[item.menuPeriod] = newMenu;
     }
-    menus[item.menuPeriod].menuItems.push(item.recipeId);
+    if (menus[item.menuPeriod].menuItems.indexOf(item.recipeId) === -1) {
+      menus[item.menuPeriod].menuItems.push(item.recipeId);
+    }
 
     // create menu item
     menuItemsData.push({
@@ -310,14 +311,17 @@ const getUpdatedMenu = async (
   // remove duplicate menu items
   const filteredItemsData = [];
   for (let i = 0; i < menuItemsData.length; i += 1) {
-    if (filteredItemsData.reduce((acc, item) => (acc || item._id === menuItemsData[i]._id), false)) {
+    if (!filteredItemsData.reduce(
+      ((acc, item) => (acc || item._id === menuItemsData[i]._id)),
+      false,
+    )) {
       filteredItemsData.push(menuItemsData[i]);
     }
   }
 
   // save menu items
-  for (let i = 0; i < menuItemsData.length; i += 1) {
-    const data = menuItemsData[i];
+  for (let i = 0; i < filteredItemsData.length; i += 1) {
+    const data = filteredItemsData[i];
     savePromises.push(MenuItem.findById(data._id).then((item) => {
       if (item === null) {
         return (new MenuItem(data)).save();
@@ -331,22 +335,16 @@ const getUpdatedMenu = async (
   await Promise.all(savePromises);
 };
 
-const createRestaurants = () => Promise.all([
+const createBlankRestaurants = () => Promise.all([
   Restaurant.create({ name: 'Covel' }),
   Restaurant.create({ name: 'Bruin Plate' }),
   Restaurant.create({ name: 'De Neve' }),
   Restaurant.create({ name: 'Feast' }),
 ]);
 
-const testF = async () => {
-  // console.log(await fetchRecipeData('075000', '1'));
-  await getUpdatedMenu('2019-11-13');
-  console.log('done');
-};
-
 module.exports = {
-  getUpdatedMenu,
-  testF,
+  updateMenu,
+  createBlankRestaurants,
 
   // these should be private
   // they are only exported so that we can test it with Jest
