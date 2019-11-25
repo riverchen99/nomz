@@ -25,16 +25,16 @@ export const ButtonContainer = styled.div`
 `;
 
 export const FloatRightContainer = styled.div`
-  width: 30%;
+  width: 40%;
   margin-left: 15%;
-  float: right;
-`;
-export const AFloatRightContainer = styled.div`
-  width: 100%;
   float: right;
 `;
 
 export const Row = styled.div`
-  width: 50%;
+  width: 40%;
   margin: 5px 0px;
+`;
+
+export const DaySelContainer = styled.div`
+  width: 50%;
 `;

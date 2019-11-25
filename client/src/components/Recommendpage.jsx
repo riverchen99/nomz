@@ -6,9 +6,9 @@ import {
   FilterContainer,
   Header,
   FloatRightContainer,
-  AFloatRightContainer,
   ButtonContainer,
   Row,
+  DaySelContainer,
 } from './StyledRecommendpage';
 import {
   recommendeeOptions,
@@ -87,6 +87,7 @@ class Recommendpage extends React.Component {
     axios.get(apiURL)
       .then((resp) => {
         console.log(resp.data);
+        
         const items = resp.data.map((item) => {
           return (
             <MenuItem
@@ -123,10 +124,12 @@ class Recommendpage extends React.Component {
             <Button text={"Go"} color={"#EF39FF"} handleClick={() => this.generateRecs()}/>
           </ButtonContainer>
           <Row>
-            {/* <FloatRightContainer> */}
+            <FloatRightContainer>
               <Select id="timesel" options={timeOptions} defaultValue={timeDefaultOption} onChange={(event) => this.updateTime(event)} />
-            {/* </FloatRightContainer> */}
-            <Select id="daysel" options={dayOptions} defaultValue={dayDefaultOption} onChange={(event) => this.updateDay(event)} />
+            </FloatRightContainer>
+            <DaySelContainer>
+            <Select id="daysel" options={dayOptions} defaultValue={dayDefaultOption} onChange={(event) => this.updateDay(event)} />                       
+            </DaySelContainer>
           </Row>
         </FilterContainer>
         {this.state.menuItems}
