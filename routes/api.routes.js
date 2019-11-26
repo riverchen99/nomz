@@ -5,14 +5,14 @@ const express = require('express');
 
 const router = express.Router();
 
-const MenuItem = require('../../models/MenuItem');
-const Restaurant = require('../../models/Restaurant');
-const Menu = require('../../models/Menu');
-const Review = require('../../models/Review');
-const User = require('../../models/User');
+const MenuItem = require('../models/MenuItem');
+const Restaurant = require('../models/Restaurant');
+const Menu = require('../models/Menu');
+const Review = require('../models/Review');
+const User = require('../models/User');
 
-const controllerFactory = require('../../controllers/genericControllerFactory');
-const recommendationControllers = require('../../controllers/recommendations');
+const controllerFactory = require('../controllers/genericControllerFactory');
+const recommendationControllers = require('../controllers/recommendations');
 
 /**
  * Helper function to create backend endpoints CRUD requests.
