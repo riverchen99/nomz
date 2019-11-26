@@ -2,3 +2,4 @@ node_modules/
 # in practice, remove the next comment to avoid committing keys to source control
 # config/keys.js
 docs/
+client/build/

@@ -28,6 +28,8 @@ class Recommendpage extends React.Component {
       mounted: false,
       recommendee: "everyone",
       day: "today",
+      loggedIn: false,
+      user: null,
       time: "8:00",
       menuItems: null
     };
@@ -39,6 +41,22 @@ class Recommendpage extends React.Component {
   }
 
   componentDidMount() {
+    axios.get('/auth/user').then(response => {
+      console.log(response.data)
+      if (!!response.data.user) {
+        this.setState({
+          loggedIn: true,
+          user: response.data.user
+        })
+      } else {
+        this.setState({
+          loggedIn: false,
+          user: null
+        })
+      }
+    })
+
+
     this.generateRecs();
     this.setState({
       mounted: true,
@@ -112,7 +130,7 @@ class Recommendpage extends React.Component {
   render () {
     return (
       <React.Fragment>
-        <Header>What are you craving?</Header>
+        <Header>What are you craving{this.state.loggedIn ? ", " + this.state.user.name : ""}?</Header>
         <FilterContainer>
           <Row>
             <FloatRightContainer>

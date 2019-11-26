@@ -34,15 +34,23 @@ const createGenericGetController = function (model) {
 
     model.find(query).then(async (results) => {
       if (model === Menu) {
-        results = JSON.parse(JSON.stringify(results))
-        // notice, we could normally use mongoose' populate functionality, but it lacks support for [String] ref types 
-        for (var i = 0; i < results.length; i++) {
-          results[i].menuItems = await MenuItem.find({ _id: { $in: results[i].menuItems }});
-          console.log(results[i].menuItems)
-        }
-      }
+        const resultsObject = JSON.parse(JSON.stringify(results));
+        // notice, we could normally use mongoose' populate functionality,
+        // but it lacks support for [String] ref types
 
-      res.json(results);
+        // disabling eslint for this line for max length restriction,
+        // --fix keeps removing line breaks, which then throws lint error
+        const queries = results.map((currentMenu) => MenuItem.find({ _id: { $in: currentMenu.menuItems } }).exec()); // eslint-disable-line
+        Promise.all(queries).then((documents) => {
+          documents.forEach((menuItems, idx) => {
+            resultsObject[idx].menuItems = menuItems;
+          });
+        }).then(() => {
+          res.json(resultsObject);
+        });
+      } else {
+        res.json(results);
+      }
     }).catch((err) => { console.log(err); res.status(500).send(err); });
   };
   return genericGetController;
