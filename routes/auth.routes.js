@@ -56,7 +56,7 @@ router.get('/loginSuccess', (req, res) => {
   if (req.query.extension === 1) {
     res.sendFile(path.join(__dirname, '..', 'extension', 'loggedIn.html'));
   } else {
-    res.redirect(CLIENT_HOME_PAGE_URL);
+    res.redirect((process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000') + CLIENT_HOME_PAGE_URL);
   }
 });
 
