@@ -40,6 +40,11 @@ export const timeOptions = [
   { value: '7:00', label: '7:00 PM' },
   { value: '7:30', label: '7:30 PM' },
   { value: '8:00', label: '8:00 PM' },
-
 ];
 export const timeDefaultOption = timeOptions[0];
+
+export const mealOptions = [
+  { value: "lunch", label: "Lunch" },
+  { value: "dinner", label: "Dinner" }
+];
+export const mealDefaultOption = mealOptions[0];
