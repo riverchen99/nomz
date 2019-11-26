@@ -66,7 +66,7 @@ router.get('/facebook/callback',
   },
   (req, res) => {
     console.log(`extension: ${req.query.extension}`);
-    res.redirect('/auth/loginSuccess');
+    res.redirect('/auth/loginSuccess' + req.query.extension ? '?extension=1' : '');
   });
 
 
