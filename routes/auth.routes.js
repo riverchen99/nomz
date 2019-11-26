@@ -1,6 +1,6 @@
 const express = require('express');
 const passport = require('passport');
-const path = require('path');
+//const path = require('path');
 const loginController = require('../controllers/login'); // eslint-disable-line
 
 const CLIENT_HOME_PAGE_URL = '/recommend';

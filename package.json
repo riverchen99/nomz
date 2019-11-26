@@ -4,7 +4,7 @@
   "description": "cs130 project",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "set HTTPS=true && node server.js",
     "server": "nodemon server.js",
     "install": "cd client && npm install",
     "test:server": "jest --testTimeout=10000",
