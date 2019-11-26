@@ -4,6 +4,7 @@ const path = require('path');
 const loginController = require('../controllers/login'); // eslint-disable-line
 
 const CLIENT_HOME_PAGE_URL = '/recommend';
+const CLIENT_LOGIN_PAGE_URL = '/';
 
 const router = express.Router();
 
@@ -28,17 +29,29 @@ router.post('/logout', (req, res) => {
   return res.json({ msg: 'no user to log out!' });
 });
 
+/*
+// old working code
+router.get('/facebook', passport.authenticate('facebook'));
+
+router.get(
+  '/facebook/callback',
+  passport.authenticate('facebook', {
+    successRedirect: CLIENT_HOME_PAGE_URL,
+    failureRedirect: CLIENT_LOGIN_PAGE_URL,
+  }),
+);
+*/
+
 router.get('/facebook', function (req, res, next) {
   passport.authenticate('facebook', { callbackURL: "/auth/facebook/callback" + (req.query.extension ? "?extension=1" : "") })(req, res, next);
 });
 
-// Facebook will redirect the user to this URL after approval.  Finish the
-// authentication process by attempting to obtain an access token.  If
-// access was granted, the user will be logged in.  Otherwise,
-// authentication has failed.
-
 router.get("/loginSuccess", (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'extension', 'loggedIn.html'));
+  if (req.query.extension === 1) {
+    res.sendFile(path.join(__dirname, '..', 'extension', 'loggedIn.html'));
+  } else {
+    res.redirect(CLIENT_HOME_PAGE_URL);
+  }
 });
 
 router.get("/facebook/callback",
@@ -52,6 +65,7 @@ router.get("/facebook/callback",
     res.redirect("/auth/loginSuccess")
   }
 );
+
 
 /*
 router.get('/facebook/callback', function(req, res, next) {
@@ -71,13 +85,7 @@ router.get('/facebook/callback', function(req, res, next) {
   }
 );
 */
-/*
-router.get(
-  '/facebook/callback',
-  passport.authenticate('facebook', {
-    successRedirect: CLIENT_HOME_PAGE_URL,
-    // failureRedirect: '/login',
-  }),
-);
-*/
+
+
+
 module.exports = router;

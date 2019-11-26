@@ -1,3 +1,4 @@
+// open links in new tab
 document.addEventListener('DOMContentLoaded', function () {
     var links = document.getElementsByTagName("a");
     for (var i = 0; i < links.length; i++) {
@@ -12,30 +13,20 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-const loginButton = document.getElementById('loginButton');
-loginButton.onclick = function () { // can take function(element), removing for now to fix lint
-  // ...
-};
 
 
-$.get("http://localhost:8080/auth/user", function (data) {
-	console.log(data)
+// http://dana.land/articles/send-session-cookies-using-a-chrome-extension
+// https://www.gmass.co/blog/send-cookie-cross-origin-xmlhttprequest-chrome-extension/
+$.ajax({
+  url: "http://localhost:8080/auth/user",
+  type: "GET",
+  xhrFields: {
+    withCredentials: true
+  },
+}).done((resp) => {
+  console.log(resp);
+  if (resp.user !== null) {
+    $("#loginLink").hide()
+    $("#currentUserDisplay").text(`Logged in as ${resp.user.name}`)
+  }
 })
-
-
-/*
-axios.get('/auth/user').then(response => {
-      console.log(response.data)
-      if (!!response.data.user) {
-        this.setState({
-          loggedIn: true,
-          user: response.data.user
-        })
-      } else {
-        this.setState({
-          loggedIn: false,
-          user: null
-        })
-      }
-    })
-    */
