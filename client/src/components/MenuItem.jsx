@@ -12,19 +12,19 @@ function MenuItem(props) {
     id
   } = props;
   return (
-    <StyledMenuItem index={index}>
-      <StarWrapper><StarRatingComponent name={itemName} value={rating} emptyStarColor={"#cccccc"} editing={false} /></StarWrapper>
-      <React.Fragment>
-        <ItemTitle index={index}>{itemName}</ItemTitle>
-        <p>{restaurant}</p>
-        <Link to={{ 
-          pathname: `/menuitem/${itemName}`, 
-          state: {name: itemName, id: id}}}
-        >
-          Click for details
-        </Link>
-      </React.Fragment>
-    </StyledMenuItem>
+    <Link to={{ 
+      pathname: `/menuitem/${itemName}`, 
+      state: {name: itemName, id: id}}}
+      style={{ textDecoration: 'none' }}
+    >
+      <StyledMenuItem index={index}>
+        <StarWrapper><StarRatingComponent name={itemName} value={rating} emptyStarColor={"#cccccc"} editing={false} /></StarWrapper>
+        <React.Fragment>
+          <ItemTitle index={index}>{itemName}</ItemTitle>
+          <p>{restaurant}</p>
+        </React.Fragment>
+      </StyledMenuItem>
+    </Link>
   );
 }
 
