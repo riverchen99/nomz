@@ -4,6 +4,7 @@
 
 const Review = require('../models/Review');
 const MenuItem = require('../models/MenuItem');
+const Menu = require('../models/Menu');
 
 /**
  * Higher order function to create a generic controller for GET endpoint requests.
@@ -24,13 +25,33 @@ const createGenericGetController = function (model) {
     console.log(req.params.ids);
     console.log(req.query);
     for (var k of Object.keys(req.query)) { // eslint-disable-line
-      req.query[k] = JSON.parse(req.query[k]);
+      try { // eslint-disable-line
+        req.query[k] = JSON.parse(req.query[k]);
+      } catch (e) { } // eslint-disable-line
     }
     console.log(req.query);
     const query = req.params.ids === undefined ? req.query : { _id: { $in: req.params.ids.split(';') } };
-    model.find(query)
-      .then((results) => res.json(results))
-      .catch((err) => { console.log(err); res.status(500).send(err); });
+
+    model.find(query).then(async (results) => {
+      if (model === Menu) {
+        const resultsObject = JSON.parse(JSON.stringify(results));
+        // notice, we could normally use mongoose' populate functionality,
+        // but it lacks support for [String] ref types
+
+        // disabling eslint for this line for max length restriction,
+        // --fix keeps removing line breaks, which then throws lint error
+        const queries = results.map((currentMenu) => MenuItem.find({ _id: { $in: currentMenu.menuItems } }).exec()); // eslint-disable-line
+        Promise.all(queries).then((documents) => {
+          documents.forEach((menuItems, idx) => {
+            resultsObject[idx].menuItems = menuItems;
+          });
+        }).then(() => {
+          res.json(resultsObject);
+        });
+      } else {
+        res.json(results);
+      }
+    }).catch((err) => { console.log(err); res.status(500).send(err); });
   };
   return genericGetController;
 };
