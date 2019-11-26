@@ -8,7 +8,8 @@ class Loginpage extends React.Component {
       <StyledLoginpage>
         <Title>nomz</Title>
         <Text>Personalized recommendations based on your ratings</Text>
-        <a href="/auth/facebook">Login with Facebook</a>
+        {/* <a href="/auth/facebook">Login with Facebook</a> */}
+        <a href="http://localhost:8080/auth/facebook">Login with Facebook</a>
         <p>Or <Link to="/recommend">continue as guest</Link></p>
       </StyledLoginpage>
     )

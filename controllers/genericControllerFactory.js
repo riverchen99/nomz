@@ -25,15 +25,9 @@ const createGenericGetController = function (model) {
     console.log(req.params.ids);
     console.log(req.query);
     for (var k of Object.keys(req.query)) { // eslint-disable-line
-<<<<<<< HEAD
-      try {
-        req.query[k] = JSON.parse(req.query[k]);
-      } catch (e) { }
-=======
       try { // eslint-disable-line
         req.query[k] = JSON.parse(req.query[k]);
       } catch (e) { } // eslint-disable-line
->>>>>>> 71951f0213592fe79f473c0df552fbc655d07ec5
     }
     console.log(req.query);
     const query = req.params.ids === undefined ? req.query : { _id: { $in: req.params.ids.split(';') } };

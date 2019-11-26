@@ -161,7 +161,7 @@ class RestaurantMenupage extends React.Component {
             <Select options={dayOptions} defaultValue={dayDefaultOption} onChange={(event) => this.updateDaySelection(event)} />
           </Row>
           <br />
-          <Button text={"Go"} color={"#EF39FF"} handleClick={() => {}}/>
+          <Button text={"Go"} color={"#EF39FF"} handleClick={() => this.fetchMenu()} />
 
         </FilterContainer>
       {this.state.menuItems}
