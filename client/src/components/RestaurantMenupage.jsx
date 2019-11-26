@@ -1,6 +1,14 @@
 import React from 'react';
 import Select from 'react-select';
-import { Header } from './StyledRecommendpage';
+import Button from './Button';
+import {
+  Text,
+  FilterContainer,
+  Header,
+  FloatRightContainer,
+  ButtonContainer,
+} from './StyledRecommendpage';
+import { Row } from './StyledRestaurantMenupage';
 import {
   mealOptions,
   mealDefaultOption,
@@ -137,15 +145,25 @@ class RestaurantMenupage extends React.Component {
 
   async componentDidMount() {
     console.log('what is it', this.props.location.state);
-    await this.fetchMenu();
+    this.fetchMenu();
   }
 
   render() {
     return (
       <div>
+        <Header>{this.props.location.state.restName}</Header>
+        <FilterContainer>
+          <Row>
+            <Text>Menu for:</Text>
+            <FloatRightContainer>
+              <Select options={mealOptions} defaultValue={mealDefaultOption} onChange={(event) => this.updateMealSelection(event)} />
+            </FloatRightContainer>
+            <Select options={dayOptions} defaultValue={dayDefaultOption} onChange={(event) => this.updateDaySelection(event)} />
+          </Row>
+          <br />
+          <Button text={"Go"} color={"#EF39FF"} handleClick={() => {}}/>
 
-        <Select options={dayOptions} defaultValue={dayDefaultOption} onChange={(event) => this.updateDaySelection(event)} />
-        <Select options={mealOptions} defaultValue={mealDefaultOption} onChange={(event) => this.updateMealSelection(event)} />
+        </FilterContainer>
       {this.state.menuItems}
       </div>
     )

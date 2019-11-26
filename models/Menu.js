@@ -16,7 +16,7 @@ const MenuSchema = new mongoose.Schema({
   startTime: Date,
   endTime: Date,
   restaurant: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' },
-  menuItems: { type: [mongoose.Schema.Types.String], ref: 'MenuItem' },
+  menuItems: { type: [String], ref: 'MenuItem' },
 });
 const Menu = mongoose.model('Menu', MenuSchema);
 module.exports = Menu;
