@@ -32,6 +32,7 @@ router.post('/logout', (req, res) => {
 
 
 // old working code
+/*
 router.get('/facebook', passport.authenticate('facebook'));
 
 router.get(
@@ -41,8 +42,9 @@ router.get(
     failureRedirect: CLIENT_LOGIN_PAGE_URL,
   }),
 );
+*/
 
-/*
+
 router.get('/facebook', (req, res, next) => {
   passport.authenticate('facebook', { callbackURL: `https://cs130-nomz.herokuapp.com/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}` })(req, res, next);
 });
@@ -66,7 +68,7 @@ router.get('/facebook/callback',
     console.log(`extension: ${req.query.extension}`);
     res.redirect('/auth/loginSuccess');
   });
-*/
+
 
 /*
 router.get('/facebook/callback', function(req, res, next) {
