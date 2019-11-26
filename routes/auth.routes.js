@@ -4,7 +4,8 @@ const path = require('path');
 const loginController = require('../controllers/login'); // eslint-disable-line
 
 const CLIENT_HOME_PAGE_URL = '/recommend';
-const CLIENT_LOGIN_PAGE_URL = '/';
+// for future use for failed logins
+const CLIENT_LOGIN_PAGE_URL = '/'; // eslint-disable-line
 
 const router = express.Router();
 
@@ -42,11 +43,11 @@ router.get(
 );
 */
 
-router.get('/facebook', function (req, res, next) {
-  passport.authenticate('facebook', { callbackURL: "/auth/facebook/callback" + (req.query.extension ? "?extension=1" : "") })(req, res, next);
+router.get('/facebook', (req, res, next) => {
+  passport.authenticate('facebook', { callbackURL: `/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}` })(req, res, next);
 });
 
-router.get("/loginSuccess", (req, res) => {
+router.get('/loginSuccess', (req, res) => {
   if (req.query.extension === 1) {
     res.sendFile(path.join(__dirname, '..', 'extension', 'loggedIn.html'));
   } else {
@@ -54,17 +55,16 @@ router.get("/loginSuccess", (req, res) => {
   }
 });
 
-router.get("/facebook/callback",
-  function(req, res, next) {
-    passport.authenticate("facebook", {
-      callbackURL: "/auth/facebook/callback" + (req.query.extension ? "?extension=1" : ""),
-    })(req, res, next)
+router.get('/facebook/callback',
+  (req, res, next) => {
+    passport.authenticate('facebook', {
+      callbackURL: `/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}`,
+    })(req, res, next);
   },
-  function(req, res) {
-    console.log("extension: " + req.query.extension);
-    res.redirect("/auth/loginSuccess")
-  }
-);
+  (req, res) => {
+    console.log(`extension: ${req.query.extension}`);
+    res.redirect('/auth/loginSuccess');
+  });
 
 
 /*
@@ -85,7 +85,6 @@ router.get('/facebook/callback', function(req, res, next) {
   }
 );
 */
-
 
 
 module.exports = router;
