@@ -6,6 +6,7 @@ const loginController = require('../controllers/login'); // eslint-disable-line
 const CLIENT_HOME_PAGE_URL = '/recommend';
 // for future use for failed logins
 const CLIENT_LOGIN_PAGE_URL = '/'; // eslint-disable-line
+const CALLBACK_URL_BASE = process.env.NODE_ENV === 'production' ? 'https://cs130-nomz.herokuapp.com' : '';
 
 const router = express.Router();
 
@@ -46,7 +47,9 @@ router.get(
 
 
 router.get('/facebook', (req, res, next) => {
-  passport.authenticate('facebook', { callbackURL: `https://cs130-nomz.herokuapp.com/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}` })(req, res, next);
+  passport.authenticate('facebook', {
+    callbackURL: `${CALLBACK_URL_BASE}/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}`,
+  })(req, res, next);
 });
 
 router.get('/loginSuccess', (req, res) => {
@@ -61,7 +64,7 @@ router.get('/facebook/callback',
   (req, res, next) => {
     console.log('got to callback');
     passport.authenticate('facebook', {
-      callbackURL: `https://cs130-nomz.herokuapp.com/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}`,
+      callbackURL: `${CALLBACK_URL_BASE}/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}`,
     })(req, res, next);
   },
   (req, res) => {
