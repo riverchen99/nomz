@@ -5,6 +5,7 @@
   "manifest_version": 2,
   "permissions": [
     "http://localhost:8080/*",
+    "https://cs130-nomz.herokuapp.com/*"
   ],
   "background": {
     "persistent": false,

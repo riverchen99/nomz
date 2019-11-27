@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // http://dana.land/articles/send-session-cookies-using-a-chrome-extension
 // https://www.gmass.co/blog/send-cookie-cross-origin-xmlhttprequest-chrome-extension/
 $.ajax({
-  url: 'http://localhost:8080/auth/user',
+  url: 'https://cs130-nomz.herokuapp.com/auth/user',
   type: 'GET',
   xhrFields: {
     withCredentials: true,
