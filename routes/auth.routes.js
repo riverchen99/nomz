@@ -59,7 +59,7 @@ router.get('/loginSuccess', (req, res) => {
 
 router.get('/facebook/callback',
   (req, res, next) => {
-    console.log("got to callback")
+    console.log('got to callback');
     passport.authenticate('facebook', {
       callbackURL: `https://cs130-nomz.herokuapp.com/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}`,
     })(req, res, next);

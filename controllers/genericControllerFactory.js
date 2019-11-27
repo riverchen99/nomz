@@ -22,15 +22,14 @@ const createGenericGetController = function (model) {
    * @param {express.Response} res - The express response object containing a list of resources.
    */
   const genericGetController = function (req, res) {
-    console.log(req.params.ids);
-    console.log(req.query);
     for (var k of Object.keys(req.query)) { // eslint-disable-line
       try { // eslint-disable-line
         req.query[k] = JSON.parse(req.query[k]);
       } catch (e) { } // eslint-disable-line
     }
-    console.log(req.query);
+
     const query = req.params.ids === undefined ? req.query : { _id: { $in: req.params.ids.split(';') } };
+    console.log(query);
 
     model.find(query).then(async (results) => {
       if (model === Menu) {
@@ -116,8 +115,14 @@ function createGenericUpdateController(model) {
    * @param {express.Response} res - The express response object indicating success or failure.
    */
   const genericUpdateController = function (req, res) {
+    console.log(req.body);
     model.findOneAndUpdate(req.body.filter, req.body.update)
-      .then(() => res.sendStatus(200))
+      .then(async () => {
+        if (model === Review) {
+          await updateAggregateRating(req.body.filter.menuItem);
+        }
+        res.sendStatus(200);
+      })
       .catch((err) => { console.log(err); res.status(500).send(err); });
   };
   return genericUpdateController;
