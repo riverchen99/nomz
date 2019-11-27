@@ -44,7 +44,7 @@ function addRating(rating, $el, menuItemId, newReview) {
       success: console.log,
       data: JSON.stringify({
         menuItem: menuItemId,
-        author: 'guest_extension' || userId,
+        author: userId || "guest_extension",
         rating,
       }),
       contentType: 'application/json',
@@ -97,32 +97,26 @@ function addStars(reviewData, menuItemData) { // eslint-disable-line
 }
 
 
-function getUserId() {
-  $.ajax({
-    url: 'https://cs130-nomz.herokuapp.com/auth/user',
-    type: 'GET',
-    xhrFields: {
-      withCredentials: true,
-    },
-    async: false,
-  }).done((resp) => {
-    console.log(resp);
-    if (resp.user !== null) {
-      return resp.user._id;
-    }
-    return null;
-  });
-}
-
-
 const itemIds = findAllItemIds();
 
-userId = getUserId();
+$.ajax({
+  url: 'https://cs130-nomz.herokuapp.com/auth/user',
+  type: 'GET',
+  xhrFields: {
+    withCredentials: true,
+  },
+  async: false,
+}).done((resp) => {
+  console.log(resp);
+  if (resp.user !== null) {
+    userId = resp.user._id;
+  }
+});
 
 $.when(
   $.get(`${remoteURL}/api/menuItems/${itemIds.join(';')}`, (data) => { menuItemData = data; console.log(menuItemData); }),
 
-  (userId === null) ? $.get(`${remoteURL}/api/reviews?menuItem={"$in":[${itemIds.map((id) => `"${id}"`).join(',')}]}&author=${userId}`, (data) => { reviewData = data; console.log(reviewData); }) : 0,
+  (userId !== null) ? $.get(`${remoteURL}/api/reviews?menuItem={"$in":[${itemIds.map((id) => `"${id}"`).join(',')}]}&author=${userId}`, (data) => { reviewData = data; console.log(reviewData); }) : 0,
 ).then(() => {
   addStars(reviewData, menuItemData);
 });
