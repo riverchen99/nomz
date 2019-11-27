@@ -44,7 +44,7 @@ function addRating(rating, $el, menuItemId, newReview) {
       success: console.log,
       data: JSON.stringify({
         menuItem: menuItemId,
-        author: "guest" || userId,
+        author: 'guest_extension' || userId,
         rating,
       }),
       contentType: 'application/json',
@@ -78,13 +78,13 @@ function addStars(reviewData, menuItemData) { // eslint-disable-line
 
   for (let i = 0; i < menuItemData.length; i += 1) {
     const aTag = $(`a[href*="${menuItemData[i]._id}"]`);
-    console.log(aTag);
+    // console.log(aTag);
     if (aTag.length !== 0) {
-      aTag.after(`<span class="star-rating" id="star-rating-${menuItemData[i]._id}"></span>`);
+      aTag.after(`<span class="star-rating-${menuItemData[i]._id}"></span>`);
 
       const userReview = reviewData.find((e) => e.menuItem === menuItemData[i]._id);
-      console.log(userReview)
-      $(`#star-rating-${menuItemData[i]._id}`).starRating({
+
+      $(`.star-rating-${menuItemData[i]._id}`).starRating({
         initialRating: (userReview === undefined) ? menuItemData[i].rating : userReview.rating,
         starSize: 10,
         starShape: 'rounded',
