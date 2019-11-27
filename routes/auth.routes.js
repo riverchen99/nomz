@@ -6,6 +6,7 @@ const loginController = require('../controllers/login'); // eslint-disable-line
 const CLIENT_HOME_PAGE_URL = '/recommend';
 // for future use for failed logins
 const CLIENT_LOGIN_PAGE_URL = '/'; // eslint-disable-line
+const CALLBACK_URL_BASE = process.env.NODE_ENV === 'production' ? 'https://cs130-nomz.herokuapp.com' : '';
 
 const router = express.Router();
 
@@ -46,27 +47,27 @@ router.get(
 
 
 router.get('/facebook', (req, res, next) => {
-  passport.authenticate('facebook', { callbackURL: `https://cs130-nomz.herokuapp.com/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}` })(req, res, next);
+  passport.authenticate('facebook', {
+    callbackURL: `${CALLBACK_URL_BASE}/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}`,
+  })(req, res, next);
 });
 
 router.get('/loginSuccess', (req, res) => {
-  if (req.query.extension === 1) {
+  if (req.query.extension === '1') {
     res.sendFile(path.join(__dirname, '..', 'extension', 'loggedIn.html'));
   } else {
-    res.redirect(CLIENT_HOME_PAGE_URL);
+    res.redirect((process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000') + CLIENT_HOME_PAGE_URL);
   }
 });
 
 router.get('/facebook/callback',
   (req, res, next) => {
-    console.log('got to callback');
     passport.authenticate('facebook', {
-      callbackURL: `https://cs130-nomz.herokuapp.com/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}`,
+      callbackURL: `${CALLBACK_URL_BASE}/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}`,
     })(req, res, next);
   },
   (req, res) => {
-    console.log(`extension: ${req.query.extension}`);
-    res.redirect('/auth/loginSuccess');
+    res.redirect(`/auth/loginSuccess${req.query.extension ? '?extension=1' : ''}`);
   });
 
 

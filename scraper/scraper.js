@@ -222,12 +222,12 @@ const fetchMenuTimes = async (date) => {
  * @return {Object} - Returns an object encapsulating the fully collated data in
  * the form of MenuItem, Menu, and Restaurant Documents.
  */
-const getUpdatedMenu = async (
+const updateMenu = async (
   date,
   fetchMenu = fetchMenuData,
   fetchTimes = fetchMenuTimes,
   fetchRecipes = fetchRecipeData) => {
-  const menuItems = [];
+  const menuItemsData = [];
   // the restaurants must already exist in the database
   const restaurants = {
     Covel: await Restaurant.findOne({ name: 'Covel' }),
@@ -235,6 +235,14 @@ const getUpdatedMenu = async (
     'De Neve': await Restaurant.findOne({ name: 'De Neve' }),
     Feast: await Restaurant.findOne({ name: 'Feast' }),
   };
+  // used to reference the restaurants when updating the menu lists associated
+  // with the restaurants
+  const restaurantById = {};
+  // we allow restricted for of iteration in this case to reduce
+  // the number of variables scoped to the function
+  for (const restaurant of Object.values(restaurants)) { // eslint-disable-line no-restricted-syntax
+    restaurantById[restaurant._id] = restaurant;
+  }
   const menus = {};
 
   const times = await fetchTimes(date);
@@ -253,27 +261,29 @@ const getUpdatedMenu = async (
     const item = items[i];
     const recipe = recipes[i];
 
-    // update restaurant
-    // TODO update the restaurant documents
-    // restaurants[item.diningHall](Restaurant.create({name: item.diningHall, menus:}))
-
     // create menu
-    if (item.menuPeriod in menus) {
-      // the menu doc already exists so we just append to it
-      menus[item.menuPeriod].menuItems.push(item.recipeId);
-    } else {
+    if (!(item.menuPeriod in menus)) {
       // we need to create a new menu doc
-      menus[item.menuPeriod] = new Menu({
+      const menuData = {
         mealPeriod: item.menuPeriod,
-        startTime: times[item.menuPeriod].startTime,
-        endTime: times[item.menuPeriod].endTime,
+        startTime: times[item.menuPeriod].start,
+        endTime: times[item.menuPeriod].end,
         restaurant: restaurants[item.diningHall]._id,
-        menuItems: [item.recipeId],
-      });
+      };
+      // we allow this await in the loop because it only fetches
+      // the menu once per meal period.
+      let newMenu = await Menu.findOne(menuData); // eslint-disable-line no-await-in-loop
+      if (newMenu === null) {
+        newMenu = new Menu(menuData);
+      }
+      menus[item.menuPeriod] = newMenu;
+    }
+    if (menus[item.menuPeriod].menuItems.indexOf(item.recipeId) === -1) {
+      menus[item.menuPeriod].menuItems.push(item.recipeId);
     }
 
     // create menu item
-    menuItems.push(new MenuItem({
+    menuItemsData.push({
       _id: item.recipeId,
       name: item.name,
       rating: null,
@@ -283,18 +293,58 @@ const getUpdatedMenu = async (
       props: recipe.props,
       restaurant: restaurants[item.diningHall]._id,
       station: item.diningSection,
+    });
+  }
+
+  const menuList = Object.values(menus);
+
+  // update restaurant
+  for (let i = 0; i < menuList.length; i += 1) {
+    restaurantById[menuList[i].restaurant].menus.push(menuList[i]._id);
+  }
+
+  // save restaurants
+  let savePromises = Object.values(restaurants).map((res) => res.save());
+  // save menus
+  savePromises = savePromises.concat(menuList.map((menu) => menu.save()));
+
+  // remove duplicate menu items
+  const filteredItemsData = [];
+  for (let i = 0; i < menuItemsData.length; i += 1) {
+    if (!filteredItemsData.reduce(
+      ((acc, item) => (acc || item._id === menuItemsData[i]._id)),
+      false,
+    )) {
+      filteredItemsData.push(menuItemsData[i]);
+    }
+  }
+
+  // save menu items
+  for (let i = 0; i < filteredItemsData.length; i += 1) {
+    const data = filteredItemsData[i];
+    savePromises.push(MenuItem.findById(data._id).then((item) => {
+      if (item === null) {
+        return (new MenuItem(data)).save();
+      }
+      item.overwrite(data);
+      return item.save();
     }));
   }
 
-  return {
-    items: menuItems,
-    menus,
-    restaurants,
-  };
+  // wait until all are saved
+  await Promise.all(savePromises);
 };
 
+const createBlankRestaurants = () => Promise.all([
+  Restaurant.create({ name: 'Covel' }),
+  Restaurant.create({ name: 'Bruin Plate' }),
+  Restaurant.create({ name: 'De Neve' }),
+  Restaurant.create({ name: 'Feast' }),
+]);
+
 module.exports = {
-  getUpdatedMenu,
+  updateMenu,
+  createBlankRestaurants,
 
   // these should be private
   // they are only exported so that we can test it with Jest
