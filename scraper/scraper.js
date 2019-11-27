@@ -140,7 +140,7 @@ const fetchMenuData = async (date) => {
 
   const items = [];
 
-  const headers = $('#page-header');
+  const headers = $('h2');
   for (let i = 0; i < headers.length; i += 1) {
     // find the menu date
     // The date string is: "PERIOD Menu for DAY, DATE"
@@ -150,7 +150,7 @@ const fetchMenuData = async (date) => {
 
     // we only want the menu items for this period
     const elementsBetween = $(headers[i]).nextUntil(headers[i + 1]);
-    const menuBlocks = elementsBetween.filter('div.menu-block.half-col');
+    const menuBlocks = elementsBetween.filter('div.menu-block');
 
     // find the dining hall
     $(menuBlocks).each((_i, menuBlock) => {
