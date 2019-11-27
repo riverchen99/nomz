@@ -2,8 +2,8 @@ const remoteURL = 'http://cs130-nomz.herokuapp.com'; // eslint-disable-line
 const localURL = 'http://localhost:8080'; // eslint-disable-line
 
 let menuItemData;
-let reviewData;
-let userId;
+let reviewData = [];
+let userId = null;
 
 // star rating library from https://github.com/nashio/star-rating-svg
 
@@ -44,7 +44,7 @@ function addRating(rating, $el, menuItemId, newReview) {
       success: console.log,
       data: JSON.stringify({
         menuItem: menuItemId,
-        author: userId,
+        author: "guest" || userId,
         rating,
       }),
       contentType: 'application/json',
@@ -83,6 +83,7 @@ function addStars(reviewData, menuItemData) { // eslint-disable-line
       aTag.after(`<span class="star-rating" id="star-rating-${menuItemData[i]._id}"></span>`);
 
       const userReview = reviewData.find((e) => e.menuItem === menuItemData[i]._id);
+      console.log(userReview)
       $(`#star-rating-${menuItemData[i]._id}`).starRating({
         initialRating: (userReview === undefined) ? menuItemData[i].rating : userReview.rating,
         starSize: 10,
@@ -121,7 +122,7 @@ userId = getUserId();
 $.when(
   $.get(`${remoteURL}/api/menuItems/${itemIds.join(';')}`, (data) => { menuItemData = data; console.log(menuItemData); }),
 
-  $.get(`${remoteURL}/api/reviews?menuItem={"$in":[${itemIds.map((id) => `"${id}"`).join(',')}]}${userId === null ? '' : `&author=${userId}`}`, (data) => { reviewData = data; console.log(reviewData); }),
+  (userId === null) ? $.get(`${remoteURL}/api/reviews?menuItem={"$in":[${itemIds.map((id) => `"${id}"`).join(',')}]}&author=${userId}`, (data) => { reviewData = data; console.log(reviewData); }) : 0,
 ).then(() => {
   addStars(reviewData, menuItemData);
 });
