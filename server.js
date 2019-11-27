@@ -12,6 +12,7 @@ const cookieParser = require('cookie-parser');
 
 const apiRoutes = require('./routes/api.routes');
 const authRoutes = require('./routes/auth.routes');
+const scraper = require('./scraper/scraper');
 
 const PORT = process.env.PORT || 8080;
 
@@ -49,6 +50,16 @@ app.get('/hello', (req, res) => res.send('Hello world!'));
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
 });
+
+app.post('/updateMenu', (req, res) => {
+  if (req.body.date === undefined) {
+    res.send('Date required.');
+  } else {
+    scraper.updateMenu(req.body.date).then(() => res.send(`Updated menu for ${req.body.date}`));
+  }
+});
+
+// app.post('/createRestaurants', (req, res) => scraper.createBlankRestaurants());
 
 // old code
 /*
