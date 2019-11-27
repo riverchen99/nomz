@@ -246,20 +246,11 @@ const updateMenu = async (
   fetchRecipes = fetchRecipeData) => {
   const menuItemsData = [];
   // the restaurants must already exist in the database
-  const restaurants = {
-    Covel: await Restaurant.findOne({ name: 'Covel' }),
-    'Bruin Plate': await Restaurant.findOne({ name: 'Bruin Plate' }),
-    'De Neve': await Restaurant.findOne({ name: 'De Neve' }),
-    Feast: await Restaurant.findOne({ name: 'Feast' }),
-  };
+  const restaurants = {};
+
   // used to reference the restaurants when updating the menu lists associated
   // with the restaurants
   const restaurantById = {};
-  // we allow restricted for of iteration in this case to reduce
-  // the number of variables scoped to the function
-  for (const restaurant of Object.values(restaurants)) { // eslint-disable-line no-restricted-syntax
-    restaurantById[restaurant._id] = restaurant;
-  }
   const menus = {};
 
   const times = await fetchTimes(date);
@@ -277,6 +268,21 @@ const updateMenu = async (
   for (let i = 0; i < items.length; i += 1) {
     const item = items[i];
     const recipe = recipes[i];
+
+    // find or create restaurant
+    if (!(item.diningHall in restaurants)) {
+      // we allow this await in the loop because it happens only once per restaurant
+      // eslint-disable-next-line no-await-in-loop
+      restaurants[item.diningHall] = await Restaurant.findOne({ name: item.diningHall });
+
+      // create a new dining hall if it does not exist
+      if (restaurants[item.diningHall] === null) {
+        restaurants[item.diningHall] = new Restaurant({ name: item.diningHall });
+      }
+
+      // we also sort the restaurants by id for convenience
+      restaurantById[restaurants[item.diningHall]._id] = restaurants[item.diningHall];
+    }
 
     // create menu
     if (!(item.menuPeriod in menus)) {
@@ -317,7 +323,9 @@ const updateMenu = async (
 
   // update restaurant
   for (let i = 0; i < menuList.length; i += 1) {
-    restaurantById[menuList[i].restaurant].menus.push(menuList[i]._id);
+    if (restaurantById[menuList[i].restaurant].menus.indexOf(menuList[i]._id) === -1) {
+      restaurantById[menuList[i].restaurant].menus.push(menuList[i]._id);
+    }
   }
 
   // save restaurants
@@ -356,7 +364,7 @@ const createBlankRestaurants = () => Promise.all([
   Restaurant.create({ name: 'Covel' }),
   Restaurant.create({ name: 'Bruin Plate' }),
   Restaurant.create({ name: 'De Neve' }),
-  Restaurant.create({ name: 'Feast' }),
+  Restaurant.create({ name: 'FEAST at Rieber' }),
 ]);
 
 module.exports = {
