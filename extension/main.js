@@ -1,5 +1,5 @@
 const remoteURL = 'http://cs130-nomz.herokuapp.com'; // eslint-disable-line
-const localURL = 'http://localhost:8080';
+const localURL = 'http://localhost:8080'; // eslint-disable-line
 
 let menuItemData;
 let reviewData;
