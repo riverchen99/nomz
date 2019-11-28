@@ -93,9 +93,13 @@ class RestaurantMenupage extends React.Component {
   // }
 
   async fetchMenu() {
-    await axios.get(`/api/menus?restaurant=${this.props.location.state.id}startTime={"$gte":"2019-11-24T19:00:00.000Z"}`)
+    await axios.get(`/api/menus?restaurant=${this.props.location.state.id}`, {
+      params: {
+        startTime: "2019-11-24T19:00:00.000Z"
+      }
+    })
       .then((resp) => {
-        //console.log(resp.data);
+        console.log(resp.data);
 
         const mealTimePeriod = this.mapMealPeriodToTime(this.state.restaurantName, this.state.meal);
         console.log(mealTimePeriod);
@@ -144,7 +148,6 @@ class RestaurantMenupage extends React.Component {
   }
 
   async componentDidMount() {
-    console.log('what is it', this.props.location.state);
     this.fetchMenu();
   }
 
