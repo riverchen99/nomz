@@ -1,17 +1,22 @@
 import React from 'react';
 import MenuItem from './MenuItem';
 import Button from './Button';
-import { 
-  DropdownContainer,
+import {
   Text,
   FilterContainer,
-  Header 
+  Header,
+  FloatRightContainer,
+  ButtonContainer,
+  Row,
+  DaySelContainer,
 } from './StyledRecommendpage';
 import {
   recommendeeOptions,
   dayOptions,
+  timeOptions,
   recommendeeDefaultOption,
-  dayDefaultOption
+  dayDefaultOption,
+  timeDefaultOption
 } from '../options.js';
 import axios from 'axios';
 import Select from 'react-select';
@@ -23,15 +28,35 @@ class Recommendpage extends React.Component {
       mounted: false,
       recommendee: "everyone",
       day: "today",
+      loggedIn: false,
+      user: null,
+      time: "8:00",
       menuItems: null
     };
     this.updateRecommendee = this.updateRecommendee.bind(this);
     this.updateDay = this.updateDay.bind(this);
+    this.updateTime = this.updateTime.bind(this);
     this.generateRecs = this.generateRecs.bind(this);
     this.generateRecURL = this.generateRecURL.bind(this);
   }
 
   componentDidMount() {
+    axios.get('/auth/user').then(response => {
+      console.log(response.data)
+      if (!!response.data.user) {
+        this.setState({
+          loggedIn: true,
+          user: response.data.user
+        })
+      } else {
+        this.setState({
+          loggedIn: false,
+          user: null
+        })
+      }
+    })
+
+
     this.generateRecs();
     this.setState({
       mounted: true,
@@ -50,19 +75,25 @@ class Recommendpage extends React.Component {
     });
   }
 
+  updateTime(option) {
+    this.setState({
+      time: option.value,
+    });
+  }
+
   /**
   * Helper function that generates the URL of the recommendations get request
   * @return {string} - Returns string form of axios get request url
   */
   generateRecURL() {
-    const { day, recommendee } = this.state;
+    const { day, recommendee, time } = this.state;
     const thing = new Date();
     const month = thing.getMonth() + 1;
     let date = thing.getDate();
     if (day === 'tomorrow'){
       date += 1;
     }
-      return `api/recommendations?date=2019-${month}-${date}T12:00-0800&userId=${recommendee}`;
+      return `api/recommendations?date=2019-${month}-${date}T${time}-0800&userId=${recommendee}`;
   }
 
   /**
@@ -73,6 +104,8 @@ class Recommendpage extends React.Component {
     const apiURL = this.generateRecURL();
     axios.get(apiURL)
       .then((resp) => {
+        console.log(resp.data);
+        
         const items = resp.data.map((item) => {
           return (
             <MenuItem
@@ -97,14 +130,25 @@ class Recommendpage extends React.Component {
   render () {
     return (
       <React.Fragment>
-        <Header>What are you craving?</Header>
+        <Header>What are you craving{this.state.loggedIn ? ", " + this.state.user.name : ""}?</Header>
         <FilterContainer>
-          <Text>Top picks for:</Text>
-          <DropdownContainer>
-          <Select id="recsel" options={recommendeeOptions} defaultValue={recommendeeDefaultOption} onChange={(event) => this.updateRecommendee(event)} />
-          <Select id="daysel" options={dayOptions} defaultValue={dayDefaultOption} onChange={(event) => this.updateDay(event)} />
-          </DropdownContainer>
-          <Button text={"Go"} color={"#EF39FF"} handleClick={() => this.generateRecs()}/>
+          <Row>
+            <FloatRightContainer>
+              <Select className="testing" id="recsel" options={recommendeeOptions} defaultValue={recommendeeDefaultOption} onChange={(event) => this.updateRecommendee(event)} />
+            </FloatRightContainer>
+            <Text>Top picks for:</Text>
+          </Row>
+          <ButtonContainer>
+            <Button text={"Go"} color={"#EF39FF"} handleClick={() => this.generateRecs()}/>
+          </ButtonContainer>
+          <Row>
+            <FloatRightContainer>
+              <Select id="timesel" options={timeOptions} defaultValue={timeDefaultOption} onChange={(event) => this.updateTime(event)} />
+            </FloatRightContainer>
+            <DaySelContainer>
+            <Select id="daysel" options={dayOptions} defaultValue={dayDefaultOption} onChange={(event) => this.updateDay(event)} />                       
+            </DaySelContainer>
+          </Row>
         </FilterContainer>
         {this.state.menuItems}
       </React.Fragment>

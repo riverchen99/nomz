@@ -28,6 +28,7 @@ const PROPS_MAPPING = {
 
 const menuUrl = (date) => `http://menu.dining.ucla.edu/Menus/${date}`;
 const recipeUrl = (recipeId, recipeSize) => `http://menu.dining.ucla.edu/Recipes/${recipeId}/${recipeSize}`;
+const hoursUrl = (date) => `http://menu.dining.ucla.edu/Hours/${date}`;
 
 
 /**
@@ -182,6 +183,18 @@ const fetchMenuData = async (date) => {
   return items;
 };
 
+
+const conv12to24 = (date, time12hr) => {
+  const [timeRaw, timePeriod] = time12hr.split(' ');
+  let [hour, minute] = timeRaw.split(':').map((x) => Number(x)); // eslint-disable-line prefer-const
+  if (timePeriod === 'pm') {
+    hour = (hour + 12) % 24;
+  } else if (timePeriod !== 'am') {
+    throw new Error(`invalid time format: ${time12hr}`);
+  }
+  return new Date(...date.split('-'), hour, minute);
+};
+
 /**
  * Helper function to fetch and parse the meal periods for a particular day.
  * This function currently has a dummy implementation.
@@ -190,26 +203,30 @@ const fetchMenuData = async (date) => {
  * @return {Object} - Returns an object mapping each meal period to a start and end time
  */
 const fetchMenuTimes = async (date) => {
-  // TODO: scrape the menu times from the web page
-  const dateArr = date.split('-');
-  return {
-    Breakfast: {
-      start: new Date(...dateArr, 6),
-      end: new Date(...dateArr, 9),
-    },
-    Brunch: {
-      start: new Date(...dateArr, 9),
-      end: new Date(...dateArr, 14),
-    },
-    Lunch: {
-      start: new Date(...dateArr, 11),
-      end: new Date(...dateArr, 14),
-    },
-    Dinner: {
-      start: new Date(...dateArr, 17),
-      end: new Date(...dateArr, 20),
-    },
-  };
+  const $ = await fetchData(hoursUrl(date));
+
+  const hours = {};
+
+  $('table.hours-table').find('tr').each((_i, row) => {
+    const location = $(row).find('span.hours-location').text();
+    const periods = $(row).find('td.hours-open');
+    for (let i = 0; i < periods.length; i += 1) {
+      const periodClasses = $(periods[i]).attr('class');
+      const periodName = periodClasses.substring(periodClasses.indexOf(' ') + 1);
+
+      const hourRangeStr = $(periods[i]).find('span.hours-range').text();
+      const [start, end] = hourRangeStr.split(' - ');
+
+      if (hours[location] === undefined) {
+        hours[location] = {};
+      }
+      hours[location][periodName] = {
+        start: conv12to24(date, start),
+        end: conv12to24(date, end),
+      };
+    }
+  });
+  return hours;
 };
 
 /**
@@ -222,19 +239,18 @@ const fetchMenuTimes = async (date) => {
  * @return {Object} - Returns an object encapsulating the fully collated data in
  * the form of MenuItem, Menu, and Restaurant Documents.
  */
-const getUpdatedMenu = async (
+const updateMenu = async (
   date,
   fetchMenu = fetchMenuData,
   fetchTimes = fetchMenuTimes,
   fetchRecipes = fetchRecipeData) => {
-  const menuItems = [];
+  const menuItemsData = [];
   // the restaurants must already exist in the database
-  const restaurants = {
-    Covel: await Restaurant.findOne({ name: 'Covel' }),
-    'Bruin Plate': await Restaurant.findOne({ name: 'Bruin Plate' }),
-    'De Neve': await Restaurant.findOne({ name: 'De Neve' }),
-    Feast: await Restaurant.findOne({ name: 'Feast' }),
-  };
+  const restaurants = {};
+
+  // used to reference the restaurants when updating the menu lists associated
+  // with the restaurants
+  const restaurantById = {};
   const menus = {};
 
   const times = await fetchTimes(date);
@@ -253,27 +269,44 @@ const getUpdatedMenu = async (
     const item = items[i];
     const recipe = recipes[i];
 
-    // update restaurant
-    // TODO update the restaurant documents
-    // restaurants[item.diningHall](Restaurant.create({name: item.diningHall, menus:}))
+    // find or create restaurant
+    if (!(item.diningHall in restaurants)) {
+      // we allow this await in the loop because it happens only once per restaurant
+      // eslint-disable-next-line no-await-in-loop
+      restaurants[item.diningHall] = await Restaurant.findOne({ name: item.diningHall });
+
+      // create a new dining hall if it does not exist
+      if (restaurants[item.diningHall] === null) {
+        restaurants[item.diningHall] = new Restaurant({ name: item.diningHall });
+      }
+
+      // we also sort the restaurants by id for convenience
+      restaurantById[restaurants[item.diningHall]._id] = restaurants[item.diningHall];
+    }
 
     // create menu
-    if (item.menuPeriod in menus) {
-      // the menu doc already exists so we just append to it
-      menus[item.menuPeriod].menuItems.push(item.recipeId);
-    } else {
+    if (!(item.menuPeriod in menus)) {
       // we need to create a new menu doc
-      menus[item.menuPeriod] = new Menu({
+      const menuData = {
         mealPeriod: item.menuPeriod,
-        startTime: times[item.menuPeriod].startTime,
-        endTime: times[item.menuPeriod].endTime,
+        startTime: times[item.diningHall][item.menuPeriod].start,
+        endTime: times[item.diningHall][item.menuPeriod].end,
         restaurant: restaurants[item.diningHall]._id,
-        menuItems: [item.recipeId],
-      });
+      };
+      // we allow this await in the loop because it only fetches
+      // the menu once per meal period.
+      let newMenu = await Menu.findOne(menuData); // eslint-disable-line no-await-in-loop
+      if (newMenu === null) {
+        newMenu = new Menu(menuData);
+      }
+      menus[item.menuPeriod] = newMenu;
+    }
+    if (menus[item.menuPeriod].menuItems.indexOf(item.recipeId) === -1) {
+      menus[item.menuPeriod].menuItems.push(item.recipeId);
     }
 
     // create menu item
-    menuItems.push(new MenuItem({
+    menuItemsData.push({
       _id: item.recipeId,
       name: item.name,
       rating: null,
@@ -283,18 +316,60 @@ const getUpdatedMenu = async (
       props: recipe.props,
       restaurant: restaurants[item.diningHall]._id,
       station: item.diningSection,
+    });
+  }
+
+  const menuList = Object.values(menus);
+
+  // update restaurant
+  for (let i = 0; i < menuList.length; i += 1) {
+    if (restaurantById[menuList[i].restaurant].menus.indexOf(menuList[i]._id) === -1) {
+      restaurantById[menuList[i].restaurant].menus.push(menuList[i]._id);
+    }
+  }
+
+  // save restaurants
+  let savePromises = Object.values(restaurants).map((res) => res.save());
+  // save menus
+  savePromises = savePromises.concat(menuList.map((menu) => menu.save()));
+
+  // remove duplicate menu items
+  const filteredItemsData = [];
+  for (let i = 0; i < menuItemsData.length; i += 1) {
+    if (!filteredItemsData.reduce(
+      ((acc, item) => (acc || item._id === menuItemsData[i]._id)),
+      false,
+    )) {
+      filteredItemsData.push(menuItemsData[i]);
+    }
+  }
+
+  // save menu items
+  for (let i = 0; i < filteredItemsData.length; i += 1) {
+    const data = filteredItemsData[i];
+    savePromises.push(MenuItem.findById(data._id).then((item) => {
+      if (item === null) {
+        return (new MenuItem(data)).save();
+      }
+      item.overwrite(data);
+      return item.save();
     }));
   }
 
-  return {
-    items: menuItems,
-    menus,
-    restaurants,
-  };
+  // wait until all are saved
+  await Promise.all(savePromises);
 };
 
+const createBlankRestaurants = () => Promise.all([
+  Restaurant.create({ name: 'Covel' }),
+  Restaurant.create({ name: 'Bruin Plate' }),
+  Restaurant.create({ name: 'De Neve' }),
+  Restaurant.create({ name: 'FEAST at Rieber' }),
+]);
+
 module.exports = {
-  getUpdatedMenu,
+  updateMenu,
+  createBlankRestaurants,
 
   // these should be private
   // they are only exported so that we can test it with Jest

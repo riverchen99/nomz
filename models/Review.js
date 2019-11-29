@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
  */
 const ReviewSchema = new mongoose.Schema({
   menuItem: { type: String, required: true },
-  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  author: { type: mongoose.Schema.Types.String, ref: 'User', required: true },
   rating: { type: Number, required: true },
   comments: String,
 });

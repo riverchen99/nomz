@@ -5,7 +5,14 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
-const apiRoutes = require('./routes/api/routes');
+const passport = require('passport');
+const cookieSession = require('cookie-session');
+const cookieParser = require('cookie-parser');
+
+
+const apiRoutes = require('./routes/api.routes');
+const authRoutes = require('./routes/auth.routes');
+const scraper = require('./scraper/scraper');
 
 const PORT = process.env.PORT || 8080;
 
@@ -23,12 +30,36 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'client', 'build')));
 app.use('/docs', express.static('docs'));
 
+app.use(
+  cookieSession({
+    name: 'session',
+    keys: ['nomz'],
+    maxAge: 24 * 60 * 60 * 100,
+  }),
+);
+app.use(cookieParser());
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 app.use('/api', apiRoutes);
+app.use('/auth', authRoutes);
 app.get('/hello', (req, res) => res.send('Hello world!'));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
 });
+
+app.post('/updateMenu', (req, res) => {
+  if (req.body.date === undefined) {
+    res.send('Date required.');
+  } else {
+    scraper.updateMenu(req.body.date).then(() => res.send(`Updated menu for ${req.body.date}`));
+  }
+});
+
+// app.post('/createRestaurants', (req, res) => scraper.createBlankRestaurants());
 
 // old code
 /*

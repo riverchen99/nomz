@@ -90,24 +90,28 @@ const user1 = new User({
   name: 'Mufasa',
   preferences: [],
   restrictions: ['eggs'],
+  _id: '1',
 });
 
 const user2 = new User({
   name: 'Scar',
   preferences: ['vegetarian'],
   restrictions: ['nuts'],
+  _id: '2',
 });
 
 const user3 = new User({
   name: 'Pumbaa',
   preferences: [],
   restrictions: ['non-grub things'],
+  _id: '3',
 });
 
 const user4 = new User({
   name: 'EmptyUser',
   preferences: [],
   restrictions: [],
+  _id: '4',
 });
 
 
@@ -215,7 +219,7 @@ describe('CRUD API Endpoints works correctly', () => {
 
   describe('POST Review', () => {
     it('should update the corresponding MenuItem rating', async () => {
-      await User.create({ name: 'NewUser' });
+      await User.create({ name: 'NewUser', _id: 'asdf' });
       const users = await User.find();
       console.log(users);
       const res = await request(app).post('/api/reviews').send({ menuItem: '10', author: users[0]._id, rating: 5 });
