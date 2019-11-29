@@ -316,7 +316,7 @@ describe('Recommendations API works correctly', () => {
 
   describe('Get Recommendations 6: Breakfast egg restriction', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T09:00-0800&userId=Mufasa');
+      const res = await request(app).get(`/api/recommendations?date=2019-11-14T09:00-0800&userId=${user1._id}`);
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(2);
     });

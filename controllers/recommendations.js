@@ -64,9 +64,12 @@ async function recommendationController(req, res) {
   const restaurant = '';
   let reviewedItems = [];
 
-  if (req.query.userId !== undefined) {
-    const user = await User.find({ name: req.query.userId });
-    if (user.length !== 0 && user !== 'everyone') {
+  if (req.query.userId !== undefined && req.query.userId !== 'everyone') {
+    // const user = await User.find({ name: req.query.userId });
+    // Validate id, should be one and only one instance of user
+    // Will be id OR _id
+    const user = await User.find({ _id: req.query.userId });
+    if (user.length !== 0) {
       reviewedItems = await Utils.getUserReviewedItems(user[0], 3);
       preferences = user[0].preferences;
       restrictions = user[0].restrictions;
@@ -77,7 +80,8 @@ async function recommendationController(req, res) {
   const recommendations = await Utils.generateRecommendations(menuItemIds,
     restaurant,
     preferences,
-    restrictions, reviewedItems);
+    restrictions,
+    reviewedItems);
   res.json(recommendations);
 }
 
