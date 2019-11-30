@@ -53,7 +53,7 @@ router.get('/facebook', (req, res, next) => {
 });
 
 router.get('/loginSuccess', (req, res) => {
-  if (req.query.extension === 1) {
+  if (req.query.extension === '1') {
     res.sendFile(path.join(__dirname, '..', 'extension', 'loggedIn.html'));
   } else {
     res.redirect((process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000') + CLIENT_HOME_PAGE_URL);
@@ -62,13 +62,11 @@ router.get('/loginSuccess', (req, res) => {
 
 router.get('/facebook/callback',
   (req, res, next) => {
-    console.log('got to callback');
     passport.authenticate('facebook', {
       callbackURL: `${CALLBACK_URL_BASE}/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}`,
     })(req, res, next);
   },
   (req, res) => {
-    console.log(`extension: ${req.query.extension}`);
     res.redirect(`/auth/loginSuccess${req.query.extension ? '?extension=1' : ''}`);
   });
 
