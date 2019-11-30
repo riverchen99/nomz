@@ -10,6 +10,24 @@ const Review = require('../models/Review');
 const DEBUG = true;
 
 /**
+ * similarityScore(menuItem1, menuItem2)
+ * weightedRecommendations(menuItems, reviewed,reviedRatings)
+ * getUserReviewedItems(user, ratingThresh)
+ * propsCheck(infoArray, props, type)
+ * restrictionCheck(restrictions, info)
+ * itemCompatibility(preferences, restrictions, type)
+ * generateRecommendations(
+  availableMenuItemIds,
+  restaurantFilter,
+  preferences,
+  restrictions,
+  reviewedItems,
+) {
+ *
+ * */
+
+
+/**
  * Return quantified similarity between two menu items.
  * Auxiliary function not exposed to frontend client.
  *
@@ -69,7 +87,7 @@ function similarityScore(menuItem1, menuItem2) {
  * Auxiliary function not exposed to frontend client.
  *
  * @param {MenuItem[]} menuItems -  Available menu items
- * @param {MenuItem[]} reviewes - Reviewed Menu ite
+ * @param {MenuItem[]} reviewed - Reviewed Menu ite
  * @param {Number[]} - Array of Review objects authored by user
  * @return {Object} - Array of {Menu Item, score} objects sorted by weight score
  */
@@ -137,7 +155,7 @@ async function getUserReviewedItems(user, ratingThresh) {
  *
  * @param {string[]} infoArray - Contains a list of either user restrictions or
  * preferences to check
- * @param {MenuItem.props} props - Desc
+ * @param {MenuItem.props} props - Props of menuItem
  * @param {string} type - 'preferences' or 'restrictions'. Used to relate any matches
  * to type of filtering.
  * @return {Boolean} - Whether the menu item should be included

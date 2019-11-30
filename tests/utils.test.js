@@ -59,7 +59,7 @@ describe('Props Check Test 1: ', () => {
 });
 
 describe('Props Check Test 2: ', () => {
-  it('should find a no restricted tag....return true', async () => {
+  it('should find no restricted tag....return true', async () => {
     const props = {
       vegetarian: true,
       peanuts: false,
@@ -106,11 +106,8 @@ describe('Props Check Test 5: ', () => {
 
 /*
 item1 = new MenuItem({
-    _id: { type: String, required: true },
-    name: {
-      type: String,
-      required: true,
-    },
+    _id: 1,
+    name: "Eggs",
     rating: Number,
     description: String,
     nutrition: {
