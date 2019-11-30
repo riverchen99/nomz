@@ -44,7 +44,7 @@ function addRating(rating, $el, menuItemId, newReview) {
       success: console.log,
       data: JSON.stringify({
         menuItem: menuItemId,
-        author: userId || "guest_extension",
+        author: userId || 'guest_extension',
         rating,
       }),
       contentType: 'application/json',

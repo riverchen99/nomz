@@ -7,15 +7,32 @@ const Restaurant = require('../models/Restaurant');
 const MenuItem = require('../models/MenuItem');
 const Review = require('../models/Review');
 
+const DEBUG = true;
 
+/**
+ * Return quantified similarity between two menu items.
+ * Auxiliary function not exposed to frontend client.
+ *
+ * @param {MenuItem} menuItem1 - Menu item from current availability
+ * @param {MenuItem} menuItem2 - Menu item from user reviews
+ * @return {Number} - Similarity score
+ */
 function similarityScore(menuItem1, menuItem2) {
   // ingredient score
-  console.log(menuItem2);
+
+  if (DEBUG) {
+    console.log(`Compare ${menuItem1.name} with ${menuItem2.name}`);
+  }
   const ingredients1 = menuItem1.ingredients;
   const ingredients2 = menuItem2.ingredients;
-  console.log(`Ingredients2: ${ingredients2}`);
+
+  if (DEBUG) {
+    console.log(`Ingredients1: ${ingredients1}`);
+    console.log(`Ingredients2: ${ingredients2}`);
+  }
   let score = 0;
-  // assume imgredients listed by importance
+
+  // assume ingredients listed by importance
   const len = ingredients1.length;
   for (let i = 0; i < ingredients1.length; i += 1) {
     if (ingredients2.includes(ingredients1[i])) {
@@ -23,16 +40,39 @@ function similarityScore(menuItem1, menuItem2) {
     }
   }
 
+  // Prop match
   const prop1 = menuItem1.props;
   const prop2 = menuItem2.props;
+  if (DEBUG) {
+    console.log(`Prop1: ${prop1}`);
+    console.log(`Prop2: ${prop2}`);
+  }
   Object.keys(prop1).forEach((key) => {
-    if (prop1[key] === prop2[key]) {
-      score += 1;
+    if (prop1[key] !== undefined && prop1[key] === prop2[key]) {
+      if (DEBUG) {
+        console.log(`Prop1Key: ${prop1[key]}`);
+        console.log(`Prop2Key: ${prop2[key]}`);
+      }
+      score += 5;
     }
   });
+
+  // Restaurant match
+  if (menuItem1.restaurant === menuItem2.restaurant) {
+    score += 5;
+  }
   return score;
 }
 
+/**
+ * Rank available menu items based on user reviewed items.
+ * Auxiliary function not exposed to frontend client.
+ *
+ * @param {MenuItem[]} menuItems -  Available menu items
+ * @param {MenuItem[]} reviewes - Reviewed Menu ite
+ * @param {Number[]} - Array of Review objects authored by user
+ * @return {Object} - Array of {Menu Item, score} objects sorted by weight score
+ */
 function weightedRecommendations(menuItems, reviewed, reviewedRatings) {
   const ratingWeight = 10;
   const dict = []; // create an empty array
@@ -45,12 +85,11 @@ function weightedRecommendations(menuItems, reviewed, reviewedRatings) {
     cumeScore += (menuItem.rating * ratingWeight);
     // Score similarity of item to user history
     for (let j = 0; j < reviewed.length; j += 1) {
-      console.log('Menu Item: ', menuItem);
-      console.log('Reviewed Item: ', reviewed[j]);
       if (menuItem._id === reviewed[j]._id) {
         // standard similarity score
         cumeScore += menuItem.ingredients.length;
         // Extra points for being in user history
+        // Weighted by user rating
         cumeScore += reviewedRatings[i] * ratingWeight;
       } else {
         cumeScore += similarityScore(menuItem, reviewed[j]);
@@ -67,6 +106,15 @@ function weightedRecommendations(menuItems, reviewed, reviewedRatings) {
   return dict;
 }
 
+/**
+ * Return reviews submitted by a specified user. Can specify a minimum rating
+ * for the reviews to return
+ * Auxiliary function not exposed to frontend client.
+ *
+ * @param {User} user - Id of user
+ * @param {Number} ratingThresh - Minimum rating for extracted reviews
+ * @return {MenuItem[]} - Array of MenuItem objects user has reviewed
+ */
 async function getUserReviewedItems(user, ratingThresh) {
   const reviews = await Review.find({ author: user, rating: { $gte: ratingThresh } });
   const reviewedItems = [];
@@ -85,7 +133,7 @@ async function getUserReviewedItems(user, ratingThresh) {
  * checking for preferences, a menu item should have all or  * most of props identified
  * in the user preferences. If checking for restrictions, a menu item must not have any
  * props that the user restricted on order to be included.
- * Auxiliary function not exposed to client.
+ * Auxiliary function not exposed to frontend client.
  *
  * @param {string[]} infoArray - Contains a list of either user restrictions or
  * preferences to check
@@ -97,7 +145,6 @@ async function getUserReviewedItems(user, ratingThresh) {
 function propsCheck(infoArray, props, type) {
   let matchScore = 0;
   const maxScore = infoArray.length;
-  // console.log(infoArray);
   if (maxScore === 0) {
     // no restrictions/preferences to worry about so we can include it
     return true;
@@ -115,7 +162,7 @@ function propsCheck(infoArray, props, type) {
     // contains incompatible stuff, exclude from filtered results
     return false;
   } if (type === 'preferences') {
-    // 80% matching threshold for acceptance of match
+    // 50% matching threshold for acceptance of match
     if ((matchScore / maxScore) >= 0.5) {
       return true;
     }
@@ -128,7 +175,7 @@ function propsCheck(infoArray, props, type) {
 /**
    * Return whether a menu item's ingredients comply with user restrictions.
    * If any restricted item is found, it does not comply.
-   * Auxiliary function not exposed to client.
+   * Auxiliary function not exposed to frontend client.
    *
    * @param {string[]} restrictions - Contains a list of the user restrictions
    * @param {string[]} info - Allergen or ingredient information to search through
@@ -154,7 +201,7 @@ function restrictionCheck(restrictions, info) {
 /**
    * Checks if a menuItem is included in the filtered results based on whethers its
    * dietary information complies with the user preferences and restrictions
-   * Auxiliary function not exposed to client.
+   * Auxiliary function not exposed to frontend client.
    *
    * @param {string[]} preferences - Array of user preferences that a menu item should have
    * @param {string[]} restrictions - Array of user restrictions that a menu item cannot have
@@ -171,11 +218,12 @@ function itemCompatibility(preferences, restrictions, menuItem) {
 
 /**
  * Returns an array of MenuItem objects from the MenuItem array based on user filters.
- * Auxiliary function not exposed to client.
+ * Auxiliary function not exposed to frontend client.
  * @param {string[]} availableMenuItemIds- Array of object IDs for MenuItem candidates
  * @param {string} restaurantFilter - name of restaurant, if applicable. Empty string otherwise
  * @param {string[]} preferences - Array of user preferences to filter through menu items by
  * @param {string[]} restrictions - Array of user restrictions to filter out menu items by
+ * @param {string[]} reviewedItems - Array of previous user re
  * @return {MenuItem[]} - Array of MenuItems the comply with the applicable filters
  */
 async function generateRecommendations(
@@ -185,9 +233,6 @@ async function generateRecommendations(
   restrictions,
   reviewedItems,
 ) {
-  // look up menuItem by menuItemIds
-
-  // console.log(availableMenuItemIds);
   const filterRestaurant = (restaurantFilter.length !== 0);
   const filterPreferences = (preferences.length !== 0);
   const filterRestrictions = (restrictions.length !== 0);
@@ -226,18 +271,21 @@ async function generateRecommendations(
 
   // add score to remaining results that we want to sort
   const weightedResults = weightedRecommendations(results, reviewed, reviewedItemsRatings);
-  console.log('Weighted');
-  console.log(weightedResults);
-
+  if (DEBUG) {
+    console.log('Weighted');
+    console.log(weightedResults);
+  }
   const scoredResults = weightedResults.map((a) => a.item);
-
-  console.log('Final');
-  console.log(scoredResults);
-
+  if (DEBUG) {
+    console.log('Final');
+    console.log(scoredResults);
+  }
   // Original seen for debugging purposes
   results.sort((a, b) => b.rating - a.rating);
-  console.log('Regular');
-  console.log(results);
+  /* if (DEBUG){
+    console.log('Regular');
+    console.log(results);
+  } */
 
 
   return results;
