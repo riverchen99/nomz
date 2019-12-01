@@ -22,10 +22,27 @@ class MenuItempage extends React.Component {
       restaurantName: '',
       aggregateRating: 0,
       reviews: null,
+      loggedIn: false,
+      user: null,
     };
   }
 
   componentDidMount() { 
+    axios.get('/auth/user').then(response => {
+      console.log(response.data)
+      if (!!response.data.user) {
+        this.setState({
+          loggedIn: true,
+          user: response.data.user
+        })
+      } else {
+        this.setState({
+          loggedIn: false,
+          user: null
+        })
+      }
+    })
+
     this.getMenuItem();
     this.getReviews();
   }
@@ -105,9 +122,19 @@ class MenuItempage extends React.Component {
     const { id } = this.props.location.state;
     axios.get(`/api/reviews`)
       .then((resp) => {
-        // filter for reviews of the current menu item only
-        const reviews = resp.data.filter(review => 
-          review.menuItem === id);
+        /**
+         * Filter for reviews of the current menu item only.
+         * Only reviews with texts are displayed, however
+         * rating only reviews (from extension) from the extension are
+         * factored in for the calculation of the rating
+         * Review from current user is also not displayed 
+         * in the list, but instead shown in the review form component.
+         */
+        var reviews = resp.data.filter(review => 
+          review.menuItem === id && review.comments != null);
+        if (this.state.loggedIn) {
+          reviews = reviews.filter(review => review.author !== this.state.user);
+        }
         const itemReviews = reviews.map(review =>  
           <ReviewComponent key={this.state.itemName + resp.data.indexOf(review)} review={review} />
         )
