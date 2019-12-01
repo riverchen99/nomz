@@ -22,6 +22,7 @@ router.get('/user', (req, res) => {
   return res.json({ user: null });
 });
 
+/*
 router.post('/logout', (req, res) => {
   if (req.user) {
     req.session.destroy();
@@ -30,7 +31,13 @@ router.post('/logout', (req, res) => {
   }
   return res.json({ msg: 'no user to log out!' });
 });
+*/
 
+router.get("/logout", (req, res) => {
+  req.session = null;
+  res.redirect("/");
+
+})
 
 // old working code
 /*
