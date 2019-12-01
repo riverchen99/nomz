@@ -5,6 +5,7 @@ import Recommendpage from './components/Recommendpage';
 import MenuItempage from './components/MenuItempage';
 import AllMenuspage from './components/AllMenuspage';
 import RestaurantMenupage from './components/RestaurantMenupage';
+import Profilepage from "./components/Profilepage"
 import './App.css';
 
 class App extends Component {
@@ -22,6 +23,7 @@ class App extends Component {
           <Route exact path="/menuitem/:id" component={MenuItempage} />
           <Route exact path="/allmenus" component={AllMenuspage} />
           <Route exact path="/restaurantmenu/:id" component={RestaurantMenupage} />
+          <Route exact path="/profile" component={Profilepage} />
         </Switch>
       </BrowserRouter>
     );
