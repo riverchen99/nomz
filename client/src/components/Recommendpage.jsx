@@ -87,7 +87,6 @@ class Recommendpage extends React.Component {
   */
   generateRecURL() {
     const { day, recommendee, time, loggedIn, user } = this.state;
-<<<<<<< HEAD
     let userId = recommendee;
     if (loggedIn) {
       userId = user;
@@ -96,26 +95,13 @@ class Recommendpage extends React.Component {
     const timeToArr = time.split(":");
     date.setHours(parseInt(timeToArr[0]));
     date.setMinutes(parseInt(timeToArr[1]));
-=======
-    const thing = new Date();
-    const month = thing.getMonth() + 1;
-    let date = thing.getDate();
-    let userId = recommendee;
->>>>>>> 9eddc21f98274cb282370e40efb93cf74c7443ba
     if (day === 'tomorrow'){
       date.setDate(date.getDate() + 1);
       date += 1;
     }
-<<<<<<< HEAD
     return `api/recommendations?date=${date}&userId=${userId}`;
-=======
-    if (loggedIn) {
-      userId = user;
-    }
-      return `api/recommendations?date=2019-${month}-${date}T${time}-0800&userId=${userId}`;
->>>>>>> 9eddc21f98274cb282370e40efb93cf74c7443ba
   }
-  
+
   /**
   * Function that makes axios call to backend to fetch recommended items based on input values
   * @return {Number} - 1 denotes success, 0 denotes failure

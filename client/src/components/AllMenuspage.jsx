@@ -62,13 +62,6 @@ class AllMenuspage extends React.Component {
           <Text>De Neve Dining</Text>
           <Text>FEAST at Rieber</Text>
           <Text>Bruin Plate</Text>
-          {/* <h2>Quick Service</h2>
-          <p>Bruin Cafe</p>
-          <p>Cafe 1919</p>
-          <p>Rendezvous</p>
-          <p>The Study at Hedrick</p>
-          <p>De Neve Late Night</p>
-          <p>Bruin Plate Grab & Go Breakfast</p> */}
         </Container>
       </React.Fragment>
     )
