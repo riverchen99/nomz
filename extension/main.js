@@ -94,9 +94,7 @@ function addStars(reviewData, menuItemData) { // eslint-disable-line
           activeColor: (userReview === undefined) ? 'gold' : 'crimson',
           callback: (rating, $el) => { addRating(rating, $el, menuItemData[i]._id, userReview === undefined); }, // eslint-disable-line
         });
-      }
-      // if in guest mode, ratings will still be displayed but in read-only mode
-      else {
+      } else { // if in guest mode, ratings will still be displayed but in read-only mode
         $(`.star-rating-${menuItemData[i]._id}`).starRating({
           initialRating: (userReview === undefined) ? menuItemData[i].rating : userReview.rating,
           starSize: 10,
