@@ -7,122 +7,7 @@ const Restaurant = require('../models/Restaurant');
 const MenuItem = require('../models/MenuItem');
 const Review = require('../models/Review');
 
-const DEBUG = true;
-
-/**
- * similarityScore(menuItem1, menuItem2)
- * weightedRecommendations(menuItems, reviewed,reviedRatings)
- * getUserReviewedItems(user, ratingThresh)
- * propsCheck(infoArray, props, type)
- * restrictionCheck(restrictions, info)
- * itemCompatibility(preferences, restrictions, type)
- * generateRecommendations(
-  availableMenuItemIds,
-  restaurantFilter,
-  preferences,
-  restrictions,
-  reviewedItems,
-) {
- *
- * */
-
-
-/**
- * Return quantified similarity between two menu items.
- * Auxiliary function not exposed to frontend client.
- *
- * @param {MenuItem} menuItem1 - Menu item from current availability
- * @param {MenuItem} menuItem2 - Menu item from user reviews
- * @return {Number} - Similarity score
- */
-function similarityScore(menuItem1, menuItem2) {
-  // ingredient score
-
-  if (DEBUG) {
-    console.log(`Compare ${menuItem1.name} with ${menuItem2.name}`);
-  }
-  const ingredients1 = menuItem1.ingredients;
-  const ingredients2 = menuItem2.ingredients;
-
-  if (DEBUG) {
-    console.log(`Ingredients1: ${ingredients1}`);
-    console.log(`Ingredients2: ${ingredients2}`);
-  }
-  let score = 0;
-
-  // assume ingredients listed by importance
-  const len = ingredients1.length;
-  for (let i = 0; i < ingredients1.length; i += 1) {
-    if (ingredients2.includes(ingredients1[i])) {
-      score += (len - i);
-    }
-  }
-
-  // Prop match
-  const prop1 = menuItem1.props;
-  const prop2 = menuItem2.props;
-  if (DEBUG) {
-    console.log(`Prop1: ${prop1}`);
-    console.log(`Prop2: ${prop2}`);
-  }
-  Object.keys(prop1).forEach((key) => {
-    if (prop1[key] !== undefined && prop1[key] === prop2[key]) {
-      if (DEBUG) {
-        console.log(`Prop1Key: ${prop1[key]}`);
-        console.log(`Prop2Key: ${prop2[key]}`);
-      }
-      score += 5;
-    }
-  });
-
-  // Restaurant match
-  if (menuItem1.restaurant === menuItem2.restaurant) {
-    score += 5;
-  }
-  return score;
-}
-
-/**
- * Rank available menu items based on user reviewed items.
- * Auxiliary function not exposed to frontend client.
- *
- * @param {MenuItem[]} menuItems -  Available menu items
- * @param {MenuItem[]} reviewed - Reviewed Menu ite
- * @param {Number[]} - Array of Review objects authored by user
- * @return {Object} - Array of {Menu Item, score} objects sorted by weight score
- */
-function weightedRecommendations(menuItems, reviewed, reviewedRatings) {
-  const ratingWeight = 10;
-  const dict = []; // create an empty array
-
-
-  for (let i = 0; i < menuItems.length; i += 1) {
-    let cumeScore = 0;
-    const menuItem = menuItems[i];
-    // Score rating
-    cumeScore += (menuItem.rating * ratingWeight);
-    // Score similarity of item to user history
-    for (let j = 0; j < reviewed.length; j += 1) {
-      if (menuItem._id === reviewed[j]._id) {
-        // standard similarity score
-        cumeScore += menuItem.ingredients.length;
-        // Extra points for being in user history
-        // Weighted by user rating
-        cumeScore += reviewedRatings[i] * ratingWeight;
-      } else {
-        cumeScore += similarityScore(menuItem, reviewed[j]);
-      }
-    }
-    // Cume score
-    dict.push({
-      item: menuItem,
-      score: cumeScore,
-    });
-  }
-
-  dict.sort((a, b) => b.score - a.score);
-  return dict;
-}
+const DEBUG = false;
 
 /**
  * Return reviews submitted by a specified user. Can specify a minimum rating
@@ -131,7 +16,8 @@ function weightedRecommendations(menuItems, reviewed, reviewedRatings) {
  *
  * @param {User} user - Id of user
  * @param {Number} ratingThresh - Minimum rating for extracted reviews
- * @return {MenuItem[]} - Array of MenuItem objects user has reviewed
+ * @return {Object[]} - Array of (MenuItem, rating) objects user has reviewed in
+ * ascending order of rating
  */
 async function getUserReviewedItems(user, ratingThresh) {
   const reviews = await Review.find({ author: user, rating: { $gte: ratingThresh } });
@@ -142,7 +28,10 @@ async function getUserReviewedItems(user, ratingThresh) {
       userRating: (reviews[i].rating),
     });
   }
-  return reviewedItems;
+  if (DEBUG) {
+    console.log(reviewedItems.sort((a, b) => a.userRating - b.userRating));
+  }
+  return reviewedItems.sort((a, b) => a.userRating - b.userRating);
 }
 
 /**
@@ -223,7 +112,7 @@ function restrictionCheck(restrictions, info) {
    *
    * @param {string[]} preferences - Array of user preferences that a menu item should have
    * @param {string[]} restrictions - Array of user restrictions that a menu item cannot have
-   * @param {MenuItem} type - MenuItem object to check for compliance of user filters
+   * @param {MenuItem} menuItem - MenuItem object to check for compliance of user filters
    * @return {Boolean} - Whether the menu item complies with user filters
    */
 function itemCompatibility(preferences, restrictions, menuItem) {
@@ -235,14 +124,125 @@ function itemCompatibility(preferences, restrictions, menuItem) {
 }
 
 /**
+ * Return quantified similarity between two menu items.
+ * Auxiliary function not exposed to frontend client.
+ *
+ * @param {MenuItem} menuItem1 - Menu item from current availability
+ * @param {MenuItem} menuItem2 - Menu item from user reviews
+ * @return {Number} - Similarity score
+ */
+function similarityScore(menuItem1, menuItem2) {
+  // ingredient score
+
+
+  const ingredients1 = menuItem1.ingredients;
+  const ingredients2 = menuItem2.ingredients;
+
+  if (DEBUG) {
+    console.log(`Ingredients1: ${ingredients1}`);
+    console.log(`Ingredients2: ${ingredients2}`);
+  }
+  let score = 0;
+
+
+  let similar = 0;
+  for (let i = 0; i < ingredients2.length; i += 1) {
+    if (ingredients1.includes(ingredients1[i])) {
+      similar += 2;
+    }
+  }
+  score += ((menuItem2.rating * 100 * similar) / (ingredients1.length + ingredients2.length));
+
+  // Prop match
+  const prop1 = menuItem1.props;
+  const prop2 = menuItem2.props;
+  if (DEBUG) {
+    console.log(`Prop1: ${prop1}`);
+    console.log(`Prop2: ${prop2}`);
+  }
+  Object.keys(prop1).forEach((key) => {
+    if (prop1[key] !== undefined && prop1[key] === prop2[key]) {
+      if (DEBUG) {
+        console.log(`Prop1Key: ${prop1[key]}`);
+        console.log(`Prop2Key: ${prop2[key]}`);
+      }
+      score += 5;
+    }
+  });
+
+  // Restaurant match
+  if (menuItem1.restaurant === menuItem2.restaurant) {
+    score += 5;
+  }
+  if (DEBUG) {
+    console.log(`Compare ${menuItem1.name} with ${menuItem2.name}: ${score}`);
+  }
+  return score;
+}
+
+/**
+ * Rank available menu items based on user reviewed items.
+ * Auxiliary function not exposed to frontend client.
+ *
+ * @param {MenuItem[]} menuItems -  Available MenuItem objects
+ * @param {MenuItem[]} reviewed - User reviewed MenuItem objects
+ * @param {Number[]} - Array of respective user ratings for reviewed objects
+ * @return {Object} - Array of {Menu Item, score} objects sorted by weight score
+ */
+function weightedRecommendations(menuItems, reviewed, reviewedRatings) {
+  const ratingWeight = 10;
+  const dict = []; // create an empty array
+
+
+  for (let i = 0; i < menuItems.length; i += 1) {
+    let cumeScore = 0;
+    const menuItem = menuItems[i];
+    // Score rating
+    cumeScore += (menuItem.rating * ratingWeight);
+    console.log(cumeScore);
+    // Score similarity of item to user history
+    for (let j = 0; j < reviewed.length; j += 1) {
+      if (menuItem._id === reviewed[j]._id) {
+        // standard similarity score = would give 100% match
+        let match = 0;
+        match += reviewed[j].rating * 100; // ingredients
+        match += Object.keys(menuItem.props).length * 5;
+        match += 5; // restaurant
+        // Extra points for being in user history
+        // Weighted by user rating
+        match += reviewedRatings[j] * ratingWeight;
+
+        cumeScore += (j + 1) * reviewedRatings[j] * match;
+        if (DEBUG) {
+          console.log(match);
+          console.log(`Compare ${menuItem} SAME: ${cumeScore}`);
+        }
+      } else {
+        cumeScore += (j + 1) * reviewedRatings[j] * similarityScore(menuItem, reviewed[j]);
+      }
+    }
+    // Cume score
+    dict.push({
+      item: menuItem,
+      score: cumeScore,
+    });
+  }
+
+  dict.sort((a, b) => b.score - a.score);
+  return dict;
+}
+
+/**
  * Returns an array of MenuItem objects from the MenuItem array based on user filters.
  * Auxiliary function not exposed to frontend client.
- * @param {string[]} availableMenuItemIds- Array of object IDs for MenuItem candidates
+ * @param {string[]} availableMenuItemIds - Array of object IDs for MenuItem candidates
  * @param {string} restaurantFilter - name of restaurant, if applicable. Empty string otherwise
  * @param {string[]} preferences - Array of user preferences to filter through menu items by
  * @param {string[]} restrictions - Array of user restrictions to filter out menu items by
- * @param {string[]} reviewedItems - Array of previous user re
- * @return {MenuItem[]} - Array of MenuItems the comply with the applicable filters
+ * @param {Object[]} reviewedItems - Array of user reviewed (item, rating) pairs
+ * @param {MenuItem} reviewedItems.item - Reviewed Menu item
+ * @param {Number} reviewedItems.userRating - Corresponding user rating
+ * @return {MenuItem[]} - Array of MenuItems that comply with the user information
  */
 async function generateRecommendations(
   availableMenuItemIds,
@@ -298,6 +298,7 @@ async function generateRecommendations(
     console.log('Final');
     console.log(scoredResults);
   }
+
   // Original seen for debugging purposes
   results.sort((a, b) => b.rating - a.rating);
   /* if (DEBUG){
@@ -306,9 +307,9 @@ async function generateRecommendations(
   } */
 
 
-  return results;
+  return scoredResults;
 }
 
 module.exports = {
-  propsCheck, restrictionCheck, generateRecommendations, getUserReviewedItems,
+  propsCheck, restrictionCheck, generateRecommendations, getUserReviewedItems, similarityScore,
 };

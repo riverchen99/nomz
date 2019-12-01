@@ -6,7 +6,7 @@ const Utils = require('../controllers/recommendations-utils');
 const Menu = require('../models/Menu');
 const User = require('../models/User');
 
-const DEBUG = true;
+const DEBUG = false;
 /*
  * orig params
  * @param {Object} req.query.day - day
@@ -20,8 +20,9 @@ const DEBUG = true;
  * @param {Object} req.query - Object containing properties to filter for the desired resource.
  * (Automatically filled by Express from URL params)
  * @param {Object} req.query.date - date
+ * @param {Object} req.query.userId - User ID or "everyone" (default)
  * @param {express.Response} res - The express response object indicating success or failure.
- * @return {MenuItem[]} - Array of MenuItems the comply with the applicable filters
+ * @return {MenuItem[]} - Array of MenuItems complying with received user and time information
  */
 async function recommendationController(req, res) {
   // call this with
