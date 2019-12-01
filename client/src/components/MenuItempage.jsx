@@ -24,6 +24,7 @@ class MenuItempage extends React.Component {
       reviews: null,
       loggedIn: false,
       user: null,
+      alreadyRated: false,
     };
   }
 
@@ -75,17 +76,27 @@ class MenuItempage extends React.Component {
     // this code assumes we will be passed in a location.state via the router
     const { id } = this.props.location.state;
     // only allow review to be submitted if a rating is given (0 by default)
-    if (this.state.starRating < 1) {
+    if (this.state.loggedIn === false) {
+      alert('You must be logged in order to submit a review.');
+    } else if (this.state.starRating < 1) {
       alert('Please give a rating.'); 
-    }
-    else {
-      axios.post('/api/reviews', {
-        menuItem: id,
-        author: "5dcd2aa442e56ac143e24b6d", // currently hard coded since no user login yet
-        rating: this.state.starRating,
-        comments: this.state.reviewText
-      })
-      .then((resp) => console.log(resp));
+    } else {
+      if (this.state.alreadyRated) {
+        console.log(this.state.reviewText);
+        console.log(this.state.starRating);
+        axios.put('/api/reviews',
+          {filter: {menuItem: id, author: this.state.user }, update: { rating: this.state.starRating, comments: this.state.reviewText.toString() }})
+          .then((resp) => console.log(resp));
+      } else {
+        axios.post('/api/reviews', {
+          menuItem: id,
+          author: this.state.user, 
+          rating: this.state.starRating,
+          comments: this.state.reviewText
+        })
+        .then((resp) => console.log(resp));
+      }
+      
       this.getReviews();
     }
   }
@@ -133,7 +144,13 @@ class MenuItempage extends React.Component {
         var reviews = resp.data.filter(review => 
           review.menuItem === id && review.comments != null);
         if (this.state.loggedIn) {
-          reviews = reviews.filter(review => review.author !== this.state.user);
+          const userReview = resp.data.filter(review => review.author === this.state.user._id && review.menuItem === id);
+          if (userReview !== null) {
+            this.setState({alreadyRated: true});
+            const currentReview = userReview[0];
+            this.setState({reviewText: currentReview.comments, starRating: currentReview.rating } );
+          }
+          reviews = reviews.filter(review => review.author !== this.state.user._id);
         }
         const itemReviews = reviews.map(review =>  
           <ReviewComponent key={this.state.itemName + resp.data.indexOf(review)} review={review} />
@@ -156,8 +173,8 @@ class MenuItempage extends React.Component {
             </MenuItemInfoRating>
           </MenuItemHeader>
           <Heading>Write a review!</Heading>
-          <EditableStarRating onRatingChange={this.handleRatingChange} />
-          <ReviewForm onReviewChange={this.handleReviewChange} onReviewSubmit={this.handleReviewSubmit} />
+          <EditableStarRating onRatingChange={this.handleRatingChange} starRating={this.state.starRating}/>
+          <ReviewForm onReviewChange={this.handleReviewChange} onReviewSubmit={this.handleReviewSubmit} reviewText={this.state.reviewText} starRating={this.state.starRating}/>
           <Heading>Reviews</Heading>
           {this.state.reviews}
         </MenuItemBox>
