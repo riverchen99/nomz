@@ -199,7 +199,7 @@ function weightedRecommendations(menuItems, reviewed, reviewedRatings) {
     const menuItem = menuItems[i];
     // Score rating
     cumeScore += (menuItem.rating * ratingWeight);
-    console.log(cumeScore);
+    //console.log(cumeScore);
     // Score similarity of item to user history
     for (let j = 0; j < reviewed.length; j += 1) {
       if (menuItem._id === reviewed[j]._id) {
