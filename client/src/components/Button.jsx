@@ -2,9 +2,9 @@ import React from 'react';
 import { StyledButton } from './StyledButton';
 
 function Button(props) {
-  const { text, color, handleClick, width } = props;
+  const { text, color, handleClick } = props;
   return (
-    <StyledButton color={color} onClick={handleClick} width={width}>{text}</StyledButton>
+    <StyledButton color={color} onClick={handleClick}>{text}</StyledButton>
   );
 }
 
