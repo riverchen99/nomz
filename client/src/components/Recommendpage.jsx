@@ -57,10 +57,10 @@ class Recommendpage extends React.Component {
       }
     })
 
-    await this.generateRecs();
-    this.setState({
-      mounted: true,
-    })
+    let genRec = await this.generateRecs();
+    if (genRec) {
+      this.setState({ mounted: true });
+    }
   }
 
   updateRecommendee(option) {
