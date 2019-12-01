@@ -114,8 +114,6 @@ class Recommendpage extends React.Component {
             <Button text={"Update"} color={"#EF39FF"} handleClick={() => this.saveProfile()}/>
           </ButtonContainer>
         </FilterContainer>
-        
-        {this.state.menuItems}
       </React.Fragment>
     )
   }
