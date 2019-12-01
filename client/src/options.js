@@ -44,7 +44,7 @@ export const timeOptions = [
 export const timeDefaultOption = timeOptions[0];
 
 export const mealOptions = [
-  { value: "lunch", label: "Lunch" },
-  { value: "dinner", label: "Dinner" }
+  { value: 'lunch', label: 'Lunch' },
+  { value: 'dinner', label: 'Dinner' },
 ];
 export const mealDefaultOption = mealOptions[0];

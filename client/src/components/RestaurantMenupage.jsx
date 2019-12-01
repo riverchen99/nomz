@@ -1,6 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
 import Button from './Button';
+import NavBar from './NavBar';
 import {
   Text,
   FilterContainer,
@@ -92,14 +93,10 @@ class RestaurantMenupage extends React.Component {
   //     return { year: year, month: month, day: day, hour: hour, min: min, sec: sec };
   // }
 
-  async fetchMenu() {
-    await axios.get(`/api/menus?restaurant=${this.props.location.state.id}`, {
-      params: {
-        startTime: "2019-11-24T19:00:00.000Z"
-      }
-    })
+  fetchMenu() {
+    axios.get(`/api/menus?restaurant=${this.props.location.state.id}startTime={"$gte":"2019-11-24T19:00:00.000Z"}`)
       .then((resp) => {
-        console.log(resp.data);
+        //console.log(resp.data);
 
         const mealTimePeriod = this.mapMealPeriodToTime(this.state.restaurantName, this.state.meal);
         console.log(mealTimePeriod);
@@ -147,13 +144,15 @@ class RestaurantMenupage extends React.Component {
     })
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    console.log('what is it', this.props.location.state);
     this.fetchMenu();
   }
 
   render() {
     return (
       <div>
+        <NavBar userName={this.state.loggedIn ? this.state.user.name : "Guest"} />
         <Header>{this.props.location.state.restName}</Header>
         <FilterContainer>
           <Row>

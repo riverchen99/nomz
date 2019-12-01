@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import NavBar from './NavBar';
 import { Header } from './StyledRecommendpage';
 import { Container, Subtitle, Text } from './StyledAllMenuspage';
 import axios from 'axios';
@@ -28,6 +29,7 @@ class AllMenuspage extends React.Component {
   render () {
     return (
       <React.Fragment>
+        <NavBar userName={this.state.loggedIn ? this.state.user.name : "Guest"} />
         <Header>Menus</Header>
         <Container>
           <Subtitle>Dining Halls</Subtitle>

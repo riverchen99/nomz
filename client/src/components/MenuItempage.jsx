@@ -5,6 +5,7 @@ import { StyledMenuItempage, MenuItemBox, MenuItemHeader, MenuItemInfoHeader, Me
 import ReviewComponent from './ReviewComponent';
 import ReviewForm from './ReviewForm';
 import EditableStarRating from './EditableStarRating';
+import NavBar from './NavBar';
 
 class MenuItempage extends React.Component {
   constructor(props) {
@@ -119,6 +120,7 @@ class MenuItempage extends React.Component {
     return (
       <StyledMenuItempage>
         <MenuItemBox>
+          <NavBar userName={this.state.loggedIn ? this.state.user.name : "Guest"} />
           <MenuItemHeader>
             <MenuItemInfoHeader>
               <MenuItemInfoName>{this.state.itemName}</MenuItemInfoName>

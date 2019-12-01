@@ -4,6 +4,7 @@ const MenuItem = require('../models/MenuItem');
 const Menu = require('../models/Menu');
 const Restaurant = require('../models/Restaurant');
 const User = require('../models/User');
+const Review = require('../models/Review');
 // const Recommendations = require('../controllers/recommendations');
 const { app, runServer, closeServer } = require('../server');
 
@@ -74,13 +75,13 @@ const item8 = new MenuItem({
   _id: '7',
   name: 'Bacon',
   ingredients: ['Bacon'],
-  rating: 5,
+  rating: 4,
   restaurant: rest2.id,
 });
 const item9 = new MenuItem({
   _id: '8',
   name: 'Breakfast Taco',
-  ingredients: ['tortilla'],
+  ingredients: ['tortilla', 'avocado', 'beans'],
   rating: 5,
   restaurant: rest2.id,
 });
@@ -112,6 +113,7 @@ const user4 = new User({
   restrictions: [],
   _id: '4',
 });
+
 
 function seedUserData() {
   return User.insertMany([
@@ -170,6 +172,17 @@ function seedMenuData() {
       },
     ],
   );
+}
+
+function seedReviewData() {
+  return Review.insertMany([
+    {
+      menuItem: item8,
+      author: user1,
+      rating: 3,
+      comment: 'Yum',
+    },
+  ]);
 }
 
 function tearDownDb() {
@@ -249,6 +262,7 @@ describe('Recommendations API works correctly', () => {
     seedMenuData(),
     seedUserData(),
     seedRestaurantData(),
+    seedReviewData(),
   ]));
 
   afterEach(() => tearDownDb());
@@ -306,9 +320,32 @@ describe('Recommendations API works correctly', () => {
 
   describe('Get Recommendations 6: Breakfast egg restriction', () => {
     it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T09:00-0800&userId=Mufasa');
+      const res = await request(app).get(`/api/recommendations?date=2019-11-14T09:00-0800&userId=${user1._id}`);
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(2);
+    });
+  });
+
+  describe('Get Recommendations Test 7: Trivial time filtering for everyone', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?date=2019-11-14T09:00-0800&userId=everyone');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(3);
+    });
+  });
+});
+
+
+describe('Recommendations API works correctly', () => {
+  beforeAll(() => runServer(TEST_DB_URI));
+
+  afterAll(() => closeServer());
+
+  describe('Get Recommendations : Actual DB data', () => {
+    it('should return 200 and nonempty list', async () => {
+      const res = await request(app).get('/api/recommendations?date=2019-11-14T12:00-0800&&userId=everyone');
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveLength(0);
     });
   });
 });

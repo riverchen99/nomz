@@ -1,4 +1,5 @@
 import React from 'react';
+import NavBar from './NavBar';
 import MenuItem from './MenuItem';
 import Button from './Button';
 import {
@@ -86,15 +87,18 @@ class Recommendpage extends React.Component {
   * @return {string} - Returns string form of axios get request url
   */
   generateRecURL() {
-    const { day, recommendee, time } = this.state;
+    const { day, recommendee, time, loggedIn, user } = this.state;
     const thing = new Date();
     const month = thing.getMonth() + 1;
     let date = thing.getDate();
+    let userId = recommendee;
     if (day === 'tomorrow'){
       date += 1;
     }
-      return `api/recommendations?date=2019-${month}-${date}T${time}-0800&userId=${recommendee}`;
-  }
+    if (loggedIn) {
+      userId = user;
+    }
+      return `api/recommendations?date=2019-${month}-${date}T${time}-0800&userId=${userId}`;  }
 
   /**
   * Function that makes axios call to backend to fetch recommended items based on input values
@@ -130,6 +134,7 @@ class Recommendpage extends React.Component {
   render () {
     return (
       <React.Fragment>
+        <NavBar userName={this.state.loggedIn ? this.state.user.name : "Guest"} />
         <Header>What are you craving{this.state.loggedIn ? ", " + this.state.user.name : ""}?</Header>
         <FilterContainer>
           <Row>
