@@ -20,7 +20,7 @@ class EditableStarRating extends React.Component {
           name="starRating"
           starColor="#FFC32B"
           emptyStarColor="#C4C4C4"
-          value={this.props.starRating}
+          value={this.props.star_rating}
           onStarClick={this.onStarClick} />
       </div>
     );
