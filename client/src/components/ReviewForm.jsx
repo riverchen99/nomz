@@ -20,24 +20,18 @@ class ReviewForm extends React.Component {
   }
 
   render() {
-    var buttonText = "Post Review";
-    if (this.props.reviewText === '' && this.props.starRating === 0) {
-      buttonText = "Post Review";
-    } else {
-      buttonText = "Update Review";
-    }
     return (
       <StyledReviewForm onSubmit={this.handleSubmit}>
         <TextInput 
           type="text" 
-          value={this.props.reviewText} 
+          value={this.props.review_text} 
           onChange={this.handleChange} 
           rows={8} 
           required
           placeholder={"Write your review here!"}/>
         <SubmitComponent>
           Your name and profile picture will be shown on the review.
-          <Button type="submit" text={buttonText} color="rgb(239, 57, 255)" width="200px"/>
+          <Button type="submit" text="Post Review" color="rgb(239, 57, 255)" />
         </SubmitComponent>
       </StyledReviewForm>
     );

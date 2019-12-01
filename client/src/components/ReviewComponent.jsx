@@ -36,7 +36,7 @@ class ReviewComponent extends React.Component {
         </UserInfo>
         <Rating>
           <StarRating>
-            <StarRatingComponent name="rating" editing={false} starCount={5} value={this.state.starRating} emptyStarColor="#C4C4C4"/>
+            <StarRatingComponent name="rating" editing={false} starCount={5} value={this.state.starRating} />
           </StarRating>
           {this.state.textReview}
         </Rating>
