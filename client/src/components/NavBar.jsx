@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '../images/nomz_logo.png';
 import HamburgerMenu from '../images/hamburger_menu.png';
-import { StyledNavBar, LogoImage, LogoContainer, User, HamburgerImage, Menu, Wrapper, Item } from './StyledNavBar';
+import { StyledNavBar, LogoImage, User, HamburgerImage, Menu, Wrapper, Item } from './StyledNavBar';
 
 class NavBar extends React.Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class NavBar extends React.Component {
           <Item><Link to={{ pathname: '/profile'}} style={{ textDecoration: 'none', color: '#888888' }}>Profile</Link></Item>
           <Item><Link to={{ pathname: '/recommend'}} style={{ textDecoration: 'none', color: '#888888' }}>Top Rated</Link></Item>
           <Item><Link to={{ pathname: '/allmenus' }} style={{ textDecoration: 'none',  color: '#888888' }}>Menus</Link></Item>
-          <Item>Logout</Item>
+          <Item><a href="http://localhost:8080/auth/logout">Logout</a></Item>
         </Menu>
       </Wrapper>
     )

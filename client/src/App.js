@@ -5,7 +5,7 @@ import Recommendpage from './components/Recommendpage';
 import MenuItempage from './components/MenuItempage';
 import AllMenuspage from './components/AllMenuspage';
 import RestaurantMenupage from './components/RestaurantMenupage';
-import Profilepage from "./components/Profilepage"
+import Profilepage from './components/Profilepage';
 import './App.css';
 
 class App extends Component {

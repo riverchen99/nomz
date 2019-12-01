@@ -11,6 +11,8 @@ class AllMenuspage extends React.Component {
     this.state = {
       diningHalls: [],
       quickService: [],
+      loggedIn: false,
+      user: null,
     };
     this.populateRestaurants = this.populateRestaurants.bind(this);
   }
@@ -23,6 +25,21 @@ class AllMenuspage extends React.Component {
   }
 
   componentDidMount() {
+    axios.get('/auth/user').then(response => {
+      console.log(response.data)
+      if (!!response.data.user) {
+        this.setState({
+          loggedIn: true,
+          user: response.data.user
+        })
+      } else {
+        this.setState({
+          loggedIn: false,
+          user: null
+        })
+      }
+    })
+
     this.populateRestaurants();
   }
 

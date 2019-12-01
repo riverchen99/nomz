@@ -23,10 +23,27 @@ class MenuItempage extends React.Component {
       restaurantName: '',
       aggregateRating: 0,
       reviews: null,
+      loggedIn: false,
+      user: null
     };
   }
 
   componentDidMount() { 
+    axios.get('/auth/user').then(response => {
+      console.log(response.data)
+      if (!!response.data.user) {
+        this.setState({
+          loggedIn: true,
+          user: response.data.user
+        })
+      } else {
+        this.setState({
+          loggedIn: false,
+          user: null
+        })
+      }
+    })
+
     this.getMenuItem();
     this.getReviews();
   }

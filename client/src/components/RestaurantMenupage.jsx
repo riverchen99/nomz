@@ -22,6 +22,8 @@ class RestaurantMenupage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loggedIn: false,
+      user: null,
       restaurantName: this.props.location.state.restName,
       restaurantId: this.props.location.state.id,
       day: "today",
@@ -145,6 +147,21 @@ class RestaurantMenupage extends React.Component {
   }
 
   componentDidMount() {
+    axios.get('/auth/user').then(response => {
+      console.log(response.data)
+      if (!!response.data.user) {
+        this.setState({
+          loggedIn: true,
+          user: response.data.user
+        })
+      } else {
+        this.setState({
+          loggedIn: false,
+          user: null
+        })
+      }
+    })
+
     console.log('what is it', this.props.location.state);
     this.fetchMenu();
   }
