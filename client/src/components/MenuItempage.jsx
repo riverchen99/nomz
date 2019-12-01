@@ -1,10 +1,11 @@
 import React from 'react';
 import axios from 'axios';
 import StarRatingComponent from 'react-star-rating-component';
-import { StyledMenuItempage, MenuItemBox, MenuItemHeader, MenuItemInfoHeader, MenuItemInfoName, MenuItemInfoRating, MenuItemInfoRestaurant, Heading } from './StyledMenuItempage';
+import { StyledMenuItempage, MenuItemBox, MenuItemHeader, MenuItemInfoHeader, MenuItemInfoName, MenuItemInfoRating, MenuItemInfoRestaurant, Heading, NoReviewsDisplay } from './StyledMenuItempage';
 import ReviewComponent from './ReviewComponent';
 import ReviewForm from './ReviewForm';
 import EditableStarRating from './EditableStarRating';
+import { thisExpression } from '@babel/types';
 
 class MenuItempage extends React.Component {
   constructor(props) {
@@ -96,7 +97,7 @@ class MenuItempage extends React.Component {
         })
         .then((resp) => console.log(resp));
       }
-      
+      this.getMenuItem();
       this.getReviews();
     }
   }
@@ -113,6 +114,7 @@ class MenuItempage extends React.Component {
       .then((resp) => {
         const item = resp.data[0];
         const rating = item.rating;
+        console.log(rating);
         this.setState({ aggregateRating: rating });
         const restaurantID = item.restaurant;
         axios.get(`/api/restaurants/${restaurantID}`)
@@ -138,23 +140,23 @@ class MenuItempage extends React.Component {
          * Only reviews with texts are displayed, however
          * rating only reviews (from extension) from the extension are
          * factored in for the calculation of the rating
-         * Review from current user is also not displayed 
-         * in the list, but instead shown in the review form component.
          */
         var reviews = resp.data.filter(review => 
           review.menuItem === id && review.comments != null);
         if (this.state.loggedIn) {
           const userReview = resp.data.filter(review => review.author === this.state.user._id && review.menuItem === id);
-          if (userReview !== null) {
+          if (userReview.length !== 0) {
             this.setState({alreadyRated: true});
             const currentReview = userReview[0];
             this.setState({reviewText: currentReview.comments, starRating: currentReview.rating } );
           }
-          reviews = reviews.filter(review => review.author !== this.state.user._id);
         }
-        const itemReviews = reviews.map(review =>  
+        var itemReviews = reviews.map(review =>  
           <ReviewComponent key={this.state.itemName + resp.data.indexOf(review)} review={review} />
         )
+        if (itemReviews.length === 0) {
+          itemReviews = <NoReviewsDisplay>No reviews to display. Be the first to write a review!</NoReviewsDisplay>
+        } 
         this.setState({ reviews: itemReviews });
     });
   }
@@ -169,7 +171,7 @@ class MenuItempage extends React.Component {
               <MenuItemInfoRestaurant>{this.state.restaurantName}</MenuItemInfoRestaurant>
             </MenuItemInfoHeader>
             <MenuItemInfoRating>
-              <StarRatingComponent name="rating" editing={false} starCount={5} value={this.state.aggregateRating} />
+              <StarRatingComponent name="rating" editing={false} starCount={5} value={this.state.aggregateRating} emptyStarColor="#C4C4C4"/>
             </MenuItemInfoRating>
           </MenuItemHeader>
           <Heading>Write a review!</Heading>
