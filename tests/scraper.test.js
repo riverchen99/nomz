@@ -1,11 +1,11 @@
-// const scraper = require('../scraper/scraper');
+const scraper = require('../scraper/scraper');
 
 describe('Test Menu Overview Scraper', () => {
   it('should return a matching menu', () => {
     // these items were manually vetted for accuracy,
     // the parser should return these items for this particular date
-    expect(true).toEqual(true);
-    /* const trueItems = [
+    // expect(true).toEqual(true);
+    const trueItems = [
       {
         name: 'Bacon',
         recipeId: '089003',
@@ -188,17 +188,15 @@ describe('Test Menu Overview Scraper', () => {
       },
     ];
     return scraper.fetchMenuData('2019-11-13').then((items) => expect(items).toEqual(trueItems));
-    */
   });
-/*
+
   it('should return a matching recipe', () => {
     // this recipe was manually vetted for accuracy
     // the parser should return an identical recipe
 
     const trueData = {
       name: 'Meatloaf',
-      description: 'Ground beef mixed with onion, celery,
-       bread crumbs, and eggs. Flavored with a ketchup and Worcestershire sauce mix.',
+      description: 'Ground beef mixed with onion, celery, bread crumbs, and eggs. Flavored with a ketchup and Worcestershire sauce mix.',
       ingredients: [
         'Beef Stock (Water',
         'Beef Base)',
@@ -234,5 +232,4 @@ describe('Test Menu Overview Scraper', () => {
     };
     return scraper.fetchRecipeData('073004', '4').then((data) => expect(data).toEqual(trueData));
   });
-  */
 });

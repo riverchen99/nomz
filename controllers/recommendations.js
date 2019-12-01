@@ -6,6 +6,7 @@ const Utils = require('../controllers/recommendations-utils');
 const Menu = require('../models/Menu');
 const User = require('../models/User');
 
+const DEBUG = false;
 /*
  * orig params
  * @param {Object} req.query.day - day
@@ -19,8 +20,9 @@ const User = require('../models/User');
  * @param {Object} req.query - Object containing properties to filter for the desired resource.
  * (Automatically filled by Express from URL params)
  * @param {Object} req.query.date - date
+ * @param {Object} req.query.userId - User ID or "everyone" (default)
  * @param {express.Response} res - The express response object indicating success or failure.
- * @return {MenuItem[]} - Array of MenuItems the comply with the applicable filters
+ * @return {MenuItem[]} - Array of MenuItems complying with received user and time information
  */
 async function recommendationController(req, res) {
   // call this with
@@ -40,8 +42,9 @@ async function recommendationController(req, res) {
   */
 
   const date = new Date(req.query.date);
-
-  console.log(date);
+  if (DEBUG) {
+    console.log(date);
+  }
   // const userId = req.query.userId // to fix lint error
 
   // const oldDate = new Date('Tue Nov 12 2019 11:30:00 AM');
@@ -53,16 +56,27 @@ async function recommendationController(req, res) {
   const availableMenus = await Menu.find({ endTime: { $gte: date }, startTime: { $lte: date } });
 
   // availableMenus is an array of Menus available today
-  console.log(availableMenus);
+  if (DEBUG) {
+    // Foods whose IDs that will be passed to util function
+    console.log(availableMenus);
+  }
   let menuItemIds = [];
   for (let i = 0; i < availableMenus.length; i += 1) {
     menuItemIds = menuItemIds.concat((availableMenus[i]).menuItems);
   }
-  // console.log(menuItemIds);
+
+
   let preferences = [];
-  let restrictions = [];// 'eggs'];
+  let restrictions = [];
   const restaurant = '';
   let reviewedItems = [];
+  /*
+  Commented out as design decision. Web app currently does not have any
+  restaurant-specific pages for recommendations. Kept for future changes.
+  if (req.query.restaurant !== undefined){
+    restaurant = req.query.restaurant
+  }
+  */
 
   if (req.query.userId !== undefined && req.query.userId !== 'everyone') {
     // const user = await User.find({ name: req.query.userId });
@@ -70,12 +84,16 @@ async function recommendationController(req, res) {
     // Will be id OR _id
     const user = await User.find({ _id: req.query.userId });
     if (user.length !== 0) {
+      // Retrieve revies of 3+ stars tp avoid poorly rated recommending items
       reviewedItems = await Utils.getUserReviewedItems(user[0], 3);
       preferences = user[0].preferences;
       restrictions = user[0].restrictions;
     }
   }
-
+  if (DEBUG) {
+    // Foods whose IDs that will be passed to util function
+    console.log(reviewedItems);
+  }
 
   const recommendations = await Utils.generateRecommendations(menuItemIds,
     restaurant,
@@ -85,10 +103,6 @@ async function recommendationController(req, res) {
   res.json(recommendations);
 }
 
-/*
-For deployment, only recommendationController will be exposed to the client
-auxiliary functions are only exposed for unit testing
-*/
 module.exports = {
   recommendationController,
 };
