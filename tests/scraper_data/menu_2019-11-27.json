@@ -1,0 +1,517 @@
+{
+  "items": [
+    {
+      "name": "Egg Whites Omelet",
+      "recipeId": "061005",
+      "recipeSize": "1",
+      "diningHall": "De Neve",
+      "diningSection": "The Front Burner",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Omelet Bar",
+      "recipeId": "061035",
+      "recipeSize": "1",
+      "diningHall": "De Neve",
+      "diningSection": "The Front Burner",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Bacon",
+      "recipeId": "089011",
+      "recipeSize": "2",
+      "diningHall": "De Neve",
+      "diningSection": "The Kitchen",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Grilled Hot Links",
+      "recipeId": "089020",
+      "recipeSize": "2",
+      "diningHall": "De Neve",
+      "diningSection": "The Kitchen",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Scrambled Eggs",
+      "recipeId": "061102",
+      "recipeSize": "3",
+      "diningHall": "De Neve",
+      "diningSection": "The Kitchen",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Belgian Waffle",
+      "recipeId": "217033",
+      "recipeSize": "1!2",
+      "diningHall": "De Neve",
+      "diningSection": "The Pizzeria",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "The Griddler",
+      "recipeId": "117037",
+      "recipeSize": "1",
+      "diningHall": "De Neve",
+      "diningSection": "The Grill",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Egg Whites Omelet",
+      "recipeId": "061005",
+      "recipeSize": "1",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Freshly Bowled",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Omelet Bar",
+      "recipeId": "061035",
+      "recipeSize": "1",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Freshly Bowled",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Farro Egg Souffle",
+      "recipeId": "140229",
+      "recipeSize": "5",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Harvest",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Red Potato Hash",
+      "recipeId": "161046",
+      "recipeSize": "2",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Harvest",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Roasted Tomato Salsa",
+      "recipeId": "977188",
+      "recipeSize": "1",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Harvest",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Scrambled Eggs",
+      "recipeId": "061102",
+      "recipeSize": "3",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Harvest",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Red Lentil Waffle",
+      "recipeId": "217067",
+      "recipeSize": "2",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Stone Oven",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Vegetable Stuffed Whole Wheat Crepe",
+      "recipeId": "140487",
+      "recipeSize": "3",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Simply Grilled",
+      "menuPeriod": "Breakfast",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Caprese Sandwich",
+      "recipeId": "138010",
+      "recipeSize": "1",
+      "diningHall": "Covel",
+      "diningSection": "Exhibition Kitchen",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Chicken Olivada Sandwich",
+      "recipeId": "117046",
+      "recipeSize": "1",
+      "diningHall": "Covel",
+      "diningSection": "Exhibition Kitchen",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Build-Your-Own Pasta Bar",
+      "recipeId": "999070",
+      "recipeSize": "1",
+      "diningHall": "Covel",
+      "diningSection": "Exhibition Kitchen",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Chicken Parmesan",
+      "recipeId": "111156",
+      "recipeSize": "1",
+      "diningHall": "Covel",
+      "diningSection": "Euro Kitchen",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Manicotti",
+      "recipeId": "140100",
+      "recipeSize": "1",
+      "diningHall": "Covel",
+      "diningSection": "Euro Kitchen",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Margherita Pizza",
+      "recipeId": "140248",
+      "recipeSize": "1!10",
+      "diningHall": "Covel",
+      "diningSection": "Pizza Oven",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Chicken & Arugula Sandwich",
+      "recipeId": "117129",
+      "recipeSize": "1",
+      "diningHall": "Covel",
+      "diningSection": "Grill",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Albondigas de Pollo en Caldo de Chipotle",
+      "recipeId": "111863",
+      "recipeSize": "1",
+      "diningHall": "De Neve",
+      "diningSection": "Flex Bar",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Cuban Style Pork",
+      "recipeId": "081084",
+      "recipeSize": "3",
+      "diningHall": "De Neve",
+      "diningSection": "Flex Bar",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Peruvian Style Beef w/ Potato",
+      "recipeId": "071076",
+      "recipeSize": "3",
+      "diningHall": "De Neve",
+      "diningSection": "The Front Burner",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Peruvian Vegan Chicken w/ Potatoes",
+      "recipeId": "140524",
+      "recipeSize": "4",
+      "diningHall": "De Neve",
+      "diningSection": "The Front Burner",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Buffalo Chicken Wings",
+      "recipeId": "400470",
+      "recipeSize": "4",
+      "diningHall": "De Neve",
+      "diningSection": "The Kitchen",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Cauliflower Mac-N-Cheese",
+      "recipeId": "131011",
+      "recipeSize": "3",
+      "diningHall": "De Neve",
+      "diningSection": "The Kitchen",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "BBQ Chicken Pizza",
+      "recipeId": "141030",
+      "recipeSize": "1!10",
+      "diningHall": "De Neve",
+      "diningSection": "The Pizzeria",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Chili Cheese Burger",
+      "recipeId": "077082",
+      "recipeSize": "1",
+      "diningHall": "De Neve",
+      "diningSection": "The Grill",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Col. Karapet's Yardbird Cruncher",
+      "recipeId": "111062",
+      "recipeSize": "1",
+      "diningHall": "De Neve",
+      "diningSection": "The Grill",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Chicken w/ Toasted Quinoa & Garlic Vegetable Bowl",
+      "recipeId": "111147",
+      "recipeSize": "5",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Freshly Bowled",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Seasonal Field Green Salad, Mixed Grains & Avocado Bowl",
+      "recipeId": "041194",
+      "recipeSize": "5",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Freshly Bowled",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Shrimp Pasta Salad w/ Avocado",
+      "recipeId": "041112",
+      "recipeSize": "2",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Harvest",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Swiss Chard Salad w/ Lemon Vinaigrette Dressing",
+      "recipeId": "041153",
+      "recipeSize": "2",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Harvest",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Wheat Berry, Apricot & Arugula Salad",
+      "recipeId": "041147",
+      "recipeSize": "2",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Harvest",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Chicken Cranberry Pecan Salad",
+      "recipeId": "041096",
+      "recipeSize": "2",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Harvest",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Roasted Potato Salad",
+      "recipeId": "042232",
+      "recipeSize": "2",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Harvest",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Spicy Roasted Beet & Carrot Salad",
+      "recipeId": "047133",
+      "recipeSize": "2",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Harvest",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Armenian Lamb Flatbread",
+      "recipeId": "141141",
+      "recipeSize": "1",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Stone Oven",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Marinated Roma Tomato Pizza",
+      "recipeId": "141067",
+      "recipeSize": "1",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Stone Oven",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Lamb & Beef Stacker w/ Greek Yogurt Sauce",
+      "recipeId": "103001",
+      "recipeSize": "4",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Simply Grilled",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Thai Tofu Stacker",
+      "recipeId": "140651",
+      "recipeSize": "3",
+      "diningHall": "Bruin Plate",
+      "diningSection": "Simply Grilled",
+      "menuPeriod": "Lunch",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Penne Pasta",
+      "recipeId": "165025",
+      "recipeSize": "2",
+      "diningHall": "Covel",
+      "diningSection": "Exhibition Kitchen",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Penne Alfredo",
+      "recipeId": "302004",
+      "recipeSize": "6",
+      "diningHall": "Covel",
+      "diningSection": "Exhibition Kitchen",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Flank Steak w/ Harissa Dry Rub",
+      "recipeId": "071085",
+      "recipeSize": "2",
+      "diningHall": "Covel",
+      "diningSection": "Euro Kitchen",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Vegan Meatballs & Marinara",
+      "recipeId": "300016",
+      "recipeSize": "3",
+      "diningHall": "Covel",
+      "diningSection": "Euro Kitchen",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Margherita Pizza",
+      "recipeId": "140248",
+      "recipeSize": "1!10",
+      "diningHall": "Covel",
+      "diningSection": "Pizza Oven",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Chicken & Arugula Sandwich",
+      "recipeId": "117129",
+      "recipeSize": "1",
+      "diningHall": "Covel",
+      "diningSection": "Grill",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Cuban Style Pork",
+      "recipeId": "081084",
+      "recipeSize": "3",
+      "diningHall": "De Neve",
+      "diningSection": "Flex Bar",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Pork Chile Verde",
+      "recipeId": "085016",
+      "recipeSize": "6",
+      "diningHall": "De Neve",
+      "diningSection": "Flex Bar",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Pollo Asado Tacos",
+      "recipeId": "112014",
+      "recipeSize": "1",
+      "diningHall": "De Neve",
+      "diningSection": "The Front Burner",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Vegan Tacos",
+      "recipeId": "140038",
+      "recipeSize": "1",
+      "diningHall": "De Neve",
+      "diningSection": "The Front Burner",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Texas Oak-Smoked Brisket",
+      "recipeId": "071048",
+      "recipeSize": "2",
+      "diningHall": "De Neve",
+      "diningSection": "The Kitchen",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Buffalo Chicken Pizza",
+      "recipeId": "141035",
+      "recipeSize": "1!10",
+      "diningHall": "De Neve",
+      "diningSection": "The Pizzeria",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Chili Cheese Burger",
+      "recipeId": "077082",
+      "recipeSize": "1",
+      "diningHall": "De Neve",
+      "diningSection": "The Grill",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    },
+    {
+      "name": "Col. Karapet's Yardbird Cruncher",
+      "recipeId": "111062",
+      "recipeSize": "1",
+      "diningHall": "De Neve",
+      "diningSection": "The Grill",
+      "menuPeriod": "Dinner",
+      "menuDate": "November 27, 2019"
+    }
+  ]
+}
