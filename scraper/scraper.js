@@ -27,6 +27,7 @@ const PROPS_MAPPING = {
 };
 
 const menuUrl = (date) => `http://menu.dining.ucla.edu/Menus/${date}`;
+const detailedMenuUrl = (period) => (date) => `http://menu.dining.ucla.edu/Menus/${date}/${period}`;
 const recipeUrl = (recipeId, recipeSize) => `http://menu.dining.ucla.edu/Recipes/${recipeId}/${recipeSize}`;
 const hoursUrl = (date) => `http://menu.dining.ucla.edu/Hours/${date}`;
 
@@ -131,12 +132,13 @@ const fetchRecipeData = async (recipeId, recipeSize) => {
  * Helper function to fetch and parse the menu data for a particular day.
  *
  * @param {String} date - The ISO format date (YYYY-MM-DD)
+ * @param {String} [url=menuUrl] - A function that returns the menu url given the date.
  * @return {Array} - Returns an array of menu item objects. Each object contains
  * basic information that can be used to fetch the full recipe information with
  * fetchRecipeData.
  */
-const fetchMenuData = async (date) => {
-  const $ = await fetchData(menuUrl(date));
+const fetchMenuData = async (date, url = menuUrl) => {
+  const $ = await fetchData(url(date));
 
   const items = [];
 
@@ -181,6 +183,23 @@ const fetchMenuData = async (date) => {
     });
   }
   return items;
+};
+
+/**
+ * Helper function to fetch and parse the detailed menu data for a particular day.
+ *
+ * @param {String} date - The ISO format date (YYYY-MM-DD)
+ * @return {Array} - Returns an array of menu item objects. Each object contains
+ * basic information that can be used to fetch the full recipe information with
+ * fetchRecipeData.
+ */
+const fetchDetailedMenuData = async (date) => {
+  const menuPeriods = ['Breakfast', 'Brunch', 'Lunch', 'Dinner'];
+  const itemPromises = menuPeriods.reduce((promises, mealPeriod) => {
+    promises.push(fetchMenuData(date, detailedMenuUrl(mealPeriod)));
+    return promises;
+  }, []);
+  return (await Promise.all(itemPromises)).reduce((acc, itemList) => acc.concat(itemList), []);
 };
 
 
@@ -248,7 +267,7 @@ const fetchMenuTimes = async (date) => {
  */
 const updateMenu = async (
   date,
-  fetchMenu = fetchMenuData,
+  fetchMenu = fetchDetailedMenuData,
   fetchTimes = fetchMenuTimes,
   fetchRecipes = fetchRecipeData) => {
   const menuItemsData = [];
@@ -380,6 +399,7 @@ module.exports = {
 
   // these should be private
   // they are only exported so that we can test it with Jest
+  fetchDetailedMenuData,
   fetchMenuData,
   fetchRecipeData,
   fetchMenuTimes,
