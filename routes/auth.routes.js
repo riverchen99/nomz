@@ -22,7 +22,7 @@ const router = express.Router();
  * Controller to retreive a logged in user's information.
  * @function GET /user
  * @param {express.Request} req - The express request object.
- * @param {Object} req.user - User information, automatically filled by Express if an appropriate cookie is found
+ * @param {Object} req.user - User information, filled by Express if an appropriate cookie is found
  * @param {express.Response} res - The express response object containing a list of resources.
  */
 router.get('/user', (req, res) => {
@@ -40,7 +40,7 @@ router.get('/user', (req, res) => {
  * @param {express.Request} req - The express request object.
  * @param {express.Response} res - The express response object containing a list of resources.
  */
-router.get("/logout", (req, res) => {
+router.get('/logout', (req, res) => {
   req.session = null;
   res.redirect('/');
 });
@@ -59,7 +59,7 @@ router.get('/facebook', (req, res, next) => {
 });
 
 /**
- * Controller serve login success page (if logging in from extension), 
+ * Controller serve login success page (if logging in from extension),
  * or redirect to recommendation page (if logging in from webapp).
  * @function GET /logout
  * @param {express.Request} req - The express request object.
