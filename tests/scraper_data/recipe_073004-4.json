@@ -1,0 +1,36 @@
+{
+  "name": "Meatloaf",
+  "description": "Ground beef mixed with onion, celery, bread crumbs, and eggs. Flavored with a ketchup and Worcestershire sauce mix.",
+  "ingredients": [
+    "Beef Stock (Water",
+    "Beef Base)",
+    "Beef",
+    "Eggs",
+    "Ketchup",
+    "Onion",
+    "Italian Bread Crumbs",
+    "Celery",
+    "Brown Sugar",
+    "Worcestershire Sauce",
+    "Dry Mustard",
+    "Sea Salt",
+    "White Pepper",
+    "Oregano"
+  ],
+  "allergens": ["Milk", "Eggs", "Fish", "Wheat", "Soybeans", "Gluten"],
+  "props": {
+    "vegetarian": false,
+    "vegan": false,
+    "peanuts": false,
+    "treeNuts": false,
+    "wheat": true,
+    "gluten": true,
+    "soy": true,
+    "dairy": true,
+    "eggs": true,
+    "shellfish": false,
+    "fish": true,
+    "halal": false,
+    "lowCarbon": false
+  }
+}
