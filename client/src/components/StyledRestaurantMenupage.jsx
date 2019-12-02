@@ -11,3 +11,13 @@ export const Heading = styled.h1`
   color: rgb(136, 136, 136);
   padding: 2% 15% 0% 15%;
 `;
+
+export const DaySelContainer = styled.div`
+  width: 100%;
+`;
+
+export const FloatRightContainer = styled.div`
+  width: 40%;
+  margin-left: 15%;
+  float: right;
+`;
