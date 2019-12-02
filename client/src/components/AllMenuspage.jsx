@@ -25,7 +25,7 @@ class AllMenuspage extends React.Component {
         <Link
         to={{
           pathname: `/restaurantmenu/${allRest.data[i].name}`,
-          state: {id: allRest.data[i].id, restName: allRest.data[i].name},
+          state: {id: allRest.data[i]._id, restName: allRest.data[i].name},
         }}
         style={{ textDecoration: 'none' }}
         ><Text>{allRest.data[i].name}</Text>
