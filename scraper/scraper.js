@@ -379,7 +379,6 @@ const updateMenu = async (
       if (item === null) {
         return (new MenuItem(data)).save();
       }
-      item.overwrite(data);
       return item.save();
     }));
   }
