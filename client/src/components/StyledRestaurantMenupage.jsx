@@ -13,7 +13,7 @@ export const Heading = styled.h1`
 `;
 
 export const DaySelContainer = styled.div`
-  width: 100%;
+  width: 50%;
 `;
 
 export const FloatRightContainer = styled.div`
