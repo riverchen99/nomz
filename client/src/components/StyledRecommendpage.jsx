@@ -7,6 +7,7 @@ export const Header = styled.h1`
   text-align: center;
   margin: 5%;
   letter-spacing: 5px;
+  z-index: 0;
 `;
 
 export const Text = styled.h3`

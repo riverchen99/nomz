@@ -1,10 +1,11 @@
 import React from 'react';
 import axios from 'axios';
 import StarRatingComponent from 'react-star-rating-component';
-import { StyledMenuItempage, MenuItemBox, MenuItemHeader, MenuItemInfoHeader, MenuItemInfoName, MenuItemInfoRating, MenuItemInfoRestaurant, Heading, NoReviewsDisplay } from './StyledMenuItempage';
+import { StyledMenuItempage, MenuItemBox, MenuItemHeader, MenuItemInfoHeader, MenuItemInfoName, MenuItemInfoRating, MenuItemInfoRestaurant, Heading } from './StyledMenuItempage';
 import ReviewComponent from './ReviewComponent';
 import ReviewForm from './ReviewForm';
 import EditableStarRating from './EditableStarRating';
+import NavBar from './NavBar';
 import { thisExpression } from '@babel/types';
 
 class MenuItempage extends React.Component {
@@ -23,9 +24,6 @@ class MenuItempage extends React.Component {
       restaurantName: '',
       aggregateRating: 0,
       reviews: null,
-      loggedIn: false,
-      user: null,
-      alreadyRated: false,
     };
   }
 
@@ -76,9 +74,7 @@ class MenuItempage extends React.Component {
     // this code assumes we will be passed in a location.state via the router
     const { id } = this.props.location.state;
     // only allow review to be submitted if a rating is given (0 by default)
-    if (this.state.loggedIn === false) {
-      alert('You must be logged in order to submit a review.');
-    } else if (this.state.starRating < 1) {
+    if (this.state.starRating < 1) {
       alert('Please give a rating.'); 
     } else {
       if (this.state.alreadyRated) {
@@ -153,9 +149,6 @@ class MenuItempage extends React.Component {
         var itemReviews = reviews.map(review =>  
           <ReviewComponent key={this.state.itemName + resp.data.indexOf(review)} review={review} />
         )
-        if (itemReviews.length === 0) {
-          itemReviews = <NoReviewsDisplay>No reviews to display. Be the first to write a review!</NoReviewsDisplay>
-        } 
         this.setState({ reviews: itemReviews });
     });
   }
@@ -164,18 +157,19 @@ class MenuItempage extends React.Component {
     return (
       <StyledMenuItempage>
         <MenuItemBox>
+          <NavBar userName={this.state.loggedIn ? this.state.user.name : "Guest"} />
           <MenuItemHeader>
             <MenuItemInfoHeader>
               <MenuItemInfoName>{this.state.itemName}</MenuItemInfoName>
               <MenuItemInfoRestaurant>{this.state.restaurantName}</MenuItemInfoRestaurant>
             </MenuItemInfoHeader>
             <MenuItemInfoRating>
-              <StarRatingComponent name="rating" editing={false} starCount={5} value={this.state.aggregateRating} emptyStarColor="#C4C4C4"/>
+              <StarRatingComponent name="rating" editing={false} starCount={5} value={this.state.aggregateRating} />
             </MenuItemInfoRating>
           </MenuItemHeader>
           <Heading>Write a review!</Heading>
-          <EditableStarRating onRatingChange={this.handleRatingChange} starRating={this.state.starRating}/>
-          <ReviewForm onReviewChange={this.handleReviewChange} onReviewSubmit={this.handleReviewSubmit} reviewText={this.state.reviewText} starRating={this.state.starRating}/>
+          <EditableStarRating onRatingChange={this.handleRatingChange} />
+          <ReviewForm onReviewChange={this.handleReviewChange} onReviewSubmit={this.handleReviewSubmit} />
           <Heading>Reviews</Heading>
           {this.state.reviews}
         </MenuItemBox>
