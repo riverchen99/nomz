@@ -30,7 +30,7 @@ class NavBar extends React.Component {
         <Menu expanded={this.state.expanded} >
           <Item><Link to={{ pathname: '/recommend'}} style={{ textDecoration: 'none', color: '#888888' }}>Top Rated</Link></Item>
           <Item><Link to={{ pathname: '/allmenus' }} style={{ textDecoration: 'none',  color: '#888888' }}>Menus</Link></Item>
-        {lastLinks}
+          {lastLinks}
         </Menu>
       </Wrapper>
     )
