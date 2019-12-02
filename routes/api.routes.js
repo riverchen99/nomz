@@ -1,5 +1,5 @@
 /**
- * @module
+ * @module API Routes
  */
 const express = require('express');
 

@@ -32,7 +32,6 @@ class MenuItempage extends React.Component {
 
   componentDidMount() { 
     axios.get('/auth/user').then(response => {
-      console.log(response.data)
       if (!!response.data.user) {
         this.setState({
           loggedIn: true,
@@ -84,8 +83,6 @@ class MenuItempage extends React.Component {
       alert('Please give a rating.'); 
     } else {
       if (this.state.alreadyRated) {
-        console.log(this.state.reviewText);
-        console.log(this.state.starRating);
         axios.put('/api/reviews',
           {filter: {menuItem: id, author: this.state.user }, update: { rating: this.state.starRating, comments: this.state.reviewText.toString() }})
           .then((resp) => console.log(resp));
@@ -115,7 +112,6 @@ class MenuItempage extends React.Component {
       .then((resp) => {
         const item = resp.data[0];
         const rating = item.rating;
-        console.log(rating);
         this.setState({ aggregateRating: rating });
         const restaurantID = item.restaurant;
         axios.get(`/api/restaurants/${restaurantID}`)
@@ -142,6 +138,9 @@ class MenuItempage extends React.Component {
          * rating only reviews (from extension) from the extension are
          * factored in for the calculation of the rating
          */
+        // Note: this isn't scalable but for now we are just focused on getting
+        // the basic functionality together.
+        // TODO: need a backend call that will get all reviews for a given menu item id
         var reviews = resp.data.filter(review => 
           review.menuItem === id && review.comments != null);
         if (this.state.loggedIn) {

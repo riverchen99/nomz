@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from './Button';
+import NavBar from './NavBar';
 import {
   FilterContainer,
   Header,
@@ -53,7 +54,7 @@ class Recommendpage extends React.Component {
       { display: "Contains Eggs", schemaValue: "eggs" },
       { display: "Contains Crustacean Shellfish", schemaValue: "shellfish" },
       { display: "Contains Fish", schemaValue: "fish" },
-      { display: "Halal", schemaValue: "Halal" },
+      { display: "Halal", schemaValue: "halal" },
       { display: "Low Carbon Footprint", schemaValue: "lowCarbon" }
     ]
 
@@ -100,6 +101,7 @@ class Recommendpage extends React.Component {
   render () {
         return (
       <React.Fragment>
+        <NavBar userName={this.state.loggedIn ? this.state.user.name : "Guest"} />
         <Header>{this.state.loggedIn ? this.state.user.name + "'s Profile" : "Profile"}</Header>
 
         <FilterContainer>
