@@ -7,11 +7,9 @@ import {
   Text,
   FilterContainer,
   Header,
-  FloatRightContainer,
   ButtonContainer,
-  DaySelContainer,
 } from './StyledRecommendpage';
-import { Row, Heading } from './StyledRestaurantMenupage';
+import { Row, Heading, FloatRightContainer, DaySelContainer } from './StyledRestaurantMenupage';
 import {
   mealOptions,
   mealDefaultOption,
