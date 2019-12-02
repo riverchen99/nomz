@@ -1,6 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
 import Button from './Button';
+import MenuItem from './MenuItem';
 import NavBar from './NavBar';
 import {
   Text,
@@ -8,8 +9,9 @@ import {
   Header,
   FloatRightContainer,
   ButtonContainer,
+  DaySelContainer,
 } from './StyledRecommendpage';
-import { Row } from './StyledRestaurantMenupage';
+import { Row, Heading } from './StyledRestaurantMenupage';
 import {
   mealOptions,
   mealDefaultOption,
@@ -17,6 +19,7 @@ import {
   dayDefaultOption
 } from '../options';
 import axios from 'axios';
+import { Menu } from './StyledNavBar';
 
 class RestaurantMenupage extends React.Component {
   constructor(props) {
@@ -29,6 +32,7 @@ class RestaurantMenupage extends React.Component {
       day: "today",
       meal: "lunch",
       menuItems: [],
+      stations: [],
     }
     this.fetchMenu = this.fetchMenu.bind(this);
     this.mapMealPeriodToTime = this.mapMealPeriodToTime.bind(this);
@@ -95,25 +99,35 @@ class RestaurantMenupage extends React.Component {
   //     return { year: year, month: month, day: day, hour: hour, min: min, sec: sec };
   // }
 
-  fetchMenu() {
-    axios.get(`/api/menus?restaurant="${this.props.location.state.id}"&startTime={"$gte":"2019-12-02T01:00:00.000Z"}&endTime={"$lte":"2019-12-02T05:00:00.000Z"}`)
+  async fetchMenu() {
+    axios.get(`/api/menus?restaurant="${this.props.location.state.id}"&startTime={"$gte":"2019-12-01T17:00:00.000Z"}&endTime={"$lte":"2019-12-01T21:00:00.000Z"}`)
       .then((resp) => {
         console.log(resp.data);
 
         const mealTimePeriod = this.mapMealPeriodToTime(this.state.restaurantName, this.state.meal);
         console.log(mealTimePeriod);
-        for (let i = 0; i < resp.data.length; i++) {
-          const curMenu = resp.data[i];
+          const curMenu = resp.data[0];
           console.log(curMenu);
-          const curStartTime = new Date(resp.data[i].startTime);
+          // const curStartTime = new Date(resp.data[i].startTime);
           // if ((curStartTime.getHours() + ":00") === mealTimePeriod.startTime &&
           //     curStartTime.getDate() === this.mapDayToDate(this.state.day)) {
           //   console.log('found it');
 
-            let menuItemsArr = [];
-            for (let j = 0; j < curMenu.menuItems.length; j++){
-              console.log(curMenu.menuItems[j]);
-            }
+            // let menuItemsArr = [];
+            let menuItems = curMenu.menuItems;
+            // for (let j = 0; j < menuItems.length; j++){
+            //   console.log(menuItems[j]);
+            // }
+            console.log(this.state.stations);
+            const menuItemComponents = this.state.stations.map((station) =>
+              this.generateStation(station, menuItems));
+            console.log(menuItemComponents);
+
+            this.setState({menuItems:menuItemComponents});
+
+
+
+
             //   let thing = await axios.get(`/api/menuItems?_id=${curMenu.menuItems[j]}`)
             //     .then((resp) => {
             //       //console.log(resp.data);
@@ -122,7 +136,7 @@ class RestaurantMenupage extends React.Component {
             //       // });
             //       menuItemsArr.push(<p>{resp.data[0]}</p>);
             //       console.log(menuItemsArr);
-                  
+
             //     })
           //       console.log('hey', menuItemsArr);
           //   }
@@ -131,8 +145,29 @@ class RestaurantMenupage extends React.Component {
           //     menuItems: menuItemsArr,
           //   });
           // }
-        }
+        })
       }
+
+   generateStation(station, menuItems) {
+    // generate call to filter all menuitems that match the station
+    const stationItems = menuItems.filter(item =>
+      item.station === station);
+
+    const stationItemComponents = stationItems.map((item) => <MenuItem
+      key={item.name + stationItems.indexOf(item)}
+      id={item._id}
+      index={stationItems.indexOf(item) % 2}
+      itemName={item.name}
+      restaurant={this.state.restaurantName}
+      rating={item.rating}
+      />);
+    // return stationItemComponents;
+
+    return (
+      <div key={station}>
+        <Heading>{station}</Heading>
+        {stationItemComponents}
+      </div>
     )
   }
 
@@ -140,7 +175,7 @@ class RestaurantMenupage extends React.Component {
     this.setState({
       meal: option.value,
     });
-    //console.log(this.state.meal);
+    console.log(this.state.meal);
   }
 
   updateDaySelection(option) {
@@ -149,7 +184,7 @@ class RestaurantMenupage extends React.Component {
     })
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     axios.get('/auth/user').then(response => {
       console.log(response.data)
       if (!!response.data.user) {
@@ -166,7 +201,10 @@ class RestaurantMenupage extends React.Component {
     })
 
     console.log('what is it', this.props.location.state);
-    this.fetchMenu();
+    let restaurant = await axios.get(`/api/restaurants/${this.props.location.state.id}`);
+    console.log(restaurant.data[0]);
+    this.setState({stations: restaurant.data[0].stations});
+    await this.fetchMenu();
   }
 
   render() {
@@ -177,14 +215,18 @@ class RestaurantMenupage extends React.Component {
         <FilterContainer>
           <Row>
             <Text>Menu for:</Text>
+          </Row>
+          <ButtonContainer>
+            <Button text={"Go"} color={"#EF39FF"} handleClick={() => this.fetchMenu()} />
+          </ButtonContainer>
+          <Row>
             <FloatRightContainer>
               <Select options={mealOptions} defaultValue={mealDefaultOption} onChange={(event) => this.updateMealSelection(event)} />
             </FloatRightContainer>
-            <Select options={dayOptions} defaultValue={dayDefaultOption} onChange={(event) => this.updateDaySelection(event)} />
+            <DaySelContainer>
+              <Select options={dayOptions} defaultValue={dayDefaultOption} onChange={(event) => this.updateDaySelection(event)} />
+            </DaySelContainer>
           </Row>
-          <br />
-          <Button text={"Go"} color={"#EF39FF"} handleClick={() => this.fetchMenu()} />
-
         </FilterContainer>
       {this.state.menuItems}
       </div>
