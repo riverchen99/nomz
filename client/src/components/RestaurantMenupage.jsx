@@ -43,6 +43,12 @@ class RestaurantMenupage extends React.Component {
     this.getTimeFormatting = this.getTimeFormatting.bind(this);
   }
 
+  /**
+   * Function to map meal periods to times for the denoted
+   * restaurants given a certain meal period.
+   * @param {String} restaurant - Name of restaurant
+   * @param {String} meal - Name of meal period 
+   */
   mapMealPeriodToTime(restaurant, meal) {
     switch(restaurant) {
       case "Covel":
@@ -100,6 +106,10 @@ class RestaurantMenupage extends React.Component {
     }
   }
 
+  /**
+   * Helper function to generate time strings to be used for 
+   * fetching menus given the day and meal period.
+   */
   getTimeStrings() {
     const { restaurantName, meal } = this.state;
     let times = this.mapMealPeriodToTime(restaurantName, meal);
@@ -111,6 +121,11 @@ class RestaurantMenupage extends React.Component {
     return {startTimeString, endTimeString};
   }
 
+  /**
+   * Helper function to format the time strings for fetching
+   * menus using the API
+   * @param {String[]} time - Array of two strings to represent hours and minutes for the time
+   */
   getTimeFormatting(time) {
     let date = new Date();
     if (this.state.day === "tomorrow") {
@@ -126,6 +141,11 @@ class RestaurantMenupage extends React.Component {
     return timeString;
   }
 
+  /**
+   * Function to perform a GET request and put together all of the 
+   * menu items associated with the given menu for a time period and
+   * restaurant.
+   */
   fetchMenu() {
     let timeStrings = this.getTimeStrings();
     axios.get(`/api/menus?restaurant="${this.props.location.state.id}"&startTime={"$gte":"${timeStrings.startTimeString}"}&endTime={"$lte":"${timeStrings.endTimeString}"}`)
@@ -143,6 +163,12 @@ class RestaurantMenupage extends React.Component {
       })
   }
 
+  /**
+   * Helper function to generate the UI component to hold a
+   * station and all of its menu items.
+   * @param {String} station - Name of station at a restaurant
+   * @param {mongoose.Schema.Types.ObjectId[]} menuItems - Array of menuItems for a restaurant
+   */
    generateStation(station, menuItems) {
     // generate call to filter all menuitems that match the station
     const stationItems = menuItems.filter(item =>
