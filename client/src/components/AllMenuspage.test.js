@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow, mount, configure } from 'enzyme';
+import { shallow, configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { MemoryRouter } from 'react-router-dom';
 import AllMenuspage from './AllMenuspage';
@@ -11,9 +11,4 @@ describe('AllMenuspage component', () => {
     const component = shallow(<MemoryRouter><AllMenuspage /></MemoryRouter>);
     expect(component).toMatchSnapshot();
   });
-  // it('should keep track of logged in state', () => {
-  //   const component = mount(<MemoryRouter><NavBar userName={"Someone" } /></MemoryRouter>);
-  //   expect(component.find('NavBar').state().loggedIn).toEqual(true);
-  //   expect(component).toMatchSnapshot();
-  //   });
 });

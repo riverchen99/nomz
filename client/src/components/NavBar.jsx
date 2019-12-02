@@ -27,7 +27,7 @@ class NavBar extends React.Component {
     return (
       <Wrapper>
         <StyledNavBar>
-          <LogoImage src={Logo} />
+          <a href='/'><LogoImage src={Logo} /></a>
           <User>{this.props.userName}</User>
           <HamburgerImage src={HamburgerMenu} onClick={() => this.setState(prevState => ({ expanded: !prevState.expanded })) }></HamburgerImage>
         </StyledNavBar>

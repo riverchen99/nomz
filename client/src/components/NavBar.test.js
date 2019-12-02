@@ -9,12 +9,12 @@ configure({ adapter: new Adapter() });
 
 describe('Navbar component', () => {
   it('should render correctly', () => {
-    const component = shallow(<MemoryRouter><NavBar userName={"Guest" } /></MemoryRouter>);
+    const component = shallow(<MemoryRouter><NavBar userName="Guest" /></MemoryRouter>);
     expect(component).toMatchSnapshot();
   });
   it('should keep track of logged in state', () => {
-    const component = mount(<MemoryRouter><NavBar userName={"Someone" } /></MemoryRouter>);
+    const component = mount(<MemoryRouter><NavBar userName="Someone" /></MemoryRouter>);
     expect(component.find('NavBar').state().loggedIn).toEqual(true);
     expect(component).toMatchSnapshot();
-    });
+  });
 });
