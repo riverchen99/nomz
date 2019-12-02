@@ -8,18 +8,18 @@ class NavBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      loggedIn: (this.props.userName === "Guest") ? false : true,
       expanded: false,
     }
   }
   render() {
     let lastLinks;
-    if (this.props.userName !== "Guest") {
+    if (this.state.loggedIn) {
       lastLinks = (
         <React.Fragment>
           <Item><Link to={{ pathname: '/profile'}} style={{ textDecoration: 'none', color: '#888888' }}>Profile</Link></Item>
           <Item><a href="/auth/logout">Logout</a></Item>
         </React.Fragment>);
-
     }
     else {
       lastLinks = <div></div>;
@@ -27,7 +27,7 @@ class NavBar extends React.Component {
     return (
       <Wrapper>
         <StyledNavBar>
-          <LogoImage src={Logo} />
+          <a href='/'><LogoImage src={Logo} /></a>
           <User>{this.props.userName}</User>
           <HamburgerImage src={HamburgerMenu} onClick={() => this.setState(prevState => ({ expanded: !prevState.expanded })) }></HamburgerImage>
         </StyledNavBar>
