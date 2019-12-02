@@ -36,30 +36,63 @@ class RestaurantMenupage extends React.Component {
     }
     this.fetchMenu = this.fetchMenu.bind(this);
     this.mapMealPeriodToTime = this.mapMealPeriodToTime.bind(this);
-    this.mapDayToDate = this.mapDayToDate.bind(this);
     this.updateMealSelection = this.updateMealSelection.bind(this);
-    // this.convertMilToStdTime = this.convertMilToStdTime.bind(this);
-    // this.parseDateString = this.parseDateString.bind(this);
+    this.getTimeStrings = this.getTimeStrings.bind(this);
+    this.generateStation = this.generateStation.bind(this);
+    this.updateDaySelection = this.updateDaySelection.bind(this);
+    this.getTimeFormatting = this.getTimeFormatting.bind(this);
   }
 
   mapMealPeriodToTime(restaurant, meal) {
     switch(restaurant) {
-      case "covel":
+      case "Covel":
         if (meal === "lunch") {
-          return { startTime: "11:00", endTime: "2:00" };
+          return { startTime: "11:00", endTime: "15:00" };
         }
         if (meal === "dinner") {
-          return { startTime: "5:00", endTime: "9:00" };
+          return { startTime: "17:00", endTime: "21:00" };
+        }
+        else {
+          return {startTime: "00:00", endTime: "00:00"};
         }
         break;
-      case "feast":
-      case "deneve":
-      case "bplate":
+      case "FEAST at Rieber":
         if (meal === "lunch") {
-          return { startTime: "11:00", endTime: "2:00" };
+          return { startTime: "11:00", endTime: "14:00" };
         }
         if (meal === "dinner") {
-          return { startTime: "5:00", endTime: "8:00" };
+          return { startTime: "17:00", endTime: "20:00" };
+        }
+        else {
+          return {startTime: "00:00", endTime: "00:00"};
+        }
+        break;
+      case "De Neve":
+        if (meal === "breakfast") {
+          return { startTime: "07:00", endTime: "10:00" };
+        }
+        if (meal === "lunch") {
+          return { startTime: "11:00", endTime: "14:00" };
+        }
+        if (meal === "dinner") {
+          return { startTime: "17:00", endTime: "20:00" };
+        }
+        else {
+          return {startTime: "00:00", endTime: "00:00"};
+        }
+        break;
+      case "Bruin Plate":
+          if (meal === "breakfast") {
+            return { startTime: "07:00", endTime: "09:00" };
+          }
+        if (meal === "lunch") {
+          return { startTime: "11:00", endTime: "14:00" };
+        }
+        if (meal === "dinner") {
+          return { startTime: "17:00", endTime: "20:00" };
+        }
+        else {
+          return {startTime: "00:00", endTime: "00:00"};
         }
         break;
       default:
@@ -67,86 +100,48 @@ class RestaurantMenupage extends React.Component {
     }
   }
 
-  mapDayToDate(day) {
-    const curDay = new Date();
-    if (day === "today") {
-      return curDay.getDate();
-    }
-    else {
-      return curDay.getDate() + 1;
-    }
+  getTimeStrings() {
+    const { restaurantName, meal } = this.state;
+    let times = this.mapMealPeriodToTime(restaurantName, meal);
+    const timeToArrStart = times.startTime.split(":");
+    const timeToArrEnd = times.endTime.split(":");
+
+    let startTimeString = this.getTimeFormatting(timeToArrStart);
+    let endTimeString = this.getTimeFormatting(timeToArrEnd);
+    return {startTimeString, endTimeString};
   }
 
-  // convertMilToStdTime(hour) {
-  //   return (hour-8) % 12;
-  // }
+  getTimeFormatting(time) {
+    let date = new Date();
+    if (this.state.day === "tomorrow") {
+      date.setDate(date.getDate()+1);
+    }
 
-  // parseDateString(dateStr) {
-  //     const dateArr = dateStr.split('-');
-  //     if (dateArr.length < 3) { console.error("could not parse date"); return null; }
-  //     const year = dateArr[0];
-  //     const month = dateArr[1];
-  //     const day = dateArr[2].split('T')[0];
-  //     // console.log('year', year);
-  //     // console.log('month', month);
-  //     // console.log('day', day);
-  //     const hour = this.convertMilToStdTime(dateArr[2].split('T')[1].split(':')[0]);
-  //     const min = dateArr[2].split('T')[1].split(':')[1];
-  //     const sec = dateArr[2].split('T')[1].split(':')[2].split('.')[0];
-  //     // console.log('hour', hour);
-  //     // console.log('min', min);
-  //     // console.log('sec', sec);
-  //     return { year: year, month: month, day: day, hour: hour, min: min, sec: sec };
-  // }
+    date.setHours(parseInt(time[0]));
+    date.setMinutes(parseInt(time[1]));
 
-  async fetchMenu() {
-    axios.get(`/api/menus?restaurant="${this.props.location.state.id}"&startTime={"$gte":"2019-12-01T17:00:00.000Z"}&endTime={"$lte":"2019-12-01T21:00:00.000Z"}`)
+    let day = (date.getDate() < 10) ? `0${date.getDate()}` : date.getDate();
+    let hour = (date.getHours() < 10) ? `0${date.getHours()}` : date.getHours();
+    let timeString = `${date.getFullYear()}-${date.getMonth()+1}-${day}T${hour}:00:00.000Z`;
+    return timeString;
+  }
+
+  fetchMenu() {
+    let timeStrings = this.getTimeStrings();
+    axios.get(`/api/menus?restaurant="${this.props.location.state.id}"&startTime={"$gte":"${timeStrings.startTimeString}"}&endTime={"$lte":"${timeStrings.endTimeString}"}`)
       .then((resp) => {
-        console.log(resp.data);
-
-        const mealTimePeriod = this.mapMealPeriodToTime(this.state.restaurantName, this.state.meal);
-        console.log(mealTimePeriod);
+        if (resp.data.length === 0) {
+          let noMenu = <Header>No menu exists for this time period.</Header>;
+          this.setState({menuItems: noMenu});
+        } else {
           const curMenu = resp.data[0];
-          console.log(curMenu);
-          // const curStartTime = new Date(resp.data[i].startTime);
-          // if ((curStartTime.getHours() + ":00") === mealTimePeriod.startTime &&
-          //     curStartTime.getDate() === this.mapDayToDate(this.state.day)) {
-          //   console.log('found it');
-
-            // let menuItemsArr = [];
-            let menuItems = curMenu.menuItems;
-            // for (let j = 0; j < menuItems.length; j++){
-            //   console.log(menuItems[j]);
-            // }
-            console.log(this.state.stations);
-            const menuItemComponents = this.state.stations.map((station) =>
-              this.generateStation(station, menuItems));
-            console.log(menuItemComponents);
-
-            this.setState({menuItems:menuItemComponents});
-
-
-
-
-            //   let thing = await axios.get(`/api/menuItems?_id=${curMenu.menuItems[j]}`)
-            //     .then((resp) => {
-            //       //console.log(resp.data);
-            //       // const mItems = resp.data.map((item) => {
-            //       //   return <p>item.name</p>
-            //       // });
-            //       menuItemsArr.push(<p>{resp.data[0]}</p>);
-            //       console.log(menuItemsArr);
-
-            //     })
-          //       console.log('hey', menuItemsArr);
-          //   }
-          //   console.log('at the end', menuItemsArr);
-          //   this.setState({
-          //     menuItems: menuItemsArr,
-          //   });
-          // }
-        })
-      }
+          let menuItems = curMenu.menuItems;
+          const menuItemComponents = this.state.stations.map((station) =>
+            this.generateStation(station, menuItems));
+          this.setState({menuItems: menuItemComponents});
+        }
+      })
+  }
 
    generateStation(station, menuItems) {
     // generate call to filter all menuitems that match the station
@@ -161,7 +156,6 @@ class RestaurantMenupage extends React.Component {
       restaurant={this.state.restaurantName}
       rating={item.rating}
       />);
-    // return stationItemComponents;
 
     return (
       <div key={station}>
@@ -175,7 +169,6 @@ class RestaurantMenupage extends React.Component {
     this.setState({
       meal: option.value,
     });
-    console.log(this.state.meal);
   }
 
   updateDaySelection(option) {
@@ -186,7 +179,6 @@ class RestaurantMenupage extends React.Component {
 
   async componentDidMount() {
     axios.get('/auth/user').then(response => {
-      console.log(response.data)
       if (!!response.data.user) {
         this.setState({
           loggedIn: true,
@@ -200,11 +192,9 @@ class RestaurantMenupage extends React.Component {
       }
     })
 
-    console.log('what is it', this.props.location.state);
     let restaurant = await axios.get(`/api/restaurants/${this.props.location.state.id}`);
-    console.log(restaurant.data[0]);
     this.setState({stations: restaurant.data[0].stations});
-    await this.fetchMenu();
+    this.fetchMenu();
   }
 
   render() {
