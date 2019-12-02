@@ -186,13 +186,20 @@ const fetchMenuData = async (date) => {
 
 const conv12to24 = (date, time12hr) => {
   const [timeRaw, timePeriod] = time12hr.split(' ');
-  let [hour, minute] = timeRaw.split(':').map((x) => Number(x)); // eslint-disable-line prefer-const
+  // eslint-disable-next-line prefer-const
+  let [hour, minute] = timeRaw.split(':').map((x) => Number(x));
   if (timePeriod === 'pm') {
+    // this handles the case where 12 + 12 = 24
     hour = (hour + 12) % 24;
   } else if (timePeriod !== 'am') {
     throw new Error(`invalid time format: ${time12hr}`);
   }
-  return new Date(...date.split('-'), hour, minute);
+
+  // eslint-disable-next-line prefer-const
+  let [year, month, day] = date.split('-');
+  // javascript indexes the month from 0
+  month = Number(month) - 1;
+  return new Date(year, month, day, hour, minute);
 };
 
 /**
