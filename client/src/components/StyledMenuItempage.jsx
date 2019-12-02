@@ -9,9 +9,19 @@ export const StyledMenuItempage = styled.div`
   align-items: center;
 `;
 
+export const NoReviewsDisplay = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 20%;
+  background-color: white;
+  margin-top: 10px;
+  margin-bottom: 10px;
+`;
+
 export const MenuItemBox = styled.div`
   height: 100%;
-  width: 90%;
+  width: 70%;
   display: flex;
   flex-direction: column;
 `;

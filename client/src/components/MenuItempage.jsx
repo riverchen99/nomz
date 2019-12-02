@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import StarRatingComponent from 'react-star-rating-component';
-import { StyledMenuItempage, MenuItemBox, MenuItemHeader, MenuItemInfoHeader, MenuItemInfoName, MenuItemInfoRating, MenuItemInfoRestaurant, Heading } from './StyledMenuItempage';
+import { StyledMenuItempage, MenuItemBox, MenuItemHeader, MenuItemInfoHeader, MenuItemInfoName, MenuItemInfoRating, MenuItemInfoRestaurant, Heading, NoReviewsDisplay } from './StyledMenuItempage';
 import ReviewComponent from './ReviewComponent';
 import ReviewForm from './ReviewForm';
 import EditableStarRating from './EditableStarRating';
@@ -24,6 +24,9 @@ class MenuItempage extends React.Component {
       restaurantName: '',
       aggregateRating: 0,
       reviews: null,
+      loggedIn: false,
+      user: null,
+      alreadyRated: false,
     };
   }
 
@@ -74,7 +77,9 @@ class MenuItempage extends React.Component {
     // this code assumes we will be passed in a location.state via the router
     const { id } = this.props.location.state;
     // only allow review to be submitted if a rating is given (0 by default)
-    if (this.state.starRating < 1) {
+    if (this.state.loggedIn === false) {
+      alert('You must be logged in order to submit a review.');
+    } else if (this.state.starRating < 1) {
       alert('Please give a rating.'); 
     } else {
       if (this.state.alreadyRated) {
@@ -149,6 +154,9 @@ class MenuItempage extends React.Component {
         var itemReviews = reviews.map(review =>  
           <ReviewComponent key={this.state.itemName + resp.data.indexOf(review)} review={review} />
         )
+        if (itemReviews.length === 0) {
+          itemReviews = <NoReviewsDisplay>No reviews to display. Be the first to write a review!</NoReviewsDisplay>
+        } 
         this.setState({ reviews: itemReviews });
     });
   }
@@ -164,12 +172,12 @@ class MenuItempage extends React.Component {
               <MenuItemInfoRestaurant>{this.state.restaurantName}</MenuItemInfoRestaurant>
             </MenuItemInfoHeader>
             <MenuItemInfoRating>
-              <StarRatingComponent name="rating" editing={false} starCount={5} value={this.state.aggregateRating} />
+              <StarRatingComponent name="rating" editing={false} starCount={5} value={this.state.aggregateRating} emptyStarColor="#C4C4C4"/>
             </MenuItemInfoRating>
           </MenuItemHeader>
           <Heading>Write a review!</Heading>
-          <EditableStarRating onRatingChange={this.handleRatingChange} />
-          <ReviewForm onReviewChange={this.handleReviewChange} onReviewSubmit={this.handleReviewSubmit} />
+          <EditableStarRating onRatingChange={this.handleRatingChange} starRating={this.state.starRating}/>
+          <ReviewForm onReviewChange={this.handleReviewChange} onReviewSubmit={this.handleReviewSubmit} reviewText={this.state.reviewText} starRating={this.state.starRating}/>
           <Heading>Reviews</Heading>
           {this.state.reviews}
         </MenuItemBox>
