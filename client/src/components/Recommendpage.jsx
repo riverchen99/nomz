@@ -93,7 +93,7 @@ class Recommendpage extends React.Component {
     }
     let date = new Date();
     const timeToArr = time.split(":");
-    date.setHours(parseInt(timeToArr[0]));
+    date.setHours(parseInt(timeToArr[0])-8);
     date.setMinutes(parseInt(timeToArr[1]));
     if (day === 'tomorrow'){
       date.setDate(date.getDate() + 1);
