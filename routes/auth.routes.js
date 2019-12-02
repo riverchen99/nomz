@@ -1,3 +1,7 @@
+/**
+ * @module Auth Routes
+ */
+
 const express = require('express');
 const passport = require('passport');
 const path = require('path');
@@ -13,6 +17,14 @@ const router = express.Router();
 // https://www.freecodecamp.org/news/how-to-set-up-twitter-oauth-using-passport-js-and-reactjs-9ffa6f49ef0/
 // https://github.com/thechutrain/mern-passport
 
+
+/**
+ * Controller to retreive a logged in user's information.
+ * @function GET /user
+ * @param {express.Request} req - The express request object.
+ * @param {Object} req.user - User information, automatically filled by Express if an appropriate cookie is found
+ * @param {express.Response} res - The express response object containing a list of resources.
+ */
 router.get('/user', (req, res) => {
   console.log('===== user!!======');
   console.log(req.user);
@@ -22,43 +34,38 @@ router.get('/user', (req, res) => {
   return res.json({ user: null });
 });
 
-/*
-router.post('/logout', (req, res) => {
-  if (req.user) {
-    req.session.destroy();
-    res.clearCookie('connect.sid'); // clean up!
-    return res.json({ msg: 'logging you out' });
-  }
-  return res.json({ msg: 'no user to log out!' });
-});
-*/
-
+/**
+ * Controller to log out a user.
+ * @function GET /logout
+ * @param {express.Request} req - The express request object.
+ * @param {express.Response} res - The express response object containing a list of resources.
+ */
 router.get("/logout", (req, res) => {
   req.session = null;
   res.redirect("/");
 
 })
 
-// old working code
-/*
-router.get('/facebook', passport.authenticate('facebook'));
 
-router.get(
-  '/facebook/callback',
-  passport.authenticate('facebook', {
-    successRedirect: CLIENT_HOME_PAGE_URL,
-    failureRedirect: CLIENT_LOGIN_PAGE_URL,
-  }),
-);
-*/
-
-
+/**
+ * Controller to redirect to Facebook authentication page.
+ * @function GET /facebook
+ * @param {express.Request} req - The express request object.
+ * @param {express.Response} res - The express response object containing a list of resources.
+ */
 router.get('/facebook', (req, res, next) => {
   passport.authenticate('facebook', {
     callbackURL: `${CALLBACK_URL_BASE}/auth/facebook/callback${req.query.extension ? '?extension=1' : ''}`,
   })(req, res, next);
 });
 
+/**
+ * Controller serve login success page (if logging in from extension), 
+ * or redirect to recommendation page (if logging in from webapp).
+ * @function GET /logout
+ * @param {express.Request} req - The express request object.
+ * @param {express.Response} res - The express response object containing a list of resources.
+ */
 router.get('/loginSuccess', (req, res) => {
   if (req.query.extension === '1') {
     res.sendFile(path.join(__dirname, '..', 'extension', 'loggedIn.html'));
@@ -67,6 +74,12 @@ router.get('/loginSuccess', (req, res) => {
   }
 });
 
+/**
+ * Controller to serve Facebook callback.
+ * @function GET /facebook/callback
+ * @param {express.Request} req - The express request object.
+ * @param {express.Response} res - The express response object containing a list of resources.
+ */
 router.get('/facebook/callback',
   (req, res, next) => {
     passport.authenticate('facebook', {
@@ -76,26 +89,5 @@ router.get('/facebook/callback',
   (req, res) => {
     res.redirect(`/auth/loginSuccess${req.query.extension ? '?extension=1' : ''}`);
   });
-
-
-/*
-router.get('/facebook/callback', function(req, res, next) {
-  passport.authenticate('facebook', {}
-}
-  ,
-  function(req, res) {
-    console.log(req.query);
-    if (req.query.extension === 1) {
-      console.log('chrome login');
-      res.redirect("/auth/loginSuccess")
-    } else {
-      console.log("regular login");
-      res.redirect(CLIENT_HOME_PAGE_URL)
-    }
-    //res.redirect(CLIENT_HOME_PAGE_URL + "?id=" + req.user.id);
-  }
-);
-*/
-
 
 module.exports = router;

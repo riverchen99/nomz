@@ -94,6 +94,7 @@ class Recommendpage extends React.Component {
     if (day === 'tomorrow'){
       date += 1;
     }
+    date = ('0' + date).slice(-2);
     if (loggedIn) {
       userId = user;
     }

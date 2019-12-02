@@ -1,3 +1,7 @@
+/**
+ * @module
+ */
+
 // open links in new tab
 document.addEventListener('DOMContentLoaded', () => {
   const links = document.getElementsByTagName('a');
@@ -16,16 +20,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // http://dana.land/articles/send-session-cookies-using-a-chrome-extension
 // https://www.gmass.co/blog/send-cookie-cross-origin-xmlhttprequest-chrome-extension/
-$.ajax({
-  url: 'https://cs130-nomz.herokuapp.com/auth/user',
-  type: 'GET',
-  xhrFields: {
-    withCredentials: true,
-  },
-}).done((resp) => {
-  console.log(resp);
-  if (resp.user !== null) {
-    $('#loginLink').hide();
-    $('#currentUserDisplay').text(`Logged in as ${resp.user.name}`);
-  }
-});
+
+
+/**
+ * Helper function to get user information to display in popup.
+ */
+function getUserInfo() {
+  $.ajax({
+    url: 'https://cs130-nomz.herokuapp.com/auth/user',
+    type: 'GET',
+    xhrFields: {
+      withCredentials: true,
+    },
+  }).done((resp) => {
+    console.log(resp);
+    if (resp.user !== null) {
+      $('#loginLink').hide();
+      $('#currentUserDisplay').text(`Logged in as ${resp.user.name}`);
+    }
+  });
+}
+
+getUserInfo();
