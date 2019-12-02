@@ -17,7 +17,7 @@ class NavBar extends React.Component {
       lastLinks = (
         <React.Fragment>
           <Item><Link to={{ pathname: '/profile'}} style={{ textDecoration: 'none', color: '#888888' }}>Profile</Link></Item>
-          <Item><a href="http://localhost:8080/auth/logout">Logout</a></Item>
+          <Item><a href="/auth/logout">Logout</a></Item>
         </React.Fragment>);
 
     }
