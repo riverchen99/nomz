@@ -7,6 +7,7 @@ const Restaurant = require('../models/Restaurant');
 const MenuItem = require('../models/MenuItem');
 const Review = require('../models/Review');
 
+const maxElems = 10;
 const DEBUG = false;
 
 /**
@@ -290,6 +291,7 @@ async function generateRecommendations(
   results.sort((a, b) => b.rating - a.rating);
 
   if (reviewed.length === 0) {
+    results.splice(maxElems);
     return results;
   }
   // add score to remaining results that we want to sort
@@ -311,7 +313,7 @@ async function generateRecommendations(
     console.log(results);
   } */
 
-
+  scoredResults.splice(maxElems);
   return scoredResults;
 }
 
