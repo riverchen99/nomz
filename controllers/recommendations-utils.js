@@ -209,7 +209,7 @@ function weightedRecommendations(menuItems, reviewed, reviewedRatings) {
         match += reviewed[j].rating * 100; // ingredients
         if (reviewed[j] >= 4) {
           // extra pts
-          match += (1000* reviewed[j].rating);
+          match += (5000* reviewed[j].rating);
         }
         match += Object.keys(menuItem.props).length * 5;
         match += 5; // restaurant
