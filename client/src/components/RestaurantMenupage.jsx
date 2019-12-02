@@ -7,9 +7,7 @@ import {
   Text,
   FilterContainer,
   Header,
-  // FloatRightContainer,
   ButtonContainer,
-  // DaySelContainer,
 } from './StyledRecommendpage';
 import { Row, Heading, FloatRightContainer, DaySelContainer } from './StyledRestaurantMenupage';
 import {
