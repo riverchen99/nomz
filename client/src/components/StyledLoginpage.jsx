@@ -12,6 +12,7 @@ export const Title = styled.h1`
   font-size: 96px;
   letter-spacing: 20px;
   padding-top: 10%;
+  margin-bottom: 0%;
   font-weight: 800;
   text-shadow: 0px 2px 2px grey;
 `;

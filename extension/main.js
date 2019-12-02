@@ -44,7 +44,7 @@ function addRating(rating, $el, menuItemId, newReview) {
       success: console.log,
       data: JSON.stringify({
         menuItem: menuItemId,
-        author: userId || "guest_extension",
+        author: userId || 'guest_extension',
         rating,
       }),
       contentType: 'application/json',
@@ -84,14 +84,27 @@ function addStars(reviewData, menuItemData) { // eslint-disable-line
 
       const userReview = reviewData.find((e) => e.menuItem === menuItemData[i]._id);
 
-      $(`.star-rating-${menuItemData[i]._id}`).starRating({
-        initialRating: (userReview === undefined) ? menuItemData[i].rating : userReview.rating,
-        starSize: 10,
-        starShape: 'rounded',
-        useGradient: false,
-        activeColor: (userReview === undefined) ? 'gold' : 'crimson',
-        callback: (rating, $el) => { addRating(rating, $el, menuItemData[i]._id, userReview === undefined); }, // eslint-disable-line
-      });
+      // only allow ratings for logged in users
+      if (userId != null) {
+        $(`.star-rating-${menuItemData[i]._id}`).starRating({
+          initialRating: (userReview === undefined) ? menuItemData[i].rating : userReview.rating,
+          starSize: 10,
+          starShape: 'rounded',
+          useGradient: false,
+          activeColor: (userReview === undefined) ? 'gold' : 'crimson',
+          callback: (rating, $el) => { addRating(rating, $el, menuItemData[i]._id, userReview === undefined); }, // eslint-disable-line
+        });
+      } else { // if in guest mode, ratings will still be displayed but in read-only mode
+        $(`.star-rating-${menuItemData[i]._id}`).starRating({
+          initialRating: (userReview === undefined) ? menuItemData[i].rating : userReview.rating,
+          starSize: 10,
+          starShape: 'rounded',
+          useGradient: false,
+          readOnly: true,
+          activeColor: (userReview === undefined) ? 'gold' : 'crimson',
+          callback: (rating, $el) => { addRating(rating, $el, menuItemData[i]._id, userReview === undefined); }, // eslint-disable-line
+        });
+      }
     }
   }
 }
