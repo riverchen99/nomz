@@ -148,7 +148,7 @@ class Recommendpage extends React.Component {
     return (
       <React.Fragment>
         <NavBar userName={loggedIn ? user.name : "Guest"} />
-        <Header>What are you craving{loggedIn ? ", " + user.name : ""}?</Header>
+        <Header>What are you craving?</Header>
         <FilterContainer>
           <Row>
             <FloatRightContainer>
