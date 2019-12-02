@@ -287,6 +287,11 @@ async function generateRecommendations(
     results = results.filter((menuItem) => itemCompatibility(preferences, restrictions, menuItem));
   }
 
+  results.sort((a, b) => b.rating - a.rating);
+
+  if (reviewed.length === 0) {
+    return results;
+  }
   // add score to remaining results that we want to sort
   const weightedResults = weightedRecommendations(results, reviewed, reviewedItemsRatings);
   if (DEBUG) {
@@ -300,7 +305,7 @@ async function generateRecommendations(
   }
 
   // Original seen for debugging purposes
-  results.sort((a, b) => b.rating - a.rating);
+
   /* if (DEBUG){
     console.log('Regular');
     console.log(results);
