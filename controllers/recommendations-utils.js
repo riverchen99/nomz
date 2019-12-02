@@ -207,6 +207,10 @@ function weightedRecommendations(menuItems, reviewed, reviewedRatings) {
         // standard similarity score = would give 100% match
         let match = 0;
         match += reviewed[j].rating * 100; // ingredients
+        if (reviewed[j] >= 4) {
+          // extra pts
+          match += reviewed[j].rating * 100;
+        }
         match += Object.keys(menuItem.props).length * 5;
         match += 5; // restaurant
         // Extra points for being in user history
@@ -291,6 +295,9 @@ async function generateRecommendations(
   results.sort((a, b) => b.rating - a.rating);
 
   if (reviewed.length === 0) {
+    if (DEBUG) {
+      console.log(results);
+    }
     results.splice(maxElems);
     return results;
   }

@@ -40,7 +40,7 @@ const item3 = new MenuItem({
   _id: '2',
   name: 'spaghetti',
   ingredients: ['pasta', 'tomato', 'oregano'],
-  rating: 5,
+  // rating: 5,
   restaurant: rest1.id,
 });
 const item4 = new MenuItem({
@@ -53,14 +53,14 @@ const item5 = new MenuItem({
   _id: '4',
   name: 'Steak',
   ingredients: ['Beef', 'potato'],
-  rating: 5,
+  // rating: 5,
   restaurant: rest2.id,
 });
 const item6 = new MenuItem({
   _id: '5',
   name: 'lentil spaghetti',
   ingredients: ['pasta', 'lentil', 'oregano'],
-  rating: 5,
+  // rating: 5,
   restaurant: rest2.id,
 });
 const item7 = new MenuItem({
