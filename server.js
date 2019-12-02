@@ -59,6 +59,18 @@ app.post('/updateMenu', (req, res) => {
   }
 });
 
+// update menu twice a day
+setInterval(() => {
+  // current date as string adapted from:
+  // https://stackoverflow.com/questions/1531093/how-do-i-get-the-current-date-in-javascript
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${
+    String(today.getMonth() + 1).padStart(2, '0')}-${
+    String(today.getDate()).padStart(2, '0')}`;
+
+  scraper.updateMenu(todayStr);
+}, 12 * 60 * 60 * 1000); // 12 hours * 60 min/hr * 60 sec/min * 1000 ms/sec
+
 // app.post('/createRestaurants', (req, res) => scraper.createBlankRestaurants());
 
 // old code
