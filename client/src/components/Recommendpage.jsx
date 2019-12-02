@@ -1,4 +1,5 @@
 import React from 'react';
+import NavBar from './NavBar';
 import MenuItem from './MenuItem';
 import Button from './Button';
 import {
@@ -30,7 +31,7 @@ class Recommendpage extends React.Component {
       day: "today",
       loggedIn: false,
       user: null,
-      time: "8:00",
+      time: "11:30",
       menuItems: null
     };
     this.updateRecommendee = this.updateRecommendee.bind(this);
@@ -40,7 +41,7 @@ class Recommendpage extends React.Component {
     this.generateRecURL = this.generateRecURL.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     axios.get('/auth/user').then(response => {
       console.log(response.data)
       if (!!response.data.user) {
@@ -56,11 +57,10 @@ class Recommendpage extends React.Component {
       }
     })
 
-
-    this.generateRecs();
-    this.setState({
-      mounted: true,
-    })
+    let genRec = await this.generateRecs();
+    if (genRec) {
+      this.setState({ mounted: true });
+    }
   }
 
   updateRecommendee(option) {
@@ -87,58 +87,65 @@ class Recommendpage extends React.Component {
   */
   generateRecURL() {
     const { day, recommendee, time, loggedIn, user } = this.state;
-    const thing = new Date();
-    const month = thing.getMonth() + 1;
-    let date = thing.getDate();
     let userId = recommendee;
-    if (day === 'tomorrow'){
-      date += 1;
-    }
-    date = ('0' + date).slice(-2);
     if (loggedIn) {
       userId = user;
     }
-      return `api/recommendations?date=2019-${month}-${date}T${time}-0800&userId=${userId}`;  }
+    let date = new Date();
+    const timeToArr = time.split(":");
+    date.setHours(parseInt(timeToArr[0]));
+    date.setMinutes(parseInt(timeToArr[1]));
+    if (day === 'tomorrow'){
+      date.setDate(date.getDate() + 1);
+      date += 1;
+    }
+    return `api/recommendations?date=${date}&userId=${userId}`;
+  }
 
   /**
   * Function that makes axios call to backend to fetch recommended items based on input values
   * @return {Number} - 1 denotes success, 0 denotes failure
   */
-  generateRecs() {
+  async generateRecs() {
     const apiURL = this.generateRecURL();
-    axios.get(apiURL)
-      .then((resp) => {
-        console.log(resp.data);
-        
-        const items = resp.data.map((item) => {
-          return (
-            <MenuItem
-              key={item.name + resp.data.indexOf(item)}
-              id={item._id}
-              index={resp.data.indexOf(item) % 2}
-              itemName={item.name}
-              restaurant={item.restaurant}
-              rating={item.rating}
-            />
-          );
-        });
-        this.setState({ menuItems: items });
-        return 1;
-      })
-      .catch((error) => { 
-        console.log(error);
+    let items = await axios.get(apiURL);
+    if (items == null) {
+      console.error("error fetching from recommendations api");
+      return 0;
+    }
+    items = items.data;
+    for (let i = 0; i < items.length; i++) { 
+      let itemRest = await axios.get(`/api/restaurants/${items[i].restaurant}`) || null;
+      if (itemRest == null) {
+        console.error("error fetching from restaurants");
         return 0;
-      });
+      }
+      items[i].restaurant = itemRest.data[0].name;
+    }
+    const itemComponents = items.map((item) => {
+      return (<MenuItem
+        key={item.name + items.indexOf(item)}
+        id={item._id}
+        index={items.indexOf(item) % 2}
+        itemName={item.name}
+        restaurant={item.restaurant}
+        rating={item.rating}
+        />);
+    })
+    this.setState({ menuItems: itemComponents });
+    return 1;
   }
 
   render () {
+    const { loggedIn, user, menuItems} = this.state;
     return (
       <React.Fragment>
-        <Header>What are you craving{this.state.loggedIn ? ", " + this.state.user.name : ""}?</Header>
+        <NavBar userName={loggedIn ? user.name : "Guest"} />
+        <Header>What are you craving{loggedIn ? ", " + user.name : ""}?</Header>
         <FilterContainer>
           <Row>
             <FloatRightContainer>
-              <Select className="testing" id="recsel" options={recommendeeOptions} defaultValue={recommendeeDefaultOption} onChange={(event) => this.updateRecommendee(event)} />
+              <Select id="recsel" isDisabled={!loggedIn} options={recommendeeOptions} defaultValue={recommendeeDefaultOption} onChange={(event) => this.updateRecommendee(event)} />
             </FloatRightContainer>
             <Text>Top picks for:</Text>
           </Row>
@@ -154,7 +161,7 @@ class Recommendpage extends React.Component {
             </DaySelContainer>
           </Row>
         </FilterContainer>
-        {this.state.menuItems}
+        {menuItems}
       </React.Fragment>
     )
   }

@@ -27,6 +27,7 @@ const PROPS_MAPPING = {
 };
 
 const menuUrl = (date) => `http://menu.dining.ucla.edu/Menus/${date}`;
+const detailedMenuUrl = (period) => (date) => `http://menu.dining.ucla.edu/Menus/${date}/${period}`;
 const recipeUrl = (recipeId, recipeSize) => `http://menu.dining.ucla.edu/Recipes/${recipeId}/${recipeSize}`;
 const hoursUrl = (date) => `http://menu.dining.ucla.edu/Hours/${date}`;
 
@@ -131,16 +132,17 @@ const fetchRecipeData = async (recipeId, recipeSize) => {
  * Helper function to fetch and parse the menu data for a particular day.
  *
  * @param {String} date - The ISO format date (YYYY-MM-DD)
+ * @param {String} [url=menuUrl] - A function that returns the menu url given the date.
  * @return {Array} - Returns an array of menu item objects. Each object contains
  * basic information that can be used to fetch the full recipe information with
  * fetchRecipeData.
  */
-const fetchMenuData = async (date) => {
-  const $ = await fetchData(menuUrl(date));
+const fetchMenuData = async (date, url = menuUrl) => {
+  const $ = await fetchData(url(date));
 
   const items = [];
 
-  const headers = $('#page-header');
+  const headers = $('h2');
   for (let i = 0; i < headers.length; i += 1) {
     // find the menu date
     // The date string is: "PERIOD Menu for DAY, DATE"
@@ -150,7 +152,7 @@ const fetchMenuData = async (date) => {
 
     // we only want the menu items for this period
     const elementsBetween = $(headers[i]).nextUntil(headers[i + 1]);
-    const menuBlocks = elementsBetween.filter('div.menu-block.half-col');
+    const menuBlocks = elementsBetween.filter('div.menu-block');
 
     // find the dining hall
     $(menuBlocks).each((_i, menuBlock) => {
@@ -183,16 +185,40 @@ const fetchMenuData = async (date) => {
   return items;
 };
 
+/**
+ * Helper function to fetch and parse the detailed menu data for a particular day.
+ *
+ * @param {String} date - The ISO format date (YYYY-MM-DD)
+ * @return {Array} - Returns an array of menu item objects. Each object contains
+ * basic information that can be used to fetch the full recipe information with
+ * fetchRecipeData.
+ */
+const fetchDetailedMenuData = async (date) => {
+  const menuPeriods = ['Breakfast', 'Brunch', 'Lunch', 'Dinner'];
+  const itemPromises = menuPeriods.reduce((promises, mealPeriod) => {
+    promises.push(fetchMenuData(date, detailedMenuUrl(mealPeriod)));
+    return promises;
+  }, []);
+  return (await Promise.all(itemPromises)).reduce((acc, itemList) => acc.concat(itemList), []);
+};
+
 
 const conv12to24 = (date, time12hr) => {
   const [timeRaw, timePeriod] = time12hr.split(' ');
-  let [hour, minute] = timeRaw.split(':').map((x) => Number(x)); // eslint-disable-line prefer-const
+  // eslint-disable-next-line prefer-const
+  let [hour, minute] = timeRaw.split(':').map((x) => Number(x));
   if (timePeriod === 'pm') {
+    // this handles the case where 12 + 12 = 24
     hour = (hour + 12) % 24;
   } else if (timePeriod !== 'am') {
     throw new Error(`invalid time format: ${time12hr}`);
   }
-  return new Date(...date.split('-'), hour, minute);
+
+  // eslint-disable-next-line prefer-const
+  let [year, month, day] = date.split('-');
+  // javascript indexes the month from 0
+  month = Number(month) - 1;
+  return new Date(year, month, day, hour, minute);
 };
 
 /**
@@ -241,7 +267,7 @@ const fetchMenuTimes = async (date) => {
  */
 const updateMenu = async (
   date,
-  fetchMenu = fetchMenuData,
+  fetchMenu = fetchDetailedMenuData,
   fetchTimes = fetchMenuTimes,
   fetchRecipes = fetchRecipeData) => {
   const menuItemsData = [];
@@ -284,14 +310,16 @@ const updateMenu = async (
       restaurantById[restaurants[item.diningHall]._id] = restaurants[item.diningHall];
     }
 
+    const restaurantId = restaurants[item.diningHall]._id;
+
     // create menu
-    if (!(item.menuPeriod in menus)) {
+    if (!(restaurantId + item.menuPeriod in menus)) {
       // we need to create a new menu doc
       const menuData = {
         mealPeriod: item.menuPeriod,
         startTime: times[item.diningHall][item.menuPeriod].start,
         endTime: times[item.diningHall][item.menuPeriod].end,
-        restaurant: restaurants[item.diningHall]._id,
+        restaurant: restaurantId,
       };
       // we allow this await in the loop because it only fetches
       // the menu once per meal period.
@@ -299,10 +327,10 @@ const updateMenu = async (
       if (newMenu === null) {
         newMenu = new Menu(menuData);
       }
-      menus[item.menuPeriod] = newMenu;
+      menus[restaurantId + item.menuPeriod] = newMenu;
     }
-    if (menus[item.menuPeriod].menuItems.indexOf(item.recipeId) === -1) {
-      menus[item.menuPeriod].menuItems.push(item.recipeId);
+    if (menus[restaurantId + item.menuPeriod].menuItems.indexOf(item.recipeId) === -1) {
+      menus[restaurantId + item.menuPeriod].menuItems.push(item.recipeId);
     }
 
     // create menu item
@@ -314,7 +342,7 @@ const updateMenu = async (
       ingredients: recipe.ingredients,
       allergens: recipe.allergens,
       props: recipe.props,
-      restaurant: restaurants[item.diningHall]._id,
+      restaurant: restaurantId,
       station: item.diningSection,
     });
   }
@@ -373,6 +401,7 @@ module.exports = {
 
   // these should be private
   // they are only exported so that we can test it with Jest
+  fetchDetailedMenuData,
   fetchMenuData,
   fetchRecipeData,
   fetchMenuTimes,
