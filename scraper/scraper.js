@@ -310,14 +310,16 @@ const updateMenu = async (
       restaurantById[restaurants[item.diningHall]._id] = restaurants[item.diningHall];
     }
 
+    const restaurantId = restaurants[item.diningHall]._id;
+
     // create menu
-    if (!(item.menuPeriod in menus)) {
+    if (!(restaurantId + item.menuPeriod in menus)) {
       // we need to create a new menu doc
       const menuData = {
         mealPeriod: item.menuPeriod,
         startTime: times[item.diningHall][item.menuPeriod].start,
         endTime: times[item.diningHall][item.menuPeriod].end,
-        restaurant: restaurants[item.diningHall]._id,
+        restaurant: restaurantId,
       };
       // we allow this await in the loop because it only fetches
       // the menu once per meal period.
@@ -325,10 +327,10 @@ const updateMenu = async (
       if (newMenu === null) {
         newMenu = new Menu(menuData);
       }
-      menus[item.menuPeriod] = newMenu;
+      menus[restaurantId + item.menuPeriod] = newMenu;
     }
-    if (menus[item.menuPeriod].menuItems.indexOf(item.recipeId) === -1) {
-      menus[item.menuPeriod].menuItems.push(item.recipeId);
+    if (menus[restaurantId + item.menuPeriod].menuItems.indexOf(item.recipeId) === -1) {
+      menus[restaurantId + item.menuPeriod].menuItems.push(item.recipeId);
     }
 
     // create menu item
@@ -340,7 +342,7 @@ const updateMenu = async (
       ingredients: recipe.ingredients,
       allergens: recipe.allergens,
       props: recipe.props,
-      restaurant: restaurants[item.diningHall]._id,
+      restaurant: restaurantId,
       station: item.diningSection,
     });
   }
