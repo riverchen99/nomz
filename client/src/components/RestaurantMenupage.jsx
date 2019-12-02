@@ -96,7 +96,7 @@ class RestaurantMenupage extends React.Component {
   // }
 
   fetchMenu() {
-    axios.get(`/api/menus?restaurant="${this.props.location.state.id}"&startTime={"$gte":"2019-12-01T19:00:00.000Z"}&endTime={"$lte":"2019-12-01T23:00:00.000Z"}`)
+    axios.get(`/api/menus?restaurant="${this.props.location.state.id}"&startTime={"$gte":"2019-12-02T01:00:00.000Z"}&endTime={"$lte":"2019-12-02T05:00:00.000Z"}`)
       .then((resp) => {
         console.log(resp.data);
 
