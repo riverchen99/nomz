@@ -13,16 +13,13 @@ class NavBar extends React.Component {
     }
   }
   render() {
-    let lastLinks;
-    if (this.state.loggedIn) {
+    let lastLinks = <div></div>;
+    if (this.props.userName !== "Guest") {
       lastLinks = (
-        <React.Fragment>
-          <Item><Link to={{ pathname: '/profile'}} style={{ textDecoration: 'none', color: '#888888' }}>Profile</Link></Item>
-          <Item><a href="/auth/logout">Logout</a></Item>
-        </React.Fragment>);
-    }
-    else {
-      lastLinks = <div></div>;
+      <React.Fragment>
+        <Item><Link to={{ pathname: '/profile'}} style={{ textDecoration: 'none', color: '#888888' }}>Profile</Link></Item>
+        <Item><a href="/auth/logout">Logout</a></Item>
+      </React.Fragment>);
     }
     return (
       <Wrapper>
@@ -34,7 +31,7 @@ class NavBar extends React.Component {
         <Menu expanded={this.state.expanded} >
           <Item><Link to={{ pathname: '/recommend'}} style={{ textDecoration: 'none', color: '#888888' }}>Top Rated</Link></Item>
           <Item><Link to={{ pathname: '/allmenus' }} style={{ textDecoration: 'none',  color: '#888888' }}>Menus</Link></Item>
-          {lastLinks}
+        {lastLinks}
         </Menu>
       </Wrapper>
     )
