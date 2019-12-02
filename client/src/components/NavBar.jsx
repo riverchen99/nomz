@@ -8,7 +8,6 @@ class NavBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loggedIn: (this.props.userName === "Guest") ? false : true,
       expanded: false,
     }
   }
