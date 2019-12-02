@@ -14,8 +14,8 @@ export const LogoContainer = styled.div`
 
 export const LogoImage = styled.img`
   margin-top: 1%;
-  width: 10%;
-  height: 10%;
+  width: 70%;
+  height: 50%;
 `;
 
 export const User = styled.p`
