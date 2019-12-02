@@ -99,7 +99,7 @@ class Recommendpage extends React.Component {
       date.setDate(date.getDate() + 1);
       date += 1;
     }
-    return `api/recommendations?date=${date}&userId=${userId}`;
+    return `api/recommendations?date=${date}&userId=${userId._id}`;
   }
 
   /**
@@ -114,14 +114,21 @@ class Recommendpage extends React.Component {
       return 0;
     }
     items = items.data;
+
+    let restaurantNames = {}
     for (let i = 0; i < items.length; i++) { 
-      let itemRest = await axios.get(`/api/restaurants/${items[i].restaurant}`) || null;
-      if (itemRest == null) {
-        console.error("error fetching from restaurants");
-        return 0;
+      if (!(items[i].restaurant in restaurantNames)) {
+        let itemRest = await axios.get(`/api/restaurants/${items[i].restaurant}`) || null;
+        if (itemRest == null) {
+          console.error("error fetching from restaurants");
+          return 0;
+        }
+        restaurantNames[items[i].restaurant] = itemRest.data[0].name;
       }
-      items[i].restaurant = itemRest.data[0].name;
+
+      items[i].restaurant = restaurantNames[items[i].restaurant]
     }
+    
     const itemComponents = items.map((item) => {
       return (<MenuItem
         key={item.name + items.indexOf(item)}
@@ -141,7 +148,7 @@ class Recommendpage extends React.Component {
     return (
       <React.Fragment>
         <NavBar userName={loggedIn ? user.name : "Guest"} />
-        <Header>What are you craving{loggedIn ? ", " + user.name : ""}?</Header>
+        <Header>What are you craving?</Header>
         <FilterContainer>
           <Row>
             <FloatRightContainer>

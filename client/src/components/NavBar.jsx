@@ -12,22 +12,18 @@ class NavBar extends React.Component {
     }
   }
   render() {
-    let lastLinks;
+    let lastLinks = <div></div>;
     if (this.props.userName !== "Guest") {
       lastLinks = (
-        <React.Fragment>
-          <Item><Link to={{ pathname: '/profile'}} style={{ textDecoration: 'none', color: '#888888' }}>Profile</Link></Item>
-          <Item><a href="/auth/logout">Logout</a></Item>
-        </React.Fragment>);
-
-    }
-    else {
-      lastLinks = <div></div>;
+      <React.Fragment>
+        <Item><Link to={{ pathname: '/profile'}} style={{ textDecoration: 'none', color: '#888888' }}>Profile</Link></Item>
+        <Item><a href="/auth/logout">Logout</a></Item>
+      </React.Fragment>);
     }
     return (
       <Wrapper>
         <StyledNavBar>
-          <LogoImage src={Logo} />
+          <a href='/'><LogoImage src={Logo} /></a>
           <User>{this.props.userName}</User>
           <HamburgerImage src={HamburgerMenu} onClick={() => this.setState(prevState => ({ expanded: !prevState.expanded })) }></HamburgerImage>
         </StyledNavBar>

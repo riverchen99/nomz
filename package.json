@@ -7,7 +7,7 @@
     "start": "set HTTPS=true && node server.js",
     "server": "nodemon server.js",
     "install": "cd client && npm install",
-    "test:server": "jest --testTimeout=10000",
+    "test:server": "jest --testTimeout=10000 --forceExit -i",
     "test:client": "cd client && npm run test",
     "heroku-postbuild": "npm run docs && cd client && npm install --only=dev && npm install && npm run build",
     "lint": "eslint . --fix",

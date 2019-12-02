@@ -10,21 +10,31 @@ class AllMenuspage extends React.Component {
     super(props);
     this.state = {
       diningHalls: [],
-      quickService: [],
       loggedIn: false,
       user: null,
     };
     this.populateRestaurants = this.populateRestaurants.bind(this);
   }
 
-  populateRestaurants() {
-    axios.get('/api/restaurants')
-      .then((resp) => {
-        console.log(resp.data);
-      })
+  async populateRestaurants() {
+    const allRest = await axios.get('/api/restaurants')
+      .catch((err) => { console.error(err) });
+    let restArr = [];
+    for (let i = 0; i < allRest.data.length; i++){
+      restArr.push(
+        <Link
+        to={{
+          pathname: `/restaurantmenu/${allRest.data[i].name}`,
+          state: {id: allRest.data[i]._id, restName: allRest.data[i].name},
+        }}
+        style={{ textDecoration: 'none' }}
+        ><Text>{allRest.data[i].name}</Text>
+        </Link>);
+    }
+    this.setState({ diningHalls: restArr });
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     axios.get('/auth/user').then(response => {
       console.log(response.data)
       if (!!response.data.user) {
@@ -40,7 +50,7 @@ class AllMenuspage extends React.Component {
       }
     })
 
-    this.populateRestaurants();
+    await this.populateRestaurants();
   }
 
   render () {
@@ -50,18 +60,7 @@ class AllMenuspage extends React.Component {
         <Header>Menus</Header>
         <Container>
           <Subtitle>Dining Halls</Subtitle>
-          <Link
-            to={{
-              pathname: `/restaurantmenu/covel`,
-              state: {id: '5dcb728fb9a6804bd50aff58', restName: 'covel'},
-            }}
-            style={{ textDecoration: 'none' }}
-            >
-            <Text>Covel Dining</Text>
-          </Link>
-          <Text>De Neve Dining</Text>
-          <Text>FEAST at Rieber</Text>
-          <Text>Bruin Plate</Text>
+          {this.state.diningHalls}
         </Container>
       </React.Fragment>
     )

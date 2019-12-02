@@ -17,6 +17,8 @@ try {
   TEST_DB_URI = process.env.MONGODB_TEST_URI;
 }
 
+jest.useFakeTimers();
+
 // let menuItemsIds = [];
 const rest1 = new Restaurant({ name: 'Covel' });
 const rest2 = new Restaurant({ name: 'Bruin Plate' });
@@ -232,179 +234,177 @@ function tearDownDb() {
   return mongoose.connection.dropDatabase();
 }
 
-describe('CRUD API Endpoints works correctly', () => {
+describe('Routes work correctly', () => {
   beforeAll(() => runServer(TEST_DB_URI));
-
-  beforeEach(() => seedMenuItemData());
-
-  afterEach(() => tearDownDb());
 
   afterAll(() => closeServer());
 
-  describe('GET Endpoint', () => {
-    it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/menuitems');
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(10);
-    });
-  });
+  describe('CRUD API Endpoints works correctly', () => {
+    beforeEach(() => seedMenuItemData());
 
-  describe('POST Endpoint', () => {
-    it('should return 200 and add entry', async () => {
-      const res = await request(app).post('/api/menuitems').send({ name: 'new item', _id: '100' });
-      expect(res.status).toBe(200);
-      const menuItems = await MenuItem.find();
-      expect(menuItems).toHaveLength(11);
-    });
-  });
+    afterEach(() => tearDownDb());
 
-  describe('POST Review', () => {
-    it('should update the corresponding MenuItem rating', async () => {
-      await User.create({ name: 'NewUser', _id: 'asdf' });
-      const users = await User.find();
-      console.log(users);
-      const res = await request(app).post('/api/reviews').send({ menuItem: '10', author: users[0]._id, rating: 5 });
-      expect(res.status).toBe(200);
-      const menuItem = await MenuItem.find({ _id: '10' });
-      expect(menuItem[0].rating).toBe(5);
-    });
-  });
 
-  describe('PUT Endpoint', () => {
-    it('should return 200 and update entry', async () => {
-      const res = await request(app).put('/api/menuitems').send({
-        filter: { name: 'fish and chips' },
-        update: { description: 'delicious' },
+    describe('GET Endpoint', () => {
+      it('should return 200 and nonempty list', async () => {
+        const res = await request(app).get('/api/menuitems');
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(10);
       });
-      expect(res.status).toBe(200);
+    });
 
-      const menuItems = await MenuItem.find({ name: 'fish and chips' });
-      expect(menuItems[0]).toHaveProperty('description');
-      console.log(menuItems[0].description);
+    describe('POST Endpoint', () => {
+      it('should return 200 and add entry', async () => {
+        const res = await request(app).post('/api/menuitems').send({ name: 'new item', _id: '100' });
+        expect(res.status).toBe(200);
+        const menuItems = await MenuItem.find();
+        expect(menuItems).toHaveLength(11);
+      });
+    });
+
+    describe('POST Review', () => {
+      it('should update the corresponding MenuItem rating', async () => {
+        await User.create({ name: 'NewUser', _id: 'asdf' });
+        const users = await User.find();
+        console.log(users);
+        const res = await request(app).post('/api/reviews').send({ menuItem: '10', author: users[0]._id, rating: 5 });
+        expect(res.status).toBe(200);
+        const menuItem = await MenuItem.find({ _id: '10' });
+        expect(menuItem[0].rating).toBe(5);
+      });
+    });
+
+    describe('PUT Endpoint', () => {
+      it('should return 200 and update entry', async () => {
+        const res = await request(app).put('/api/menuitems').send({
+          filter: { name: 'fish and chips' },
+          update: { description: 'delicious' },
+        });
+        expect(res.status).toBe(200);
+
+        const menuItems = await MenuItem.find({ name: 'fish and chips' });
+        expect(menuItems[0]).toHaveProperty('description');
+        console.log(menuItems[0].description);
+      });
+    });
+
+    describe('DELETE Endpoint', () => {
+      it('should return 200 and delete entry', async () => {
+        const res = await request(app).delete('/api/menuitems').send({ _id: '10' });
+        expect(res.status).toBe(200);
+        const menuItems = await MenuItem.find();
+        expect(menuItems).toHaveLength(9);
+      });
     });
   });
 
-  describe('DELETE Endpoint', () => {
-    it('should return 200 and delete entry', async () => {
-      const res = await request(app).delete('/api/menuitems').send({ _id: '10' });
-      expect(res.status).toBe(200);
-      const menuItems = await MenuItem.find();
-      expect(menuItems).toHaveLength(9);
+
+  describe('Recommendations API works correctly', () => {
+    beforeEach(() => Promise.all([
+      seedMenuItemData(),
+      seedMenuData(),
+      seedUserData(),
+      seedRestaurantData(),
+      seedReviewData(),
+    ]));
+
+    afterEach(() => tearDownDb());
+
+    describe('Get Recommendations Test 1: Trivial time filtering', () => {
+      it('should return 200 and nonempty list', async () => {
+        const res = await request(app).get('/api/recommendations?date=2019-11-14T11:30-0800');
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(6);
+      });
     });
-  });
-});
 
-
-describe('Recommendations API works correctly', () => {
-  beforeAll(() => runServer(TEST_DB_URI));
-
-  beforeEach(() => Promise.all([
-    seedMenuItemData(),
-    seedMenuData(),
-    seedUserData(),
-    seedRestaurantData(),
-    seedReviewData(),
-  ]));
-
-  afterEach(() => tearDownDb());
-
-  afterAll(() => closeServer());
-
-
-  describe('Get Recommendations Test 1: Trivial time filtering', () => {
-    it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T11:30-0800');
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(6);
+    describe('Get Recommendations Test 2: Trivial time filtering', () => {
+      it('should return 200 and nonempty list', async () => {
+        const res = await request(app).get('/api/recommendations?date=2019-11-14T08:30-0800');
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(4);
+      });
     });
-  });
 
-  describe('Get Recommendations Test 2: Trivial time filtering', () => {
-    it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T08:30-0800');
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(4);
+    describe('Get Recommendations 3: Edge start time filtering', () => {
+      it('should return 200 and nonempty list', async () => {
+        const res = await request(app).get('/api/recommendations?date=2019-11-14T07:00-0800');
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(4);
+      });
     });
-  });
 
-  describe('Get Recommendations 3: Edge start time filtering', () => {
-    it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T07:00-0800');
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(4);
+    describe('Get Recommendations 4: Edge edge morning time filtering', () => {
+      it('should return 200 and nonempty list', async () => {
+        const res = await request(app).get('/api/recommendations?date=2019-11-14T09:00-0800');
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(4);
+      });
     });
-  });
 
-  describe('Get Recommendations 4: Edge edge morning time filtering', () => {
-    it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T09:00-0800');
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(4);
+    describe('GET Endpoint Test 4: Edge edge lunch time filtering', () => {
+      it('should return 200 and nonempty list', async () => {
+        const res = await request(app).get('/api/recommendations?date=2019-11-14T14:00-0800');
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(6);
+      });
     });
-  });
 
-  describe('GET Endpoint Test 4: Edge edge lunch time filtering', () => {
-    it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T14:00-0800');
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(6);
+    describe('GET Endpoint Test 5: Unavailable time filtering', () => {
+      it('should return 200 and nonempty list', async () => {
+        const res = await request(app).get('/api/recommendations?date=2019-11-14T02:00-0800');
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(0);
+      });
     });
-  });
 
-  describe('GET Endpoint Test 5: Unavailable time filtering', () => {
-    it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T02:00-0800');
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(0);
+    describe('Get Recommendations 6: Breakfast egg restriction', () => {
+      it('should return 200 and nonempty list', async () => {
+        const res = await request(app).get(`/api/recommendations?date=2019-11-14T09:00-0800&userId=${user1._id}`);
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(2);
+      });
     });
-  });
 
-  describe('Get Recommendations 6: Breakfast egg restriction', () => {
-    it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get(`/api/recommendations?date=2019-11-14T09:00-0800&userId=${user1._id}`);
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(2);
+    describe('Get Recommendations Test 7: Trivial time filtering for everyone', () => {
+      it('should return 200 and nonempty list', async () => {
+        const res = await request(app).get('/api/recommendations?date=2019-11-14T09:00-0800&userId=everyone');
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(4);
+      });
     });
-  });
 
-  describe('Get Recommendations Test 7: Trivial time filtering for everyone', () => {
-    it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get('/api/recommendations?date=2019-11-14T09:00-0800&userId=everyone');
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(4);
+    describe('Get Recommendations 7: Breakfast egg restriction, Favors lower rated item', () => {
+      it('should return 200 and nonempty list', async () => {
+        const res = await request(app).get(`/api/recommendations?date=2019-11-14T09:00-0800&userId=${user5._id}`);
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(2);
+        // lower rated item is higher because user likes it more
+        const answer = [item8, item9];
+        expect(JSON.stringify(res.body, ['_id'])).toBe(JSON.stringify(answer, ['_id']));
+      });
     });
-  });
 
-  describe('Get Recommendations 7: Breakfast egg restriction, Favors lower rated item', () => {
-    it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get(`/api/recommendations?date=2019-11-14T09:00-0800&userId=${user5._id}`);
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(2);
-      // lower rated item is higher because user likes it more
-      const answer = [item8, item9];
-      expect(JSON.stringify(res.body, ['_id'])).toBe(JSON.stringify(answer, ['_id']));
+    describe('Get Recommendations 8: Breakfast egg restriction, Only reviewed low rated item but disliked it', () => {
+      it('should return 200 and nonempty list', async () => {
+        const res = await request(app).get(`/api/recommendations?date=2019-11-14T09:00-0800&userId=${user6._id}`);
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(2);
+
+        const answer = [item9, item8];
+
+        expect(JSON.stringify(res.body, ['_id'])).toBe(JSON.stringify(answer, ['_id']));
+      });
     });
-  });
 
-  describe('Get Recommendations 8: Breakfast egg restriction, Only reviewed low rated item but disliked it', () => {
-    it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get(`/api/recommendations?date=2019-11-14T09:00-0800&userId=${user6._id}`);
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(2);
-
-      const answer = [item9, item8];
-
-      expect(JSON.stringify(res.body, ['_id'])).toBe(JSON.stringify(answer, ['_id']));
-    });
-  });
-
-  describe('Get Recommendations 9: Recommend New Item higher based on Reviews', () => {
-    it('should return 200 and nonempty list', async () => {
-      const res = await request(app).get(`/api/recommendations?date=2019-11-14T09:00-0800&userId=${user4._id}`);
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(4);
-      const answer = [item9, item10, item8, item7];
-      expect(JSON.stringify(res.body, ['_id'])).toBe(JSON.stringify(answer, ['_id']));
+    describe('Get Recommendations 9: Recommend New Item higher based on Reviews', () => {
+      it('should return 200 and nonempty list', async () => {
+        const res = await request(app).get(`/api/recommendations?date=2019-11-14T09:00-0800&userId=${user4._id}`);
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(4);
+        const answer = [item9, item10, item8, item7];
+        expect(JSON.stringify(res.body, ['_id'])).toBe(JSON.stringify(answer, ['_id']));
+      });
     });
   });
 });

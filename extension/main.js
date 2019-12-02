@@ -1,3 +1,7 @@
+/**
+ * @module
+ */
+
 const remoteURL = 'http://cs130-nomz.herokuapp.com'; // eslint-disable-line
 const localURL = 'http://localhost:8080'; // eslint-disable-line
 
@@ -33,6 +37,13 @@ function findAllItemIds() {
   return itemIds;
 }
 
+/**
+ * Function upsert ratings after star button click.
+ * @param {float} rating - The rating given by the user.
+ * @param {jQuery} $el - The star jQuery element.
+ * @param {string} menuItemId - The id of the menuitem being reviewed.
+ * @param {bool} newReview - Boolean indicating posting a new review or updating existing review.
+ */
 function addRating(rating, $el, menuItemId, newReview) {
   console.log($el);
   console.log(menuItemId);
