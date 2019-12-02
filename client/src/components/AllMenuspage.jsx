@@ -53,7 +53,7 @@ class AllMenuspage extends React.Component {
           <Link
             to={{
               pathname: `/restaurantmenu/covel`,
-              state: {id: '5dcb728fb9a6804bd50aff58', restName: 'covel'},
+              state: {id: '5dded8d9fe6ea12e797bd238', restName: 'Covel'},
             }}
             style={{ textDecoration: 'none' }}
             >

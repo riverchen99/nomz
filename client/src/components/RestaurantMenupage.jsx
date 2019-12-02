@@ -96,32 +96,34 @@ class RestaurantMenupage extends React.Component {
   // }
 
   fetchMenu() {
-    axios.get(`/api/menus?restaurant=${this.props.location.state.id}startTime={"$gte":"2019-11-24T19:00:00.000Z"}`)
+    axios.get(`/api/menus?restaurant="${this.props.location.state.id}"&startTime={"$gte":"2019-12-01T19:00:00.000Z"}&endTime={"$lte":"2019-12-01T23:00:00.000Z"}`)
       .then((resp) => {
-        //console.log(resp.data);
+        console.log(resp.data);
 
         const mealTimePeriod = this.mapMealPeriodToTime(this.state.restaurantName, this.state.meal);
         console.log(mealTimePeriod);
         for (let i = 0; i < resp.data.length; i++) {
           const curMenu = resp.data[i];
+          console.log(curMenu);
           const curStartTime = new Date(resp.data[i].startTime);
           // if ((curStartTime.getHours() + ":00") === mealTimePeriod.startTime &&
           //     curStartTime.getDate() === this.mapDayToDate(this.state.day)) {
           //   console.log('found it');
 
-          //   let menuItemsArr = [];
-          //   for (let j = 0; j < curMenu.menuItems.length; j++){
-          //     //console.log(curMenu.menuItems[j]);
-          //     let thing = await axios.get(`/api/menuItems?_id=${curMenu.menuItems[j]}`)
-          //       .then((resp) => {
-          //         //console.log(resp.data);
-          //         // const mItems = resp.data.map((item) => {
-          //         //   return <p>item.name</p>
-          //         // });
-          //         menuItemsArr.push(<p>{resp.data[0]}</p>);
-          //         console.log(menuItemsArr);
+            let menuItemsArr = [];
+            for (let j = 0; j < curMenu.menuItems.length; j++){
+              console.log(curMenu.menuItems[j]);
+            }
+            //   let thing = await axios.get(`/api/menuItems?_id=${curMenu.menuItems[j]}`)
+            //     .then((resp) => {
+            //       //console.log(resp.data);
+            //       // const mItems = resp.data.map((item) => {
+            //       //   return <p>item.name</p>
+            //       // });
+            //       menuItemsArr.push(<p>{resp.data[0]}</p>);
+            //       console.log(menuItemsArr);
                   
-          //       })
+            //     })
           //       console.log('hey', menuItemsArr);
           //   }
           //   console.log('at the end', menuItemsArr);
@@ -130,7 +132,8 @@ class RestaurantMenupage extends React.Component {
           //   });
           // }
         }
-      })
+      }
+    )
   }
 
   updateMealSelection(option) {
