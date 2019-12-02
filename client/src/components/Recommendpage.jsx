@@ -99,7 +99,7 @@ class Recommendpage extends React.Component {
       date.setDate(date.getDate() + 1);
       date += 1;
     }
-    return `api/recommendations?date=${date}&userId=${userId}`;
+    return `api/recommendations?date=${date}&userId=${userId._id}`;
   }
 
   /**

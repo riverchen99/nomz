@@ -54,7 +54,7 @@ class Recommendpage extends React.Component {
       { display: "Contains Eggs", schemaValue: "eggs" },
       { display: "Contains Crustacean Shellfish", schemaValue: "shellfish" },
       { display: "Contains Fish", schemaValue: "fish" },
-      { display: "Halal", schemaValue: "Halal" },
+      { display: "Halal", schemaValue: "halal" },
       { display: "Low Carbon Footprint", schemaValue: "lowCarbon" }
     ]
 
